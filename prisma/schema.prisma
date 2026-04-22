@@ -47,3 +47,17 @@ model Activity {
   lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }
+
+model Campaign {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   @default("cold-email") // cold-email, whatsapp, linkedin, protolead, follow-up
+  status      String   @default("draft") // draft, active, paused, completed
+  targetSector String  @default("")
+  message     String   @default("")
+  emailsSent  Int      @default(0)
+  openRate    Float    @default(0)
+  responseRate Float   @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

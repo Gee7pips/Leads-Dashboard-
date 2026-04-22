@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import {
   Users,
   Flame,
@@ -23,6 +23,7 @@ import {
   Award,
   Repeat,
   ChevronRight,
+  ChevronLeft,
   X,
   Plus,
   ArrowRight,
@@ -40,8 +41,28 @@ import {
   HardHat,
   Gavel,
   HeartPulse,
+  LayoutDashboard,
+  GitBranch,
+  Sparkles,
+  Calculator,
+  ClipboardList,
+  Bell,
+  Menu,
+  Copy,
+  RefreshCw,
+  Save,
+  Pencil,
+  Lightbulb,
+  BookOpen,
+  Handshake,
+  UserCircle,
+  Send,
+  Crown,
+  Briefcase,
+  ChevronDown,
+  Play,
+  CircleDot,
 } from 'lucide-react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -75,12 +96,13 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
   PieChart,
   Pie,
   Cell,
   ResponsiveContainer,
-  Legend,
+  FunnelChart,
+  Funnel,
+  LabelList,
 } from 'recharts'
 import {
   ChartContainer,
@@ -90,6 +112,24 @@ import {
   ChartLegendContent,
   ChartConfig,
 } from '@/components/ui/chart'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { Slider } from '@/components/ui/slider'
+import { Progress } from '@/components/ui/progress'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Separator } from '@/components/ui/separator'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from '@/components/ui/radio-group'
+import { Label } from '@/components/ui/label'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { toast } from 'sonner'
 
 // ─── Types ───────────────────────────────────────────────────────────
@@ -149,27 +189,15 @@ interface DashboardStats {
   lostLeads: number
 }
 
+type PageId = 'dashboard' | 'leads' | 'pipeline' | 'email' | 'strategies' | 'pricing' | 'analytics' | 'campaigns'
+
 // ─── Constants ───────────────────────────────────────────────────────
-const STAGES = [
-  'new',
-  'contacted',
-  'demo_sent',
-  'meeting_booked',
-  'proposal_sent',
-  'negotiation',
-  'won',
-  'lost',
-] as const
+const STAGES = ['new', 'contacted', 'demo_sent', 'meeting_booked', 'proposal_sent', 'negotiation', 'won', 'lost'] as const
 
 const STAGE_LABELS: Record<string, string> = {
-  new: 'New',
-  contacted: 'Contacted',
-  demo_sent: 'Demo Sent',
-  meeting_booked: 'Meeting Booked',
-  proposal_sent: 'Proposal Sent',
-  negotiation: 'Negotiation',
-  won: 'Won',
-  lost: 'Lost',
+  new: 'New', contacted: 'Contacted', demo_sent: 'Demo Sent',
+  meeting_booked: 'Meeting Booked', proposal_sent: 'Proposal Sent',
+  negotiation: 'Negotiation', won: 'Won', lost: 'Lost',
 }
 
 const STAGE_COLORS: Record<string, string> = {
@@ -195,14 +223,9 @@ const SECTOR_ICONS: Record<string, React.ReactNode> = {
 }
 
 const SECTOR_COLORS: Record<string, string> = {
-  Dental: '#059669',
-  Legal: '#d97706',
-  Funeral: '#dc2626',
-  Hospitality: '#7c3aed',
-  Logistics: '#0891b2',
-  Construction: '#ea580c',
-  Education: '#2563eb',
-  Medical: '#db2777',
+  Dental: '#059669', Legal: '#d97706', Funeral: '#dc2626',
+  Hospitality: '#7c3aed', Logistics: '#0891b2', Construction: '#ea580c',
+  Education: '#2563eb', Medical: '#db2777',
 }
 
 const ACTIVITY_ICONS: Record<string, React.ReactNode> = {
@@ -215,76 +238,235 @@ const ACTIVITY_ICONS: Record<string, React.ReactNode> = {
   note: <AlertCircle className="h-3.5 w-3.5" />,
 }
 
-const STRATEGY_ICONS: Record<string, React.ReactNode> = {
-  Zap: <Zap className="h-6 w-6" />,
-  Rocket: <Rocket className="h-6 w-6" />,
-  Mail: <Mail className="h-6 w-6" />,
-  Star: <Star className="h-6 w-6" />,
-  Shield: <Shield className="h-6 w-6" />,
-  Repeat: <Repeat className="h-6 w-6" />,
-  TrendingUp: <TrendingUp className="h-6 w-6" />,
-  Award: <Award className="h-6 w-6" />,
+const NAV_ITEMS: { id: PageId; label: string; icon: React.ReactNode }[] = [
+  { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" /> },
+  { id: 'leads', label: 'Leads', icon: <Users className="h-5 w-5" /> },
+  { id: 'pipeline', label: 'Pipeline', icon: <GitBranch className="h-5 w-5" /> },
+  { id: 'email', label: 'Email Generator', icon: <Sparkles className="h-5 w-5" /> },
+  { id: 'strategies', label: 'Strategies', icon: <Target className="h-5 w-5" /> },
+  { id: 'pricing', label: 'Pricing Calculator', icon: <Calculator className="h-5 w-5" /> },
+  { id: 'analytics', label: 'Analytics', icon: <TrendingUp className="h-5 w-5" /> },
+  { id: 'campaigns', label: 'Campaigns', icon: <ClipboardList className="h-5 w-5" /> },
+]
+
+const PRICING_PACKAGES = {
+  dental: [
+    { name: 'Molar', price: 4499, tagline: 'Get found. Get called.', roi: 901, paybackDays: 36, newPatients: 5, avgVisit: 750 },
+    { name: 'Crown', price: 8999, tagline: 'Fill the chair. Own the schedule.', roi: 981, paybackDays: 37, newPatients: 9, avgVisit: 900, popular: true },
+    { name: 'Implant', price: 16999, tagline: 'The full machine. Runs while you sleep.', roi: 864, paybackDays: 37, newPatients: 13, avgVisit: 1050 },
+  ],
+  general: [
+    { name: 'Vula', price: 3999, tagline: 'Get online and start getting calls', newLeads: 3, avgValue: 500, roi: 450 },
+    { name: 'Khula', price: 7999, tagline: 'Convert visitors into paying clients', newLeads: 6, avgValue: 800, roi: 720, popular: true },
+    { name: 'Premium', price: 14999, tagline: 'A fully managed digital engine', newLeads: 12, avgValue: 1000, roi: 960 },
+  ],
+  school: [
+    { name: 'Presenca', price: 4999, tagline: 'Be found and trusted online' },
+    { name: 'Ikredibo', price: 9999, tagline: 'Build community trust & enrolment', popular: true },
+    { name: 'Isibindi', price: 18999, tagline: 'Full content control + 24/7 AI' },
+  ],
 }
 
+const ADD_ONS = [
+  { id: 'ai-chatbot', name: 'AI Chatbot + WhatsApp Automation', desc: '24/7 bot — FAQs, appt capture, after-hours triage', onceOff: 4999, monthly: 499 },
+  { id: 'seo-boost', name: 'SEO Boost Pack', desc: '5 extra keywords, competitor analysis, backlinks', onceOff: 1999, monthly: 0 },
+  { id: 'google-review', name: 'Google Review Automation', desc: 'Post-visit SMS/WhatsApp review request sequence', onceOff: 1499, monthly: 149 },
+  { id: 'social-media', name: 'Social Media Starter Pack', desc: 'Branded FB + IG setup, 6 content templates', onceOff: 2499, monthly: 0 },
+  { id: 'emergency-page', name: 'Emergency Landing Page', desc: 'Dedicated emergency page, click-to-call, Ads-ready', onceOff: 1999, monthly: 0 },
+  { id: 'content-retainer', name: 'Monthly Content Retainer', desc: '2 blog posts/mo, social captions, GBP posts', onceOff: 0, monthly: 699 },
+]
+
+const STRATEGIES_DATA = [
+  {
+    id: 'lead-generation',
+    category: 'Lead Generation',
+    icon: <Zap className="h-5 w-5" />,
+    strategies: [
+      {
+        id: 'protolead', title: 'ProtoLead Method', difficulty: 'Advanced',
+        description: 'Build → Call → WhatsApp → Visit → Close. Build a demo site first, then use it as a conversation starter.',
+        keyInsight: 'Demo-first approach eliminates the "cold call" barrier',
+        steps: ['Identify Tier 1 leads (4.7-5.0★) for ProtoLead treatment', 'Build tailored demo in 1-2 days using sector templates', 'Phone call: "I built something for your practice" — no pitch', 'WhatsApp follow-up with demo link + 15-second voice note', 'In-person visit for Tier 1 leads with printed mockup/brochure', 'Close with 50% deposit (R2,000-R8,500 upfront)'],
+      },
+      {
+        id: 'speed-to-lead', title: 'Speed-to-Lead', difficulty: 'Intermediate',
+        description: 'Contact within 5 minutes makes you 21x more likely to qualify. After 30 min, conversion drops 10x.',
+        keyInsight: '5 min response = 21x qualification rate',
+        steps: ['Set up instant notifications for new leads', 'Prepare lead response templates per sector', 'Use WhatsApp as first contact method', 'Follow up missed calls within 15 minutes', 'Track response time as a KPI'],
+      },
+      {
+        id: 'lead-scoring', title: 'Lead Scoring System', difficulty: 'Beginner',
+        description: 'Not all leads are equal. Tier 1 leads with high Google ratings are proven businesses that just need a digital home.',
+        keyInsight: 'Tier 1 = HIGH PRIORITY | Tier 2 = SOLID | Tier 3 = EMERGING',
+        steps: ['Tier 1 (4.7-5.0★): ProtoLead demo first, call second, visit third', 'Tier 2 (4.0-4.6★): Direct call with tailored pitch, demo on request', 'Tier 3 (<4.0★): Phone outreach with affordable entry package', 'Score: Rating 30% + Website 20% + Sector 20% + Location 15% + Response 15%', 'Focus 60% time on Tier 1, 30% on Tier 2, 10% on Tier 3'],
+      },
+      {
+        id: 'directory-submissions', title: 'Directory Submissions Strategy', difficulty: 'Beginner',
+        description: 'List businesses on key SA directories (Snupit, Brabys, Yellow Pages, Google Business Profile) to increase visibility.',
+        keyInsight: 'GBP + 3 directories = 3x more discoverable within 30 days',
+        steps: ['Claim and optimize Google Business Profile first', 'Submit to Snupit (free + paid options)', 'Add to Brabys and Yellow Pages SA', 'Ensure consistent NAP (Name, Address, Phone)', 'Request reviews on each platform after every job'],
+      },
+    ],
+  },
+  {
+    id: 'outreach',
+    category: 'Outreach & Contact',
+    icon: <Mail className="h-5 w-5" />,
+    strategies: [
+      {
+        id: 'cold-email', title: 'Cold Email Frameworks', difficulty: 'Advanced',
+        description: 'Four frameworks: Observation → Problem → Proof → Ask | Question → Value → Ask | Trigger → Insight → Ask | Story → Bridge → Ask.',
+        keyInsight: 'Interest-based CTAs outperform meeting requests by 3x',
+        steps: ['Observation: "I noticed [specific detail]"', 'Problem: "Most [sector] in [area] are invisible to online searches"', 'Proof: "We helped [similar business] get 8-15 new enquiries/month"', 'Ask: "Mind if I send a 2-minute video showing what yours could look like?"', 'Follow up 3-5 times with increasing gaps (Day 1, 3, 7, 14, 21)', 'Never use "Just checking in" — each follow-up adds something new'],
+      },
+      {
+        id: 'whatsapp-outreach', title: 'WhatsApp Outreach Templates', difficulty: 'Beginner',
+        description: 'WhatsApp is the #1 communication tool in South Africa. Use it for initial contact with warm, conversational messages.',
+        keyInsight: 'WhatsApp has 95% open rate in SA — far higher than email',
+        steps: ['Start with friendly greeting + name reference', 'Keep under 100 words — scan-friendly', 'Include one clear question to prompt response', 'Mention specific benefit relevant to their sector', 'Attach demo link or short voice note (15 sec max)', 'Follow up 24-48 hours if no response'],
+      },
+      {
+        id: 'linkedin-dm', title: 'LinkedIn DM Strategy', difficulty: 'Intermediate',
+        description: 'For B2B and corporate leads. Professional but not stiff. Build connection first, pitch second.',
+        keyInsight: 'Personalized connection requests have 3x acceptance rate',
+        steps: ['Personalize connection request (find common ground)', 'Wait for acceptance before sending pitch', 'Keep DMs under 300 characters', 'Reference their recent post or company update', 'Ask for a brief 10-minute chat, not a meeting', 'Follow up after 1 week with value-add content'],
+      },
+      {
+        id: 'follow-up-cadence', title: 'Follow-Up Cadence (3-5 Touches)', difficulty: 'Intermediate',
+        description: 'It takes ~7 touchpoints to convert. Each follow-up must add something new — a different angle, fresh proof, or a new insight.',
+        keyInsight: 'The Rule of 7: ~7 touchpoints before converting',
+        steps: ['Touch 1 (Day 0): Initial outreach (call/WhatsApp/email)', 'Touch 2 (Day 1): Follow up with demo link or case study', 'Touch 3 (Day 3): Different angle — ROI stats or competitor insight', 'Touch 4 (Day 7): Social proof — testimonial from similar business', 'Touch 5 (Day 14): Breakup email — "Should I close your file?"', 'Track every touch in the CRM/Activity log'],
+      },
+      {
+        id: 'phone-scripts', title: 'Phone Script Templates', difficulty: 'Beginner',
+        description: 'Prepared scripts for different scenarios: initial contact, demo follow-up, objection handling, and closing.',
+        keyInsight: 'Prepared callers convert 2x more than winging it',
+        steps: ['Opening: "Hi, I am Kabelo from Carter Digitals in Pretoria..."', 'Hook: "I built something I think you would find interesting"', 'Qualify: "Quick question — do you get patients/clients from Google?"', 'Value: "Our dental clients see 8-15 new patients/month from their website"', 'Close: "Would a 2-minute video walkthrough work for you?"', 'Always get permission before sending anything'],
+      },
+    ],
+  },
+  {
+    id: 'conversion',
+    category: 'Conversion & Closing',
+    icon: <TrendingUp className="h-5 w-5" />,
+    strategies: [
+      {
+        id: 'objection-handling', title: 'Objection Handling', difficulty: 'Advanced',
+        description: 'Every objection is a buying signal. Use: Acknowledge → Reframe → Proof → Ask.',
+        keyInsight: 'Loss aversion: "Don\'t miss out" beats "You could gain" by 2x',
+        steps: ['Price: "I understand. Let me show you the ROI — 864-981% return"', 'Timing: "Perfect timing — 5-7 day delivery, you could be live in 2 weeks"', 'Competition: "We\'re 100% Black & Youth-Owned, B-BBEE Level 1 — 135% procurement recognition"', 'Status Quo: "Your competitors who went online are getting 5-13 new patients/month you\'re missing"', 'Technical: "Built on Next.js, same framework as Vercel and Nike. 99.9% uptime."', 'Always end with: "What would make this work for you?"'],
+      },
+      {
+        id: 'roi-demo', title: 'ROI Calculator Demo', difficulty: 'Intermediate',
+        description: 'Our dental clients see 864-981% ROI in Year 1. Use conservative estimates: 5-13 new patients/month from organic search.',
+        keyInsight: 'Average payback period: ~37 days',
+        steps: ['Molar (R4,499): 5 new patients/mo × R750 = R45,000/yr. ROI: 901%', 'Crown (R8,999): 9 new patients/mo × R900 = R97,200/yr. ROI: 981%', 'Implant (R16,999): 13 new patients/mo × R1,050 = R163,800/yr. ROI: 864%', 'Frame as: "How much is each lost patient costing you right now?"', 'Show the payback period — most clients break even in ~37 days'],
+      },
+      {
+        id: 'bbbee-leverage', title: 'B-BBEE Advantage Leverage', difficulty: 'Intermediate',
+        description: 'Carter Digitals is 100% Black & Youth-Owned with B-BBEE Level 1 status. 135% procurement recognition.',
+        keyInsight: 'Level 1 = 135% Procurement Recognition | CSD Registered',
+        steps: ['Lead every corporate/government pitch with B-BBEE credentials', 'Target government tenders requiring B-BBEE Level 1 suppliers', 'Highlight: CIPC 2025/907839/07, CSD Registered, POPIA Compliant', 'Use in proposals: "Maximize your B-BBEE scorecard points"', 'Target sectors with government mandates: Education, Healthcare', 'Prepare B-BBEE compliance one-pager for every corporate pitch'],
+      },
+      {
+        id: 'demo-tips', title: 'Demo/Presentation Tips', difficulty: 'Intermediate',
+        description: 'How to deliver compelling demos that convert. Show, don\'t tell. Make it personal.',
+        keyInsight: 'Personalized demos convert 40% higher than generic ones',
+        steps: ['Research the prospect before the demo — know their pain points', 'Show THEIR business context, not a generic portfolio', 'Focus on outcomes (new patients, more calls), not features', 'Keep it under 15 minutes — respect their time', 'End with a specific next step and timeline', 'Send follow-up email within 1 hour of the demo'],
+      },
+    ],
+  },
+  {
+    id: 'retention',
+    category: 'Retention & Growth',
+    icon: <Award className="h-5 w-5" />,
+    strategies: [
+      {
+        id: 'email-sequences', title: 'Email Sequence Frameworks', difficulty: 'Advanced',
+        description: 'Welcome (5-7 emails, 12-14 days), Lead Nurture (6-8 emails, 2-3 weeks), Re-Engagement (3-4 emails, 2 weeks).',
+        keyInsight: 'Welcome sequences have 50% higher open rates than standalone emails',
+        steps: ['Welcome Email 1 (Immediate): Delivery confirmation + quick win', 'Welcome Email 2 (Day 1): Your story + why you built this', 'Welcome Email 3 (Day 3): Social proof + case study', 'Welcome Email 4 (Day 5): Overcome biggest objection', 'Nurture: Lead magnet → Problem deep-dive → Solution → Case study → Offer', 'Re-engagement (30-60 days inactive): "We miss you" + special offer'],
+      },
+      {
+        id: 'upsell-strategies', title: 'Upsell Strategies', difficulty: 'Intermediate',
+        description: 'Add-ons and retainers to increase client lifetime value. Start with the relationship, upsell after results.',
+        keyInsight: 'Existing clients are 5x easier to sell to than new ones',
+        steps: ['Wait 30-60 days after launch before upselling', 'Show results first — "Your site got 500 views this month"', 'Offer SEO Boost as natural next step', 'Suggest monthly retainer for ongoing support', 'Bundle add-ons: "Add chatbot + review automation for R6,498 (save R1,000)"', 'Annual plan incentive: 2 months free on yearly retainer'],
+      },
+      {
+        id: 'referral-program', title: 'Referral Program', difficulty: 'Beginner',
+        description: 'Turn satisfied clients into referral sources. Word-of-mouth is the highest-converting channel.',
+        keyInsight: 'Referred leads convert 4x faster and spend 2x more',
+        steps: ['Ask for referrals 30 days after successful launch', 'Make it easy: "Know anyone who needs a website? I will give them a free demo"', 'Offer incentive: R500 off their next renewal for each referral', 'Create referral card/one-pager clients can share', 'Thank referrers publicly (with permission)', 'Track referral sources in CRM'],
+      },
+      {
+        id: 'health-score', title: 'Health Score Model', difficulty: 'Advanced',
+        description: 'Track client health: Login freq (×0.30) + Feature usage (×0.25) + Support sentiment (×0.15) + Billing (×0.15) + Engagement (×0.15).',
+        keyInsight: '80-100: Healthy (upsell) | 60-79: Monitor | 40-59: At risk | 0-39: Critical',
+        steps: ['Track Google Analytics monthly traffic for each client', 'Monitor review growth (new reviews/month)', 'Check for broken links or downtime', 'Send quarterly health report to clients', 'Proactively contact clients with dropping metrics', 'Schedule annual website refresh meeting'],
+      },
+    ],
+  },
+]
+
+// ─── Utility Functions ───────────────────────────────────────────────
 function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('en-ZA', {
-    style: 'currency',
-    currency: 'ZAR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(value)
+  return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value)
 }
 
 function formatDate(dateStr: string | null): string {
   if (!dateStr) return 'N/A'
-  return new Date(dateStr).toLocaleDateString('en-ZA', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
+  return new Date(dateStr).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
 function formatRelativeDate(dateStr: string): string {
-  const date = new Date(dateStr)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+  const diffDays = Math.floor((Date.now() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24))
   if (diffDays === 0) return 'Today'
   if (diffDays === 1) return 'Yesterday'
   if (diffDays < 7) return `${diffDays} days ago`
   return formatDate(dateStr)
 }
 
+// ─── Small Components ────────────────────────────────────────────────
 function TierBadge({ tier }: { tier: number }) {
-  const colors = {
-    1: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-    2: 'bg-amber-100 text-amber-700 border-amber-200',
-    3: 'bg-slate-100 text-slate-700 border-slate-200',
-  }
-  return (
-    <Badge variant="outline" className={colors[tier] || colors[3]}>
-      Tier {tier}
-    </Badge>
-  )
+  const c = { 1: 'bg-emerald-100 text-emerald-700 border-emerald-200', 2: 'bg-amber-100 text-amber-700 border-amber-200', 3: 'bg-slate-100 text-slate-700 border-slate-200' }
+  return <Badge variant="outline" className={c[tier] || c[3]}>Tier {tier}</Badge>
 }
 
 function StarRating({ rating }: { rating: number }) {
   return (
     <div className="flex items-center gap-0.5">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <Star
-          key={star}
-          className={`h-3.5 w-3.5 ${
-            star <= Math.round(rating)
-              ? 'text-amber-400 fill-amber-400'
-              : 'text-gray-300'
-          }`}
-        />
+      {[1, 2, 3, 4, 5].map((s) => (
+        <Star key={s} className={`h-3.5 w-3.5 ${s <= Math.round(rating) ? 'text-amber-400 fill-amber-400' : 'text-gray-300'}`} />
       ))}
       <span className="ml-1 text-xs text-muted-foreground">{rating.toFixed(1)}</span>
     </div>
   )
 }
+
+function DifficultyBadge({ difficulty }: { difficulty: string }) {
+  const d: Record<string, string> = { Beginner: 'bg-emerald-100 text-emerald-700', Intermediate: 'bg-amber-100 text-amber-700', Advanced: 'bg-rose-100 text-rose-700' }
+  return <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${d[difficulty] || d.Beginner}`}>{difficulty}</span>
+}
+
+function LoadingSpinner() {
+  return (
+    <div className="flex items-center justify-center py-20">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500" />
+    </div>
+  )
+}
+
+// ─── Chart Configs ───────────────────────────────────────────────────
+const sectorChartConfig: ChartConfig = {
+  Dental: { label: 'Dental', color: '#059669' }, Legal: { label: 'Legal', color: '#d97706' },
+  Funeral: { label: 'Funeral', color: '#dc2626' }, Hospitality: { label: 'Hospitality', color: '#7c3aed' },
+  Logistics: { label: 'Logistics', color: '#0891b2' }, Construction: { label: 'Construction', color: '#ea580c' },
+  Education: { label: 'Education', color: '#2563eb' }, Medical: { label: 'Medical', color: '#db2777' },
+}
+
+const tierChartConfig: ChartConfig = { count: { label: 'Leads', color: '#059669' } }
+const funnelChartConfig: ChartConfig = { count: { label: 'Leads', color: '#059669' } }
 
 // ─── Main Component ─────────────────────────────────────────────────
 export default function DashboardPage() {
@@ -292,7 +474,9 @@ export default function DashboardPage() {
   const [leads, setLeads] = useState<Lead[]>([])
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [leadDialogOpen, setLeadDialogOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState('dashboard')
+  const [activePage, setActivePage] = useState<PageId>('dashboard')
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [loading, setLoading] = useState(true)
 
   // Filters
@@ -307,897 +491,345 @@ export default function DashboardPage() {
   const [activitySummary, setActivitySummary] = useState('')
   const [activityOutcome, setActivityOutcome] = useState('')
 
+  // Email generator
+  const [emailLeadId, setEmailLeadId] = useState('')
+  const [emailType, setEmailType] = useState('cold')
+  const [emailTone, setEmailTone] = useState('professional')
+  const [emailSubject, setEmailSubject] = useState('')
+  const [emailBody, setEmailBody] = useState('')
+  const [emailGenerating, setEmailGenerating] = useState(false)
+  const [emailEditing, setEmailEditing] = useState(false)
+  const [emailEditedBody, setEmailEditedBody] = useState('')
+
+  // Pricing calculator
+  const [pricingCategory, setPricingCategory] = useState<'dental' | 'general' | 'school'>('dental')
+  const [roiNewPatients, setRoiNewPatients] = useState([5])
+  const [roiAvgValue, setRoiAvgValue] = useState([750])
+  const [roiPackage, setRoiPackage] = useState('Crown')
+  const [selectedAddOns, setSelectedAddOns] = useState<string[]>([])
+
   const fetchStats = useCallback(async () => {
-    try {
-      const res = await fetch('/api/stats')
-      const data = await res.json()
-      setStats(data)
-    } catch (err) {
-      console.error('Error fetching stats:', err)
-    }
+    try { const res = await fetch('/api/stats'); setStats(await res.json()) } catch (e) { console.error(e) }
   }, [])
 
   const fetchLeads = useCallback(async () => {
     try {
-      const params = new URLSearchParams()
-      if (searchQuery) params.set('search', searchQuery)
-      if (filterSector !== 'all') params.set('sector', filterSector)
-      if (filterTier !== 'all') params.set('tier', filterTier)
-      if (filterStage !== 'all') params.set('stage', filterStage)
-      if (filterHot !== 'all') params.set('hotLead', filterHot)
-      const res = await fetch(`/api/leads?${params.toString()}`)
-      const data = await res.json()
-      setLeads(data)
-    } catch (err) {
-      console.error('Error fetching leads:', err)
-    }
+      const p = new URLSearchParams()
+      if (searchQuery) p.set('search', searchQuery)
+      if (filterSector !== 'all') p.set('sector', filterSector)
+      if (filterTier !== 'all') p.set('tier', filterTier)
+      if (filterStage !== 'all') p.set('stage', filterStage)
+      if (filterHot !== 'all') p.set('hotLead', filterHot)
+      const res = await fetch(`/api/leads?${p.toString()}`)
+      setLeads(await res.json())
+    } catch (e) { console.error(e) }
   }, [searchQuery, filterSector, filterTier, filterStage, filterHot])
 
   useEffect(() => {
-    const load = async () => {
-      setLoading(true)
-      await Promise.all([fetchStats(), fetchLeads()])
-      setLoading(false)
-    }
-    load()
+    (async () => { setLoading(true); await Promise.all([fetchStats(), fetchLeads()]); setLoading(false) })()
   }, [fetchStats, fetchLeads])
 
-  // Debounced search
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      fetchLeads()
-    }, 300)
-    return () => clearTimeout(timeout)
+    const t = setTimeout(fetchLeads, 300); return () => clearTimeout(t)
   }, [searchQuery, fetchLeads])
 
-  const openLeadDetail = (lead: Lead) => {
-    setSelectedLead(lead)
-    setLeadDialogOpen(true)
-  }
+  const openLeadDetail = (lead: Lead) => { setSelectedLead(lead); setLeadDialogOpen(true) }
 
   const updateLeadStage = async (leadId: string, newStage: string) => {
     try {
-      const res = await fetch(`/api/leads/${leadId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ stage: newStage }),
-      })
-      const updated = await res.json()
-      setSelectedLead(updated)
-      fetchStats()
-      fetchLeads()
+      const res = await fetch(`/api/leads/${leadId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ stage: newStage }) })
+      setSelectedLead(await res.json()); fetchStats(); fetchLeads()
       toast.success(`Lead moved to ${STAGE_LABELS[newStage]}`)
-    } catch {
-      toast.error('Failed to update lead stage')
-    }
+    } catch { toast.error('Failed to update stage') }
   }
 
   const addActivity = async (leadId: string) => {
-    if (!activitySummary.trim()) {
-      toast.error('Please enter an activity summary')
-      return
-    }
+    if (!activitySummary.trim()) { toast.error('Enter an activity summary'); return }
     try {
-      await fetch(`/api/leads/${leadId}/activities`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch(`/api/leads/${leadId}/activities`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: activityType, summary: activitySummary, outcome: activityOutcome }) })
+      setActivitySummary(''); setActivityOutcome('')
+      const res = await fetch(`/api/leads/${leadId}`); setSelectedLead(await res.json()); fetchStats()
+      toast.success('Activity added')
+    } catch { toast.error('Failed to add activity') }
+  }
+
+  const generateEmail = async () => {
+    const lead = leads.find(l => l.id === emailLeadId)
+    if (!lead) return
+    setEmailGenerating(true); setEmailSubject(''); setEmailBody(''); setEmailEditing(false)
+    try {
+      const res = await fetch('/api/generate-email', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          type: activityType,
-          summary: activitySummary,
-          outcome: activityOutcome,
+          leadName: lead.name, sector: lead.sector, tier: lead.tier, rating: lead.rating,
+          notes: lead.notes, location: lead.location, area: lead.area, services: lead.services,
+          recommendedPackage: lead.recommendedPackage, estimatedValue: lead.estimatedValue,
+          phone: lead.phone, onlinePresence: lead.onlinePresence, emailType, tone: emailTone,
         }),
       })
-      setActivitySummary('')
-      setActivityOutcome('')
-      // Refresh
-      const res = await fetch(`/api/leads/${leadId}`)
-      const updated = await res.json()
-      setSelectedLead(updated)
-      fetchStats()
-      toast.success('Activity added successfully')
-    } catch {
-      toast.error('Failed to add activity')
-    }
+      const data = await res.json()
+      if (data.error) { toast.error(data.error); return }
+      setEmailSubject(data.subject); setEmailBody(data.body); setEmailEditedBody(data.body)
+      toast.success('Email generated!')
+    } catch { toast.error('Failed to generate email') }
+    finally { setEmailGenerating(false) }
   }
+
+  const copyEmailToClipboard = () => {
+    const text = emailType === 'whatsapp' || emailType === 'linkedin' ? emailBody : `Subject: ${emailSubject}\n\n${emailBody}`
+    navigator.clipboard.writeText(text).then(() => toast.success('Copied to clipboard!')).catch(() => toast.error('Failed to copy'))
+  }
+
+  const saveEmailAsActivity = async () => {
+    if (!emailLeadId || !emailBody) return
+    try {
+      await fetch(`/api/leads/${emailLeadId}/activities`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'email', summary: `Generated ${emailType}: ${emailSubject || emailType}`, outcome: emailBody.substring(0, 200) }),
+      })
+      fetchStats(); fetchLeads(); toast.success('Email saved as activity!')
+    } catch { toast.error('Failed to save activity') }
+  }
+
+  // ROI calculations
+  const currentPackages = PRICING_PACKAGES[pricingCategory]
+  const selectedPkg = currentPackages.find(p => p.name === roiPackage) || currentPackages[0]
+  const monthlyRevenue = roiNewPatients[0] * roiAvgValue[0]
+  const annualRevenue = monthlyRevenue * 12
+  const paybackDays = monthlyRevenue > 0 ? Math.round((selectedPkg.price / monthlyRevenue) * 30) : 999
+  const netGainY1 = annualRevenue - selectedPkg.price
+  const roiPercent = selectedPkg.price > 0 ? Math.round((netGainY1 / selectedPkg.price) * 100) : 0
+
+  // Add-on totals
+  const addOnTotalOnce = selectedAddOns.reduce((sum, id) => { const a = ADD_ONS.find(x => x.id === id); return sum + (a?.onceOff || 0) }, 0)
+  const addOnTotalMonthly = selectedAddOns.reduce((sum, id) => { const a = ADD_ONS.find(x => x.id === id); return sum + (a?.monthly || 0) }, 0)
+
+  // Analytics data
+  const analyticsData = useMemo(() => {
+    if (!leads.length || !stats) return null
+    const byArea = new Map<string, number>()
+    const bySectorValue = new Map<string, number>()
+    leads.forEach(l => {
+      const area = l.area || l.location || 'Unknown'
+      byArea.set(area, (byArea.get(area) || 0) + 1)
+      bySectorValue.set(l.sector, (bySectorValue.get(l.sector) || 0) + (l.estimatedValue || 0))
+    })
+    const conversionBySector = stats.bySector.map(s => {
+      const sectorLeads = leads.filter(l => l.sector === s.sector)
+      const won = sectorLeads.filter(l => l.stage === 'won').length
+      return { sector: s.sector, conversion: sectorLeads.length > 0 ? Math.round((won / sectorLeads.length) * 100) : 0 }
+    })
+    const conversionByTier = stats.byTier.map(t => {
+      const tierNum = parseInt(t.tier.replace('Tier ', ''))
+      const tierLeads = leads.filter(l => l.tier === tierNum)
+      const won = tierLeads.filter(l => l.stage === 'won').length
+      return { tier: t.tier, conversion: tierLeads.length > 0 ? Math.round((won / tierLeads.length) * 100) : 0 }
+    })
+    const hotLeads = leads.filter(l => l.hotLead)
+    const hotConverted = hotLeads.filter(l => l.stage === 'won').length
+    const avgDealSize = leads.filter(l => l.stage === 'won').length > 0
+      ? leads.filter(l => l.stage === 'won').reduce((s, l) => s + (l.estimatedValue || 0), 0) / leads.filter(l => l.stage === 'won').length
+      : 0
+    return {
+      byArea: Array.from(byArea.entries()).map(([area, count]) => ({ area, count })).sort((a, b) => b.count - a.count),
+      bySectorValue: Array.from(bySectorValue.entries()).map(([sector, value]) => ({ sector, value })).sort((a, b) => b.value - a.value),
+      conversionBySector, conversionByTier,
+      hotLeads: hotLeads.length, hotConverted,
+      avgDealSize,
+      leadVelocity: leads.length,
+    }
+  }, [leads, stats])
 
   // Pipeline data
-  const pipelineStages = STAGES.filter((s) => s !== 'won' && s !== 'lost')
-  const pipelineLeads = pipelineStages.map((stage) => ({
-    stage,
-    label: STAGE_LABELS[stage],
-    leads: (stats?.byStage.find((s) => s.stage === stage)?.count || 0),
-    items: leads.filter((l) => l.stage === stage),
-  }))
+  const pipelineStages = STAGES.filter(s => s !== 'won' && s !== 'lost')
 
-  // Chart configs
-  const sectorChartConfig: ChartConfig = {
-    Dental: { label: 'Dental', color: '#059669' },
-    Legal: { label: 'Legal', color: '#d97706' },
-    Funeral: { label: 'Funeral', color: '#dc2626' },
-    Hospitality: { label: 'Hospitality', color: '#7c3aed' },
-    Logistics: { label: 'Logistics', color: '#0891b2' },
-    Construction: { label: 'Construction', color: '#ea580c' },
-    Education: { label: 'Education', color: '#2563eb' },
-    Medical: { label: 'Medical', color: '#db2777' },
+  // Page title
+  const pageTitle = NAV_ITEMS.find(n => n.id === activePage)?.label || 'Dashboard'
+
+  const navigateToEmail = (leadId?: string) => {
+    setActivePage('email')
+    if (leadId) setEmailLeadId(leadId)
   }
 
-  const tierChartConfig: ChartConfig = {
-    count: { label: 'Leads', color: '#059669' },
-  }
+  // ─── Sidebar Content (shared) ──────────────────────────────────
+  const SidebarContent = () => (
+    <div className="flex flex-col h-full">
+      {/* Logo */}
+      <div className="p-4 flex items-center gap-3">
+        <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center font-bold text-lg text-white shrink-0">C</div>
+        {!sidebarCollapsed && (
+          <div className="min-w-0">
+            <h1 className="text-base font-bold text-white tracking-tight truncate">Carter Digitals</h1>
+            <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 text-[10px] px-1.5 py-0">B-BBEE Level 1</Badge>
+          </div>
+        )}
+      </div>
 
-  const funnelChartConfig: ChartConfig = {
-    count: { label: 'Leads', color: '#059669' },
-  }
+      <Separator className="bg-gray-700/50" />
+
+      {/* Nav */}
+      <nav className="flex-1 py-3 px-2 space-y-1">
+        {NAV_ITEMS.map(item => (
+          <button
+            key={item.id}
+            onClick={() => { setActivePage(item.id); setSidebarOpen(false) }}
+            className={`w-full flex items-center gap-3 rounded-lg transition-colors ${
+              sidebarCollapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5'
+            } ${
+              activePage === item.id
+                ? 'bg-emerald-600/20 text-emerald-400'
+                : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
+            }`}
+          >
+            {item.icon}
+            {!sidebarCollapsed && <span className="text-sm font-medium truncate">{item.label}</span>}
+          </button>
+        ))}
+      </nav>
+
+      <Separator className="bg-gray-700/50" />
+
+      {/* User */}
+      <div className={`p-4 ${sidebarCollapsed ? 'flex justify-center' : ''}`}>
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-sm shrink-0">KK</div>
+          {!sidebarCollapsed && (
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-white truncate">Kabelo Kadiaka</p>
+              <p className="text-xs text-gray-400 truncate">Founder</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* ─── Header ─── */}
-      <header className="bg-gray-900 text-white sticky top-0 z-50 shadow-lg">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center font-bold text-lg">
-                C
-              </div>
-              <div>
-                <h1 className="text-lg font-bold tracking-tight">Carter Digitals</h1>
-                <p className="text-xs text-emerald-400 font-medium">
-                  Built Different. Built African. Built to Win.
-                </p>
-              </div>
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* ─── Desktop Sidebar ─── */}
+      <aside className={`hidden lg:flex flex-col bg-gray-950 border-r border-gray-800 transition-all duration-300 shrink-0 ${sidebarCollapsed ? 'w-[68px]' : 'w-[250px]'}`}>
+        <SidebarContent />
+        <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} className="hidden lg:flex absolute top-1/2 -right-3 z-10 w-6 h-6 items-center justify-center rounded-full bg-gray-800 border border-gray-700 text-gray-400 hover:text-white hover:bg-gray-700 transition-colors">
+          {sidebarCollapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronLeft className="h-3.5 w-3.5" />}
+        </button>
+      </aside>
+
+      {/* ─── Mobile Sidebar (Sheet) ─── */}
+      <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+        <SheetContent side="left" className="w-[280px] p-0 bg-gray-950 border-gray-800">
+          <SidebarContent />
+        </SheetContent>
+      </Sheet>
+
+      {/* ─── Main Area ─── */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* ─── Top Bar ─── */}
+        <header className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
+          <div className="flex items-center gap-4 px-4 sm:px-6 h-14">
+            {/* Mobile menu */}
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-1.5 rounded-lg hover:bg-gray-100 text-gray-600">
+              <Menu className="h-5 w-5" />
+            </button>
+
+            {/* Page title */}
+            <h2 className="text-base font-semibold text-gray-900">{pageTitle}</h2>
+
+            <div className="flex-1" />
+
+            {/* Global search */}
+            <div className="hidden md:flex relative w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search leads..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 h-9 bg-gray-50 border-gray-200"
+              />
             </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Badge variant="outline" className="border-emerald-500/50 text-emerald-400 text-xs">
-                B-BBEE Level 1
-              </Badge>
-              <Badge variant="outline" className="border-amber-500/50 text-amber-400 text-xs">
-                135% Procurement
-              </Badge>
+
+            {/* Notifications */}
+            <button className="relative p-2 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors">
+              <Bell className="h-5 w-5" />
+              {stats?.hotLeads ? (
+                <span className="absolute top-1 right-1 w-2 h-2 bg-amber-500 rounded-full" />
+              ) : null}
+            </button>
+
+            {/* User avatar */}
+            <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-gray-200">
+              <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-xs">KK</div>
+              <span className="text-sm font-medium text-gray-700 hidden xl:inline">Kabelo</span>
             </div>
           </div>
-          {/* Navigation Tabs */}
-          <nav className="-mb-px">
-            <div className="flex gap-0">
-              {[
-                { value: 'dashboard', label: 'Dashboard', icon: <BarChart3 className="h-4 w-4 mr-1.5" /> },
-                { value: 'leads', label: 'Leads', icon: <Users className="h-4 w-4 mr-1.5" /> },
-                { value: 'pipeline', label: 'Pipeline', icon: <Activity className="h-4 w-4 mr-1.5" /> },
-                { value: 'strategies', label: 'Strategies', icon: <Target className="h-4 w-4 mr-1.5" /> },
-              ].map((tab) => (
-                <button
-                  key={tab.value}
-                  onClick={() => setActiveTab(tab.value)}
-                  className={`flex items-center px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-                    activeTab === tab.value
-                      ? 'border-emerald-400 text-emerald-400'
-                      : 'border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-600'
-                  }`}
-                >
-                  {tab.icon}
-                  <span className="hidden sm:inline">{tab.label}</span>
-                </button>
-              ))}
-            </div>
-          </nav>
-        </div>
-      </header>
+        </header>
 
-      {/* ─── Main Content ─── */}
-      <main className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500" />
+        {/* ─── Content ─── */}
+        <main className="flex-1 overflow-auto">
+          <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
+            {loading ? <LoadingSpinner /> : (
+              <>
+                {activePage === 'dashboard' && stats && <DashboardView stats={stats} leads={leads} openLeadDetail={openLeadDetail} />}
+                {activePage === 'leads' && (
+                  <LeadsView leads={leads} searchQuery={searchQuery} setSearchQuery={setSearchQuery}
+                    filterSector={filterSector} setFilterSector={setFilterSector}
+                    filterTier={filterTier} setFilterTier={setFilterTier}
+                    filterStage={filterStage} setFilterStage={setFilterStage}
+                    filterHot={filterHot} setFilterHot={setFilterHot}
+                    openLeadDetail={openLeadDetail}
+                    stats={stats}
+                  />
+                )}
+                {activePage === 'pipeline' && (
+                  <PipelineView leads={leads} stats={stats} pipelineStages={pipelineStages} updateLeadStage={updateLeadStage} openLeadDetail={openLeadDetail} />
+                )}
+                {activePage === 'email' && (
+                  <EmailGeneratorView leads={leads} emailLeadId={emailLeadId} setEmailLeadId={setEmailLeadId}
+                    emailType={emailType} setEmailType={setEmailType}
+                    emailTone={emailTone} setEmailTone={setEmailTone}
+                    emailSubject={emailSubject} emailBody={emailBody}
+                    emailGenerating={emailGenerating} emailEditing={emailEditing}
+                    emailEditedBody={emailEditedBody} setEmailEditedBody={setEmailEditedBody}
+                    setEmailEditing={setEmailEditing}
+                    generateEmail={generateEmail} copyEmailToClipboard={copyEmailToClipboard}
+                    saveEmailAsActivity={saveEmailAsActivity} navigateToEmail={navigateToEmail}
+                    openLeadDetail={openLeadDetail}
+                  />
+                )}
+                {activePage === 'strategies' && <StrategiesView />}
+                {activePage === 'pricing' && (
+                  <PricingView pricingCategory={pricingCategory} setPricingCategory={setPricingCategory}
+                    roiNewPatients={roiNewPatients} setRoiNewPatients={setRoiNewPatients}
+                    roiAvgValue={roiAvgValue} setRoiAvgValue={setRoiAvgValue}
+                    roiPackage={roiPackage} setRoiPackage={setRoiPackage}
+                    selectedAddOns={selectedAddOns} setSelectedAddOns={setSelectedAddOns}
+                    currentPackages={currentPackages} selectedPkg={selectedPkg}
+                    monthlyRevenue={monthlyRevenue} annualRevenue={annualRevenue}
+                    paybackDays={paybackDays} netGainY1={netGainY1} roiPercent={roiPercent}
+                    addOnTotalOnce={addOnTotalOnce} addOnTotalMonthly={addOnTotalMonthly}
+                  />
+                )}
+                {activePage === 'analytics' && analyticsData && (
+                  <AnalyticsView stats={stats} leads={leads} analyticsData={analyticsData} openLeadDetail={openLeadDetail} />
+                )}
+                {activePage === 'campaigns' && (
+                  <CampaignsView leads={leads} stats={stats} navigateToEmail={navigateToEmail} openLeadDetail={openLeadDetail} />
+                )}
+              </>
+            )}
           </div>
-        ) : (
-          <>
-            {/* ═══ DASHBOARD TAB ═══ */}
-            {activeTab === 'dashboard' && stats && (
-              <div className="space-y-6">
-                {/* KPI Cards */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                  <Card className="border-0 shadow-sm">
-                    <CardContent className="p-4 sm:p-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm text-muted-foreground">Total Leads</p>
-                          <p className="text-2xl sm:text-3xl font-bold mt-1">{stats.totalLeads}</p>
-                          <p className="text-xs text-muted-foreground mt-1">{stats.activePipeline} active</p>
-                        </div>
-                        <div className="h-12 w-12 rounded-xl bg-emerald-50 flex items-center justify-center">
-                          <Users className="h-6 w-6 text-emerald-600" />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-0 shadow-sm">
-                    <CardContent className="p-4 sm:p-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm text-muted-foreground">Hot Leads</p>
-                          <p className="text-2xl sm:text-3xl font-bold mt-1 text-amber-600">{stats.hotLeads}</p>
-                          <p className="text-xs text-muted-foreground mt-1">Priority contacts</p>
-                        </div>
-                        <div className="h-12 w-12 rounded-xl bg-amber-50 flex items-center justify-center">
-                          <Flame className="h-6 w-6 text-amber-500" />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-0 shadow-sm">
-                    <CardContent className="p-4 sm:p-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm text-muted-foreground">Pipeline Value</p>
-                          <p className="text-2xl sm:text-3xl font-bold mt-1">{formatCurrency(stats.pipelineValue)}</p>
-                          <p className="text-xs text-muted-foreground mt-1">{stats.wonLeads} won | {stats.lostLeads} lost</p>
-                        </div>
-                        <div className="h-12 w-12 rounded-xl bg-emerald-50 flex items-center justify-center">
-                          <DollarSign className="h-6 w-6 text-emerald-600" />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-0 shadow-sm">
-                    <CardContent className="p-4 sm:p-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm text-muted-foreground">Dental Leads</p>
-                          <p className="text-2xl sm:text-3xl font-bold mt-1">{stats.dentalLeads}</p>
-                          <p className="text-xs text-muted-foreground mt-1">{stats.conversionRate}% conversion rate</p>
-                        </div>
-                        <div className="h-12 w-12 rounded-xl bg-teal-50 flex items-center justify-center">
-                          <Stethoscope className="h-6 w-6 text-teal-600" />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Charts Row */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Pipeline Funnel */}
-                  <Card className="lg:col-span-3 border-0 shadow-sm">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-base font-semibold">Pipeline Funnel</CardTitle>
-                      <CardDescription>Lead distribution across sales stages</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <ChartContainer config={funnelChartConfig} className="h-[280px] w-full">
-                        <BarChart data={stats.byStage} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                          <XAxis dataKey="label" tick={{ fontSize: 11 }} />
-                          <YAxis tick={{ fontSize: 11 }} />
-                          <ChartTooltip content={<ChartTooltipContent />} />
-                          <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                            {stats.byStage.map((entry, index) => (
-                              <Cell key={entry.stage} fill={index < 6 ? '#059669' : entry.stage === 'won' ? '#10b981' : '#ef4444'} opacity={1 - index * 0.08} />
-                            ))}
-                          </Bar>
-                        </BarChart>
-                      </ChartContainer>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* By Sector */}
-                  <Card className="border-0 shadow-sm">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-base font-semibold">Leads by Sector</CardTitle>
-                      <CardDescription>Distribution across target sectors</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <ChartContainer config={sectorChartConfig} className="h-[300px] w-full">
-                        <PieChart>
-                          <Pie
-                            data={stats.bySector}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={60}
-                            outerRadius={100}
-                            dataKey="count"
-                            nameKey="sector"
-                            paddingAngle={2}
-                          >
-                            {stats.bySector.map((entry) => (
-                              <Cell key={entry.sector} fill={SECTOR_COLORS[entry.sector] || '#6b7280'} />
-                            ))}
-                          </Pie>
-                          <ChartTooltip content={<ChartTooltipContent />} />
-                          <ChartLegend content={<ChartLegendContent nameKey="sector" />} />
-                        </PieChart>
-                      </ChartContainer>
-                    </CardContent>
-                  </Card>
-
-                  {/* By Tier */}
-                  <Card className="border-0 shadow-sm">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-base font-semibold">Leads by Tier</CardTitle>
-                      <CardDescription>Lead quality distribution</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <ChartContainer config={tierChartConfig} className="h-[300px] w-full">
-                        <BarChart data={stats.byTier} layout="vertical" margin={{ top: 5, right: 20, left: 50, bottom: 5 }}>
-                          <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                          <XAxis type="number" tick={{ fontSize: 11 }} />
-                          <YAxis type="category" dataKey="tier" tick={{ fontSize: 12 }} width={50} />
-                          <ChartTooltip content={<ChartTooltipContent />} />
-                          <Bar dataKey="count" radius={[0, 4, 4, 0]}>
-                            {stats.byTier.map((entry, index) => (
-                              <Cell key={entry.tier} fill={['#059669', '#d97706', '#6b7280'][index]} />
-                            ))}
-                          </Bar>
-                        </BarChart>
-                      </ChartContainer>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Recent Activity */}
-                <Card className="border-0 shadow-sm">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base font-semibold">Recent Activity</CardTitle>
-                    <CardDescription>Latest interactions across all leads</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
-                      {stats.recentActivities.length === 0 ? (
-                        <p className="text-sm text-muted-foreground text-center py-8">No recent activities</p>
-                      ) : (
-                        stats.recentActivities.map((activity) => (
-                          <div
-                            key={activity.id}
-                            className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                            onClick={() => {
-                              const lead = leads.find((l) => l.id === activity.leadId)
-                              if (lead) openLeadDetail(lead)
-                            }}
-                          >
-                            <div className="mt-0.5 h-8 w-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
-                              {ACTIVITY_ICONS[activity.type] || <AlertCircle className="h-3.5 w-3.5" />}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2">
-                                <span className="font-medium text-sm truncate">{activity.lead?.name}</span>
-                                <Badge variant="outline" className="text-[10px] px-1.5 py-0 shrink-0">
-                                  {activity.type}
-                                </Badge>
-                              </div>
-                              <p className="text-sm text-muted-foreground mt-0.5 truncate">{activity.summary}</p>
-                            </div>
-                            <span className="text-xs text-muted-foreground whitespace-nowrap">
-                              {formatRelativeDate(activity.date)}
-                            </span>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            )}
-
-            {/* ═══ LEADS TAB ═══ */}
-            {activeTab === 'leads' && (
-              <div className="space-y-4">
-                {/* Search & Filters */}
-                <Card className="border-0 shadow-sm">
-                  <CardContent className="p-4">
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <div className="relative flex-1">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="Search by name, sector, or location..."
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className="pl-9"
-                        />
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        <Select value={filterSector} onValueChange={setFilterSector}>
-                          <SelectTrigger className="w-[130px]">
-                            <Filter className="h-4 w-4 mr-1.5" />
-                            <SelectValue placeholder="Sector" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All Sectors</SelectItem>
-                            <SelectItem value="Dental">Dental</SelectItem>
-                            <SelectItem value="Legal">Legal</SelectItem>
-                            <SelectItem value="Funeral">Funeral</SelectItem>
-                            <SelectItem value="Hospitality">Hospitality</SelectItem>
-                            <SelectItem value="Logistics">Logistics</SelectItem>
-                            <SelectItem value="Construction">Construction</SelectItem>
-                            <SelectItem value="Education">Education</SelectItem>
-                            <SelectItem value="Medical">Medical</SelectItem>
-                          </SelectContent>
-                        </Select>
-
-                        <Select value={filterTier} onValueChange={setFilterTier}>
-                          <SelectTrigger className="w-[110px]">
-                            <SelectValue placeholder="Tier" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All Tiers</SelectItem>
-                            <SelectItem value="1">Tier 1</SelectItem>
-                            <SelectItem value="2">Tier 2</SelectItem>
-                            <SelectItem value="3">Tier 3</SelectItem>
-                          </SelectContent>
-                        </Select>
-
-                        <Select value={filterStage} onValueChange={setFilterStage}>
-                          <SelectTrigger className="w-[130px]">
-                            <SelectValue placeholder="Stage" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All Stages</SelectItem>
-                            {STAGES.map((s) => (
-                              <SelectItem key={s} value={s}>{STAGE_LABELS[s]}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-
-                        <Select value={filterHot} onValueChange={setFilterHot}>
-                          <SelectTrigger className="w-[100px]">
-                            <Flame className="h-4 w-4 mr-1.5" />
-                            <SelectValue placeholder="Hot" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All</SelectItem>
-                            <SelectItem value="true">Hot Only</SelectItem>
-                            <SelectItem value="false">Not Hot</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Leads Table */}
-                <Card className="border-0 shadow-sm">
-                  <CardContent className="p-0">
-                    <div className="overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow className="bg-gray-50/50">
-                            <TableHead className="text-xs font-semibold">Name</TableHead>
-                            <TableHead className="text-xs font-semibold">Sector</TableHead>
-                            <TableHead className="text-xs font-semibold hidden sm:table-cell">Tier</TableHead>
-                            <TableHead className="text-xs font-semibold hidden md:table-cell">Rating</TableHead>
-                            <TableHead className="text-xs font-semibold">Stage</TableHead>
-                            <TableHead className="text-xs font-semibold hidden lg:table-cell">Area</TableHead>
-                            <TableHead className="text-xs font-semibold hidden sm:table-cell">Value</TableHead>
-                            <TableHead className="text-xs font-semibold text-center">Hot</TableHead>
-                            <TableHead className="text-xs font-semibold text-right">Actions</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {leads.length === 0 ? (
-                            <TableRow>
-                              <TableCell colSpan={9} className="text-center py-12 text-muted-foreground">
-                                No leads found matching your filters
-                              </TableCell>
-                            </TableRow>
-                          ) : (
-                            leads.map((lead) => (
-                              <TableRow
-                                key={lead.id}
-                                className="cursor-pointer hover:bg-emerald-50/30 transition-colors"
-                                onClick={() => openLeadDetail(lead)}
-                              >
-                                <TableCell>
-                                  <div className="flex items-center gap-2">
-                                    {lead.hotLead && <Flame className="h-3.5 w-3.5 text-amber-500 shrink-0" />}
-                                    <span className="font-medium text-sm truncate max-w-[160px]">{lead.name}</span>
-                                  </div>
-                                </TableCell>
-                                <TableCell>
-                                  <div className="flex items-center gap-1.5">
-                                    {SECTOR_ICONS[lead.sector] || <Building2 className="h-3.5 w-3.5" />}
-                                    <span className="text-sm">{lead.sector}</span>
-                                  </div>
-                                </TableCell>
-                                <TableCell className="hidden sm:table-cell">
-                                  <TierBadge tier={lead.tier} />
-                                </TableCell>
-                                <TableCell className="hidden md:table-cell">
-                                  <StarRating rating={lead.rating} />
-                                </TableCell>
-                                <TableCell>
-                                  <Badge variant="outline" className={`text-[11px] ${STAGE_COLORS[lead.stage]}`}>
-                                    {STAGE_LABELS[lead.stage]}
-                                  </Badge>
-                                </TableCell>
-                                <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
-                                  {lead.area || lead.location}
-                                </TableCell>
-                                <TableCell className="hidden sm:table-cell text-sm font-medium">
-                                  {lead.estimatedValue > 0 ? formatCurrency(lead.estimatedValue) : '—'}
-                                </TableCell>
-                                <TableCell className="text-center">
-                                  {lead.hotLead ? (
-                                    <Flame className="h-4 w-4 text-amber-500 mx-auto" />
-                                  ) : (
-                                    <span className="text-muted-foreground">—</span>
-                                  )}
-                                </TableCell>
-                                <TableCell className="text-right">
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={(e) => {
-                                      e.stopPropagation()
-                                      openLeadDetail(lead)
-                                    }}
-                                    className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
-                                  >
-                                    <Eye className="h-4 w-4" />
-                                  </Button>
-                                </TableCell>
-                              </TableRow>
-                            ))
-                          )}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <p className="text-xs text-muted-foreground text-center">
-                  Showing {leads.length} lead{leads.length !== 1 ? 's' : ''}
-                </p>
-              </div>
-            )}
-
-            {/* ═══ PIPELINE TAB ═══ */}
-            {activeTab === 'pipeline' && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-lg font-semibold">Sales Pipeline</h2>
-                    <p className="text-sm text-muted-foreground">Drag leads between stages to update their progress</p>
-                  </div>
-                  <Badge variant="outline" className="border-emerald-200 bg-emerald-50 text-emerald-700">
-                    {stats?.activePipeline || 0} active deals · {formatCurrency(stats?.pipelineValue || 0)}
-                  </Badge>
-                </div>
-
-                <div className="flex gap-4 overflow-x-auto pb-4">
-                  {pipelineStages.map((stage) => {
-                    const stageLeads = leads.filter((l) => l.stage === stage.stage)
-                    const stageCount = stats?.byStage.find((s) => s.stage === stage.stage)?.count || 0
-                    return (
-                      <div key={stage.stage} className="flex-shrink-0 w-[280px] sm:w-[300px]">
-                        <div className="flex items-center gap-2 mb-3 px-1">
-                          <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                          <h3 className="text-sm font-semibold">{stage.label}</h3>
-                          <Badge variant="secondary" className="ml-auto text-xs">{stageCount}</Badge>
-                        </div>
-                        <div className="space-y-2 max-h-[calc(100vh-240px)] overflow-y-auto pr-1">
-                          {stageLeads.length === 0 ? (
-                            <div className="border border-dashed border-gray-200 rounded-xl p-6 text-center">
-                              <p className="text-xs text-muted-foreground">No leads</p>
-                            </div>
-                          ) : (
-                            stageLeads.map((lead) => (
-                              <div
-                                key={lead.id}
-                                className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                                onClick={() => openLeadDetail(lead)}
-                              >
-                                <div className="flex items-start justify-between gap-2">
-                                  <div className="min-w-0">
-                                    <p className="font-medium text-sm truncate">{lead.name}</p>
-                                    <p className="text-xs text-muted-foreground mt-0.5">{lead.sector}</p>
-                                  </div>
-                                  {lead.hotLead && <Flame className="h-4 w-4 text-amber-500 shrink-0" />}
-                                </div>
-                                <div className="flex items-center justify-between mt-2">
-                                  <div className="flex items-center gap-1.5">
-                                    <TierBadge tier={lead.tier} />
-                                    <span className="text-xs text-muted-foreground">{lead.rating.toFixed(1)}★</span>
-                                  </div>
-                                  {lead.estimatedValue > 0 && (
-                                    <span className="text-xs font-semibold text-emerald-600">
-                                      {formatCurrency(lead.estimatedValue)}
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="mt-2 pt-2 border-t border-gray-100">
-                                  <Select
-                                    value={lead.stage}
-                                    onValueChange={(val) => updateLeadStage(lead.id, val)}
-                                    onOpenChange={(open) => { if (!open) return }}
-                                  >
-                                    <SelectTrigger className="h-7 text-xs border-gray-200 w-full" onClick={(e) => e.stopPropagation()}>
-                                      <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent onClick={(e) => e.stopPropagation()}>
-                                      {STAGES.map((s) => (
-                                        <SelectItem key={s} value={s} className="text-xs">
-                                          {STAGE_LABELS[s]}
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-                              </div>
-                            ))
-                          )}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-
-                {/* Won / Lost Summary */}
-                <div className="grid grid-cols-2 gap-4 mt-4">
-                  <Card className="border-0 shadow-sm border-l-4 border-l-emerald-500">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-                        <span className="font-semibold">Won</span>
-                        <span className="ml-auto text-2xl font-bold text-emerald-600">{stats?.wonLeads || 0}</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                  <Card className="border-0 shadow-sm border-l-4 border-l-red-400">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-2">
-                        <XCircle className="h-5 w-5 text-red-500" />
-                        <span className="font-semibold">Lost</span>
-                        <span className="ml-auto text-2xl font-bold text-red-500">{stats?.lostLeads || 0}</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-            )}
-
-            {/* ═══ STRATEGIES TAB ═══ */}
-            {activeTab === 'strategies' && <StrategiesTab />}
-          </>
-        )}
-      </main>
+        </main>
+      </div>
 
       {/* ─── Lead Detail Dialog ─── */}
       <Dialog open={leadDialogOpen} onOpenChange={setLeadDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           {selectedLead && (
-            <>
-              <DialogHeader>
-                <div className="flex items-center gap-3">
-                  <div>
-                    <DialogTitle className="text-xl">{selectedLead.name}</DialogTitle>
-                    <DialogDescription className="mt-1">
-                      {selectedLead.sector} · {selectedLead.location}
-                    </DialogDescription>
-                  </div>
-                  <div className="ml-auto flex items-center gap-2">
-                    {selectedLead.hotLead && (
-                      <Badge className="bg-amber-100 text-amber-700 border-amber-200 border">
-                        <Flame className="h-3 w-3 mr-1" /> Hot Lead
-                      </Badge>
-                    )}
-                    <TierBadge tier={selectedLead.tier} />
-                  </div>
-                </div>
-              </DialogHeader>
-
-              <div className="space-y-6 mt-4">
-                {/* Contact Info */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-semibold text-muted-foreground">Contact Details</h4>
-                    <div className="space-y-1.5">
-                      {selectedLead.phone && (
-                        <div className="flex items-center gap-2 text-sm">
-                          <Phone className="h-3.5 w-3.5 text-muted-foreground" />
-                          <a href={`tel:${selectedLead.phone}`} className="text-emerald-600 hover:underline">
-                            {selectedLead.phone}
-                          </a>
-                        </div>
-                      )}
-                      {selectedLead.address && (
-                        <div className="flex items-start gap-2 text-sm">
-                          <MapPin className="h-3.5 w-3.5 text-muted-foreground mt-0.5" />
-                          <span>{selectedLead.address}</span>
-                        </div>
-                      )}
-                      {selectedLead.hours && (
-                        <div className="flex items-center gap-2 text-sm">
-                          <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                          <span>{selectedLead.hours}</span>
-                        </div>
-                      )}
-                      {selectedLead.area && (
-                        <div className="flex items-center gap-2 text-sm">
-                          <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
-                          <span>{selectedLead.area}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-semibold text-muted-foreground">Lead Profile</h4>
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Rating</span>
-                        <StarRating rating={selectedLead.rating} />
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Stage</span>
-                        <Badge variant="outline" className={STAGE_COLORS[selectedLead.stage]}>
-                          {STAGE_LABELS[selectedLead.stage]}
-                        </Badge>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Status</span>
-                        <Badge variant="outline" className={
-                          selectedLead.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                          selectedLead.status === 'converted' ? 'bg-sky-50 text-sky-700 border-sky-200' :
-                          'bg-gray-50 text-gray-700 border-gray-200'
-                        }>
-                          {selectedLead.status}
-                        </Badge>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Est. Value</span>
-                        <span className="font-semibold">
-                          {selectedLead.estimatedValue > 0 ? formatCurrency(selectedLead.estimatedValue) : 'N/A'}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Source</span>
-                        <span className="capitalize">{selectedLead.source}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Website</span>
-                        <span>{selectedLead.hasWebsite ? <Globe className="h-3.5 w-3.5 text-emerald-600" /> : <span className="text-red-500 text-xs">None</span>}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Services & Package */}
-                {(selectedLead.services || selectedLead.recommendedPackage) && (
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-semibold text-muted-foreground">Services & Package</h4>
-                    {selectedLead.services && (
-                      <p className="text-sm bg-gray-50 rounded-lg p-3">{selectedLead.services}</p>
-                    )}
-                    {selectedLead.recommendedPackage && (
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-muted-foreground">Recommended:</span>
-                        <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200 border">
-                          {selectedLead.recommendedPackage}
-                        </Badge>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Notes */}
-                {selectedLead.notes && (
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-semibold text-muted-foreground">Notes</h4>
-                    <p className="text-sm bg-gray-50 rounded-lg p-3 whitespace-pre-wrap">{selectedLead.notes}</p>
-                  </div>
-                )}
-
-                {/* Next Action */}
-                {selectedLead.nextAction && (
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-semibold text-muted-foreground">Next Action</h4>
-                    <div className="flex items-center gap-2 bg-amber-50 rounded-lg p-3 border border-amber-200">
-                      <ArrowRight className="h-4 w-4 text-amber-600 shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-amber-800">{selectedLead.nextAction}</p>
-                        {selectedLead.nextActionDate && (
-                          <p className="text-xs text-amber-600 mt-0.5">
-                            Due: {formatDate(selectedLead.nextActionDate)}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Stage Management */}
-                <div className="space-y-2">
-                  <h4 className="text-sm font-semibold text-muted-foreground">Update Stage</h4>
-                  <Select
-                    value={selectedLead.stage}
-                    onValueChange={(val) => updateLeadStage(selectedLead.id, val)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {STAGES.map((s) => (
-                        <SelectItem key={s} value={s}>{STAGE_LABELS[s]}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Activities */}
-                <div className="space-y-3">
-                  <h4 className="text-sm font-semibold text-muted-foreground">
-                    Activity History ({selectedLead.activities?.length || 0})
-                  </h4>
-
-                  {/* Add Activity */}
-                  <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-                    <div className="flex gap-2">
-                      <Select value={activityType} onValueChange={setActivityType}>
-                        <SelectTrigger className="w-[130px]">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="call">📞 Call</SelectItem>
-                          <SelectItem value="email">📧 Email</SelectItem>
-                          <SelectItem value="whatsapp">💬 WhatsApp</SelectItem>
-                          <SelectItem value="meeting">📅 Meeting</SelectItem>
-                          <SelectItem value="proposal">📋 Proposal</SelectItem>
-                          <SelectItem value="demo">🚀 Demo</SelectItem>
-                          <SelectItem value="note">📝 Note</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <Textarea
-                      placeholder="What happened?"
-                      value={activitySummary}
-                      onChange={(e) => setActivitySummary(e.target.value)}
-                      className="min-h-[60px]"
-                    />
-                    <Input
-                      placeholder="Outcome (optional)"
-                      value={activityOutcome}
-                      onChange={(e) => setActivityOutcome(e.target.value)}
-                    />
-                    <Button
-                      onClick={() => addActivity(selectedLead.id)}
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white"
-                      size="sm"
-                    >
-                      <Plus className="h-4 w-4 mr-1" /> Add Activity
-                    </Button>
-                  </div>
-
-                  {/* Activity List */}
-                  <div className="space-y-2 max-h-[300px] overflow-y-auto">
-                    {!selectedLead.activities?.length ? (
-                      <p className="text-sm text-muted-foreground text-center py-6">No activities recorded yet</p>
-                    ) : (
-                      selectedLead.activities.map((act) => (
-                        <div key={act.id} className="flex items-start gap-3 p-3 rounded-lg border border-gray-100">
-                          <div className="mt-0.5 h-7 w-7 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
-                            {ACTIVITY_ICONS[act.type] || <AlertCircle className="h-3.5 w-3.5" />}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <Badge variant="outline" className="text-[10px] px-1.5 py-0">{act.type}</Badge>
-                              <span className="text-xs text-muted-foreground">
-                                {formatDate(act.date)}
-                              </span>
-                            </div>
-                            <p className="text-sm mt-1">{act.summary}</p>
-                            {act.outcome && (
-                              <p className="text-xs text-emerald-600 mt-1">→ {act.outcome}</p>
-                            )}
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-              </div>
-            </>
+            <LeadDetailDialog lead={selectedLead} updateLeadStage={updateLeadStage} addActivity={addActivity}
+              activityType={activityType} setActivityType={setActivityType}
+              activitySummary={activitySummary} setActivitySummary={setActivitySummary}
+              activityOutcome={activityOutcome} setActivityOutcome={setActivityOutcome}
+              navigateToEmail={navigateToEmail}
+            />
           )}
         </DialogContent>
       </Dialog>
@@ -1205,165 +837,764 @@ export default function DashboardPage() {
   )
 }
 
-// ─── Strategies Tab Component ────────────────────────────────────────
-function StrategiesTab() {
-  const [strategies, setStrategies] = useState<Array<{
-    id: string
-    category: string
-    icon: string
-    title: string
-    description: string
-    keyInsight: string
-    actionableSteps: string[]
-    pricing?: {
-      dental: Array<{ name: string; price: number; tagline: string; roi?: number; paybackDays?: number; popular?: boolean }>
-      general: Array<{ name: string; price: number; tagline: string; popular?: boolean }>
-      school: Array<{ name: string; price: number; tagline: string; popular?: boolean }>
-    }
-  }>>([])
+// ═══════════════════════════════════════════════════════════════════════
+// SUB-VIEW COMPONENTS
+// ═══════════════════════════════════════════════════════════════════════
 
-  useEffect(() => {
-    fetch('/api/strategies')
-      .then((res) => res.json())
-      .then(setStrategies)
-      .catch(console.error)
-  }, [])
-
-  if (strategies.length === 0) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500" />
-      </div>
-    )
-  }
-
+// ─── Dashboard View ──────────────────────────────────────────────
+function DashboardView({ stats, leads, openLeadDetail }: { stats: DashboardStats; leads: Lead[]; openLeadDetail: (l: Lead) => void }) {
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-lg font-semibold">Marketing Conversion Strategies</h2>
-        <p className="text-sm text-muted-foreground">
-          Battle-tested frameworks and playbooks for converting South African SME leads
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {strategies.map((strategy) => (
-          <Card key={strategy.id} className="border-0 shadow-sm hover:shadow-md transition-shadow">
-            <CardHeader className="pb-3">
-              <div className="flex items-start gap-3">
-                <div className="h-10 w-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
-                  {STRATEGY_ICONS[strategy.icon] || <Target className="h-5 w-5" />}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: 'Total Leads', value: stats.totalLeads, sub: `${stats.activePipeline} active`, icon: <Users className="h-6 w-6 text-emerald-600" />, bg: 'bg-emerald-50' },
+          { label: 'Hot Leads', value: stats.hotLeads, sub: 'Priority contacts', icon: <Flame className="h-6 w-6 text-amber-500" />, bg: 'bg-amber-50', valueColor: 'text-amber-600' },
+          { label: 'Pipeline Value', value: formatCurrency(stats.pipelineValue), sub: `${stats.wonLeads} won | ${stats.lostLeads} lost`, icon: <DollarSign className="h-6 w-6 text-emerald-600" />, bg: 'bg-emerald-50' },
+          { label: 'Dental Leads', value: stats.dentalLeads, sub: `${stats.conversionRate}% conversion rate`, icon: <Stethoscope className="h-6 w-6 text-teal-600" />, bg: 'bg-teal-50' },
+        ].map((kpi) => (
+          <Card key={kpi.label} className="border-0 shadow-sm">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">{kpi.label}</p>
+                  <p className={`text-2xl sm:text-3xl font-bold mt-1 ${kpi.valueColor || ''}`}>{kpi.value}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{kpi.sub}</p>
                 </div>
-                <div className="min-w-0">
-                  <p className="text-xs text-emerald-600 font-medium">{strategy.category}</p>
-                  <CardTitle className="text-base mt-0.5">{strategy.title}</CardTitle>
-                </div>
+                <div className={`h-12 w-12 rounded-xl ${kpi.bg} flex items-center justify-center`}>{kpi.icon}</div>
               </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <CardDescription className="text-sm leading-relaxed">
-                {strategy.description}
-              </CardDescription>
-
-              <div className="bg-emerald-50 rounded-lg p-3 border border-emerald-100">
-                <p className="text-xs font-semibold text-emerald-700 flex items-center gap-1.5">
-                  <Zap className="h-3 w-3" /> Key Insight
-                </p>
-                <p className="text-sm text-emerald-800 mt-1 font-medium">{strategy.keyInsight}</p>
-              </div>
-
-              <div className="space-y-2">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Actionable Steps
-                </p>
-                <ul className="space-y-1.5">
-                  {strategy.actionableSteps.map((step, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm">
-                      <span className="h-5 w-5 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
-                        {i + 1}
-                      </span>
-                      <span>{step}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* ROI Pricing Table */}
-              {strategy.pricing && (
-                <div className="space-y-3 pt-2">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Package Pricing
-                  </p>
-                  <div className="space-y-2">
-                    {strategy.pricing.dental && (
-                      <div>
-                        <p className="text-xs font-medium text-muted-foreground mb-1.5">🦷 Dental Packages</p>
-                        <div className="space-y-1.5">
-                          {strategy.pricing.dental.map((pkg) => (
-                            <div key={pkg.name} className={`rounded-lg p-3 ${pkg.popular ? 'bg-emerald-50 border border-emerald-200' : 'bg-gray-50 border border-gray-100'}`}>
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <span className="font-semibold text-sm">{pkg.name}</span>
-                                  {pkg.popular && <Badge className="ml-2 bg-emerald-600 text-[10px]">Popular</Badge>}
-                                  <p className="text-xs text-muted-foreground">{pkg.tagline}</p>
-                                </div>
-                                <div className="text-right">
-                                  <p className="font-bold text-emerald-600">{formatCurrency(pkg.price)}</p>
-                                  {pkg.roi && (
-                                    <p className="text-[10px] text-emerald-600 font-medium">{pkg.roi}% ROI</p>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {strategy.pricing.general && (
-                      <div>
-                        <p className="text-xs font-medium text-muted-foreground mb-1.5">🌐 General Business</p>
-                        <div className="space-y-1.5">
-                          {strategy.pricing.general.map((pkg) => (
-                            <div key={pkg.name} className={`rounded-lg p-3 ${pkg.popular ? 'bg-emerald-50 border border-emerald-200' : 'bg-gray-50 border border-gray-100'}`}>
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <span className="font-semibold text-sm">{pkg.name}</span>
-                                  {pkg.popular && <Badge className="ml-2 bg-emerald-600 text-[10px]">Popular</Badge>}
-                                  <p className="text-xs text-muted-foreground">{pkg.tagline}</p>
-                                </div>
-                                <p className="font-bold text-emerald-600">{formatCurrency(pkg.price)}</p>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {strategy.pricing.school && (
-                      <div>
-                        <p className="text-xs font-medium text-muted-foreground mb-1.5">🎓 School Packages</p>
-                        <div className="space-y-1.5">
-                          {strategy.pricing.school.map((pkg) => (
-                            <div key={pkg.name} className={`rounded-lg p-3 ${pkg.popular ? 'bg-emerald-50 border border-emerald-200' : 'bg-gray-50 border border-gray-100'}`}>
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <span className="font-semibold text-sm">{pkg.name}</span>
-                                  {pkg.popular && <Badge className="ml-2 bg-emerald-600 text-[10px]">Popular</Badge>}
-                                  <p className="text-xs text-muted-foreground">{pkg.tagline}</p>
-                                </div>
-                                <p className="font-bold text-emerald-600">{formatCurrency(pkg.price)}</p>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
             </CardContent>
           </Card>
         ))}
       </div>
+
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-2"><CardTitle className="text-base font-semibold">Pipeline Funnel</CardTitle><CardDescription>Lead distribution across sales stages</CardDescription></CardHeader>
+        <CardContent>
+          <ChartContainer config={funnelChartConfig} className="h-[280px] w-full">
+            <BarChart data={stats.byStage} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <XAxis dataKey="label" tick={{ fontSize: 11 }} />
+              <YAxis tick={{ fontSize: 11 }} />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+                {stats.byStage.map((entry, index) => (
+                  <Cell key={entry.stage} fill={index < 6 ? '#059669' : entry.stage === 'won' ? '#10b981' : '#ef4444'} opacity={1 - index * 0.08} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ChartContainer>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-2"><CardTitle className="text-base font-semibold">Leads by Sector</CardTitle></CardHeader>
+          <CardContent>
+            <ChartContainer config={sectorChartConfig} className="h-[300px] w-full">
+              <PieChart>
+                <Pie data={stats.bySector} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="count" nameKey="sector" paddingAngle={2}>
+                  {stats.bySector.map((entry) => (<Cell key={entry.sector} fill={SECTOR_COLORS[entry.sector] || '#6b7280'} />))}
+                </Pie>
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <ChartLegend content={<ChartLegendContent nameKey="sector" />} />
+              </PieChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-2"><CardTitle className="text-base font-semibold">Leads by Tier</CardTitle></CardHeader>
+          <CardContent>
+            <ChartContainer config={tierChartConfig} className="h-[300px] w-full">
+              <BarChart data={stats.byTier} layout="vertical" margin={{ top: 5, right: 20, left: 50, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                <XAxis type="number" tick={{ fontSize: 11 }} />
+                <YAxis type="category" dataKey="tier" tick={{ fontSize: 12 }} width={50} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar dataKey="count" radius={[0, 4, 4, 0]}>
+                  {stats.byTier.map((entry, index) => (<Cell key={entry.tier} fill={['#059669', '#d97706', '#6b7280'][index]} />))}
+                </Bar>
+              </BarChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-2"><CardTitle className="text-base font-semibold">Recent Activity</CardTitle></CardHeader>
+        <CardContent>
+          <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+            {stats.recentActivities.length === 0 ? <p className="text-sm text-muted-foreground text-center py-8">No recent activities</p> : stats.recentActivities.map((a) => (
+              <div key={a.id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => { const l = leads.find(x => x.id === a.leadId); if (l) openLeadDetail(l) }}>
+                <div className="mt-0.5 h-8 w-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">{ACTIVITY_ICONS[a.type] || <AlertCircle className="h-3.5 w-3.5" />}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2"><span className="font-medium text-sm truncate">{a.lead?.name}</span><Badge variant="outline" className="text-[10px] px-1.5 py-0 shrink-0">{a.type}</Badge></div>
+                  <p className="text-sm text-muted-foreground mt-0.5 truncate">{a.summary}</p>
+                </div>
+                <span className="text-xs text-muted-foreground whitespace-nowrap">{formatRelativeDate(a.date)}</span>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
+  )
+}
+
+// ─── Leads View ───────────────────────────────────────────────────
+function LeadsView({ leads, searchQuery, setSearchQuery, filterSector, setFilterSector, filterTier, setFilterTier, filterStage, setFilterStage, filterHot, setFilterHot, openLeadDetail, stats }: {
+  leads: Lead[]; searchQuery: string; setSearchQuery: (v: string) => void; filterSector: string; setFilterSector: (v: string) => void;
+  filterTier: string; setFilterTier: (v: string) => void; filterStage: string; setFilterStage: (v: string) => void;
+  filterHot: string; setFilterHot: (v: string) => void; openLeadDetail: (l: Lead) => void; stats: DashboardStats | null;
+}) {
+  return (
+    <div className="space-y-4">
+      <Card className="border-0 shadow-sm"><CardContent className="p-4">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input placeholder="Search by name, sector, or location..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9" />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Select value={filterSector} onValueChange={setFilterSector}>
+              <SelectTrigger className="w-[130px]"><Filter className="h-4 w-4 mr-1.5" /><SelectValue placeholder="Sector" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Sectors</SelectItem>
+                {['Dental','Legal','Funeral','Hospitality','Logistics','Construction','Education','Medical'].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={filterTier} onValueChange={setFilterTier}>
+              <SelectTrigger className="w-[110px]"><SelectValue placeholder="Tier" /></SelectTrigger>
+              <SelectContent><SelectItem value="all">All Tiers</SelectItem><SelectItem value="1">Tier 1</SelectItem><SelectItem value="2">Tier 2</SelectItem><SelectItem value="3">Tier 3</SelectItem></SelectContent>
+            </Select>
+            <Select value={filterStage} onValueChange={setFilterStage}>
+              <SelectTrigger className="w-[130px]"><SelectValue placeholder="Stage" /></SelectTrigger>
+              <SelectContent><SelectItem value="all">All Stages</SelectItem>{STAGES.map(s => <SelectItem key={s} value={s}>{STAGE_LABELS[s]}</SelectItem>)}</SelectContent>
+            </Select>
+            <Select value={filterHot} onValueChange={setFilterHot}>
+              <SelectTrigger className="w-[100px]"><Flame className="h-4 w-4 mr-1.5" /><SelectValue placeholder="Hot" /></SelectTrigger>
+              <SelectContent><SelectItem value="all">All</SelectItem><SelectItem value="true">Hot Only</SelectItem><SelectItem value="false">Not Hot</SelectItem></SelectContent>
+            </Select>
+          </div>
+        </div>
+      </CardContent></Card>
+
+      <Card className="border-0 shadow-sm"><CardContent className="p-0">
+        <div className="overflow-x-auto"><Table>
+          <TableHeader><TableRow className="bg-gray-50/50">
+            <TableHead className="text-xs font-semibold">Name</TableHead><TableHead className="text-xs font-semibold">Sector</TableHead>
+            <TableHead className="text-xs font-semibold hidden sm:table-cell">Tier</TableHead><TableHead className="text-xs font-semibold hidden md:table-cell">Rating</TableHead>
+            <TableHead className="text-xs font-semibold">Stage</TableHead><TableHead className="text-xs font-semibold hidden lg:table-cell">Area</TableHead>
+            <TableHead className="text-xs font-semibold hidden sm:table-cell">Value</TableHead><TableHead className="text-xs font-semibold text-center">Hot</TableHead>
+            <TableHead className="text-xs font-semibold text-right">Actions</TableHead>
+          </TableRow></TableHeader>
+          <TableBody>
+            {leads.length === 0 ? <TableRow><TableCell colSpan={9} className="text-center py-12 text-muted-foreground">No leads found</TableCell></TableRow> :
+              leads.map(lead => (
+                <TableRow key={lead.id} className="cursor-pointer hover:bg-emerald-50/30" onClick={() => openLeadDetail(lead)}>
+                  <TableCell><div className="flex items-center gap-2">{lead.hotLead && <Flame className="h-3.5 w-3.5 text-amber-500 shrink-0" />}<span className="font-medium text-sm truncate max-w-[160px]">{lead.name}</span></div></TableCell>
+                  <TableCell><div className="flex items-center gap-1.5">{SECTOR_ICONS[lead.sector] || <Building2 className="h-3.5 w-3.5" />}<span className="text-sm">{lead.sector}</span></div></TableCell>
+                  <TableCell className="hidden sm:table-cell"><TierBadge tier={lead.tier} /></TableCell>
+                  <TableCell className="hidden md:table-cell"><StarRating rating={lead.rating} /></TableCell>
+                  <TableCell><Badge variant="outline" className={`text-[11px] ${STAGE_COLORS[lead.stage]}`}>{STAGE_LABELS[lead.stage]}</Badge></TableCell>
+                  <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">{lead.area || lead.location}</TableCell>
+                  <TableCell className="hidden sm:table-cell text-sm font-medium">{lead.estimatedValue > 0 ? formatCurrency(lead.estimatedValue) : '—'}</TableCell>
+                  <TableCell className="text-center">{lead.hotLead ? <Flame className="h-4 w-4 text-amber-500 mx-auto" /> : <span className="text-muted-foreground">—</span>}</TableCell>
+                  <TableCell className="text-right"><Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); openLeadDetail(lead) }} className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"><Eye className="h-4 w-4" /></Button></TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table></div>
+      </CardContent></Card>
+      <p className="text-xs text-muted-foreground text-center">Showing {leads.length} lead{leads.length !== 1 ? 's' : ''}</p>
+    </div>
+  )
+}
+
+// ─── Pipeline View ────────────────────────────────────────────────
+function PipelineView({ leads, stats, pipelineStages, updateLeadStage, openLeadDetail }: {
+  leads: Lead[]; stats: DashboardStats | null; pipelineStages: readonly string[]; updateLeadStage: (id: string, s: string) => void; openLeadDetail: (l: Lead) => void;
+}) {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div><h2 className="text-lg font-semibold">Sales Pipeline</h2><p className="text-sm text-muted-foreground">Update lead stages by selecting a new stage</p></div>
+        <Badge variant="outline" className="border-emerald-200 bg-emerald-50 text-emerald-700">{stats?.activePipeline || 0} active · {formatCurrency(stats?.pipelineValue || 0)}</Badge>
+      </div>
+      <div className="flex gap-4 overflow-x-auto pb-4">
+        {pipelineStages.map(stage => {
+          const stageLeads = leads.filter(l => l.stage === stage)
+          const stageCount = stats?.byStage.find(s => s.stage === stage)?.count || 0
+          return (
+            <div key={stage} className="flex-shrink-0 w-[280px] sm:w-[300px]">
+              <div className="flex items-center gap-2 mb-3 px-1"><div className="h-2.5 w-2.5 rounded-full bg-emerald-500" /><h3 className="text-sm font-semibold">{STAGE_LABELS[stage]}</h3><Badge variant="secondary" className="ml-auto text-xs">{stageCount}</Badge></div>
+              <div className="space-y-2 max-h-[calc(100vh-240px)] overflow-y-auto pr-1">
+                {stageLeads.length === 0 ? <div className="border border-dashed border-gray-200 rounded-xl p-6 text-center"><p className="text-xs text-muted-foreground">No leads</p></div> : stageLeads.map(lead => (
+                  <div key={lead.id} className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => openLeadDetail(lead)}>
+                    <div className="flex items-start justify-between gap-2"><div className="min-w-0"><p className="font-medium text-sm truncate">{lead.name}</p><p className="text-xs text-muted-foreground mt-0.5">{lead.sector}</p></div>{lead.hotLead && <Flame className="h-4 w-4 text-amber-500 shrink-0" />}</div>
+                    <div className="flex items-center justify-between mt-2"><div className="flex items-center gap-1.5"><TierBadge tier={lead.tier} /><span className="text-xs text-muted-foreground">{lead.rating.toFixed(1)}★</span></div>{lead.estimatedValue > 0 && <span className="text-xs font-semibold text-emerald-600">{formatCurrency(lead.estimatedValue)}</span>}</div>
+                    <div className="mt-2 pt-2 border-t border-gray-100">
+                      <Select value={lead.stage} onValueChange={(val) => updateLeadStage(lead.id, val)} onOpenChange={(open) => { if (!open) return }}>
+                        <SelectTrigger className="h-7 text-xs border-gray-200 w-full" onClick={(e) => e.stopPropagation()}><SelectValue /></SelectTrigger>
+                        <SelectContent onClick={(e) => e.stopPropagation()}>{STAGES.map(s => <SelectItem key={s} value={s} className="text-xs">{STAGE_LABELS[s]}</SelectItem>)}</SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <Card className="border-0 shadow-sm border-l-4 border-l-emerald-500"><CardContent className="p-4"><div className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-emerald-600" /><span className="font-semibold">Won</span><span className="ml-auto text-2xl font-bold text-emerald-600">{stats?.wonLeads || 0}</span></div></CardContent></Card>
+        <Card className="border-0 shadow-sm border-l-4 border-l-red-400"><CardContent className="p-4"><div className="flex items-center gap-2"><XCircle className="h-5 w-5 text-red-500" /><span className="font-semibold">Lost</span><span className="ml-auto text-2xl font-bold text-red-500">{stats?.lostLeads || 0}</span></div></CardContent></Card>
+      </div>
+    </div>
+  )
+}
+
+// ─── Email Generator View ─────────────────────────────────────────
+function EmailGeneratorView({ leads, emailLeadId, setEmailLeadId, emailType, setEmailType, emailTone, setEmailTone, emailSubject, emailBody, emailGenerating, emailEditing, emailEditedBody, setEmailEditedBody, setEmailEditing, generateEmail, copyEmailToClipboard, saveEmailAsActivity, navigateToEmail, openLeadDetail }: {
+  leads: Lead[]; emailLeadId: string; setEmailLeadId: (v: string) => void; emailType: string; setEmailType: (v: string) => void;
+  emailTone: string; setEmailTone: (v: string) => void; emailSubject: string; emailBody: string; emailGenerating: boolean;
+  emailEditing: boolean; emailEditedBody: string; setEmailEditedBody: (v: string) => void; setEmailEditing: (v: boolean) => void;
+  generateEmail: () => void; copyEmailToClipboard: () => void; saveEmailAsActivity: () => void;
+  navigateToEmail: (id?: string) => void; openLeadDetail: (l: Lead) => void;
+}) {
+  const selectedLead = leads.find(l => l.id === emailLeadId)
+  const sortedLeads = [...leads].sort((a, b) => {
+    if (a.hotLead !== b.hotLead) return a.hotLead ? -1 : 1
+    return b.rating - a.rating
+  })
+
+  return (
+    <div className="space-y-6">
+      <div><h2 className="text-lg font-semibold">AI Email Generator</h2><p className="text-sm text-muted-foreground">Generate personalized outreach emails for your leads using AI</p></div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left: Lead Selector */}
+        <Card className="border-0 shadow-sm lg:col-span-1">
+          <CardHeader className="pb-3"><CardTitle className="text-sm font-semibold">Select a Lead</CardTitle></CardHeader>
+          <CardContent><div className="space-y-1.5 max-h-[calc(100vh-320px)] overflow-y-auto">
+            {sortedLeads.length === 0 ? <p className="text-sm text-muted-foreground text-center py-8">No leads available</p> :
+              sortedLeads.map(lead => (
+                <button key={lead.id} onClick={() => setEmailLeadId(lead.id)}
+                  className={`w-full text-left p-3 rounded-lg transition-colors ${emailLeadId === lead.id ? 'bg-emerald-50 border border-emerald-200' : 'hover:bg-gray-50 border border-transparent'}`}>
+                  <div className="flex items-center gap-2">
+                    {lead.hotLead && <Flame className="h-3.5 w-3.5 text-amber-500 shrink-0" />}
+                    <span className="font-medium text-sm truncate">{lead.name}</span>
+                    <Eye className="h-3.5 w-3.5 text-muted-foreground ml-auto shrink-0 cursor-pointer hover:text-emerald-600" onClick={(e) => { e.stopPropagation(); openLeadDetail(lead) }} />
+                  </div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-xs text-muted-foreground">{lead.sector}</span>
+                    <TierBadge tier={lead.tier} />
+                    <span className="text-xs text-muted-foreground ml-auto">{lead.rating.toFixed(1)}★</span>
+                  </div>
+                </button>
+              ))}
+          </div></CardContent>
+        </Card>
+
+        {/* Right: Generator */}
+        <div className="lg:col-span-2 space-y-4">
+          {selectedLead ? (
+            <>
+              {/* Lead Info Card */}
+              <Card className="border-0 shadow-sm"><CardContent className="p-4">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-semibold">{selectedLead.name}</h3>
+                    <p className="text-sm text-muted-foreground">{selectedLead.sector} · {selectedLead.area || selectedLead.location}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {selectedLead.hotLead && <Badge className="bg-amber-100 text-amber-700 border-amber-200 border"><Flame className="h-3 w-3 mr-1" />Hot</Badge>}
+                    <TierBadge tier={selectedLead.tier} />
+                  </div>
+                </div>
+                {selectedLead.notes && <p className="text-sm text-muted-foreground mt-2 bg-gray-50 rounded-lg p-2">{selectedLead.notes}</p>}
+                {selectedLead.recommendedPackage && (
+                  <div className="mt-2 flex items-center gap-2"><span className="text-xs text-muted-foreground">Recommended:</span><Badge className="bg-emerald-100 text-emerald-700 border-emerald-200 border">{selectedLead.recommendedPackage}</Badge>{selectedLead.estimatedValue > 0 && <span className="text-xs font-semibold text-emerald-600">{formatCurrency(selectedLead.estimatedValue)}</span>}</div>
+                )}
+              </CardContent></Card>
+
+              {/* Controls */}
+              <Card className="border-0 shadow-sm"><CardContent className="p-4 space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div><Label className="text-sm font-medium mb-2 block">Email Type</Label>
+                    <Select value={emailType} onValueChange={setEmailType}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="cold">Cold Email</SelectItem><SelectItem value="whatsapp">WhatsApp Opener</SelectItem>
+                        <SelectItem value="linkedin">LinkedIn DM</SelectItem><SelectItem value="followup">Follow-Up</SelectItem>
+                        <SelectItem value="breakup">Breakup Email</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div><Label className="text-sm font-medium mb-2 block">Tone</Label>
+                    <Select value={emailTone} onValueChange={setEmailTone}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="professional">Professional</SelectItem><SelectItem value="casual">Casual</SelectItem>
+                        <SelectItem value="direct">Direct</SelectItem><SelectItem value="friendly">Friendly</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <Button onClick={generateEmail} disabled={emailGenerating} className="bg-emerald-600 hover:bg-emerald-700 text-white w-full sm:w-auto">
+                  {emailGenerating ? <><div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />Generating...</> : <><Sparkles className="h-4 w-4 mr-2" />Generate Email</>}
+                </Button>
+              </CardContent></Card>
+
+              {/* Generated Email */}
+              {(emailSubject || emailBody) && (
+                <Card className="border-0 shadow-sm">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-sm font-semibold">Generated Email</CardTitle>
+                      <div className="flex items-center gap-1.5">
+                        <Button variant="ghost" size="sm" onClick={copyEmailToClipboard} className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"><Copy className="h-4 w-4 mr-1" />Copy</Button>
+                        <Button variant="ghost" size="sm" onClick={generateEmail} disabled={emailGenerating} className="text-gray-600 hover:bg-gray-100"><RefreshCw className="h-4 w-4 mr-1" />Regenerate</Button>
+                        <Button variant="ghost" size="sm" onClick={() => setEmailEditing(!emailEditing)} className="text-gray-600 hover:bg-gray-100"><Pencil className="h-4 w-4 mr-1" />Edit</Button>
+                        <Button variant="ghost" size="sm" onClick={saveEmailAsActivity} className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"><Save className="h-4 w-4 mr-1" />Save</Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {emailSubject && emailType !== 'whatsapp' && emailType !== 'linkedin' && (
+                      <div><p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Subject Line</p>
+                        <div className="bg-gray-50 rounded-lg p-3"><p className="font-medium text-sm">{emailSubject}</p></div></div>
+                    )}
+                    <div>
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">{emailType === 'whatsapp' ? 'Message' : emailType === 'linkedin' ? 'DM' : 'Body'}</p>
+                      {emailEditing ? (
+                        <Textarea value={emailEditedBody} onChange={(e) => setEmailEditedBody(e.target.value)} className="min-h-[200px] text-sm" />
+                      ) : (
+                        <div className="bg-gray-50 rounded-lg p-4 whitespace-pre-wrap text-sm leading-relaxed">{emailBody}</div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </>
+          ) : (
+            <Card className="border-0 shadow-sm"><CardContent className="flex flex-col items-center justify-center py-20 text-center">
+              <Sparkles className="h-12 w-12 text-gray-300 mb-4" />
+              <h3 className="font-semibold text-gray-600">Select a Lead</h3>
+              <p className="text-sm text-muted-foreground mt-1 max-w-sm">Choose a lead from the list to generate a personalized outreach email using AI.</p>
+            </CardContent></Card>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Strategies View ──────────────────────────────────────────────
+function StrategiesView() {
+  return (
+    <div className="space-y-6">
+      <div><h2 className="text-lg font-semibold">Marketing Strategy Hub</h2><p className="text-sm text-muted-foreground">Battle-tested frameworks and playbooks for converting SA SME leads</p></div>
+      <Accordion type="multiple" defaultValue={['lead-generation', 'outreach']} className="space-y-3">
+        {STRATEGIES_DATA.map(cat => (
+          <AccordionItem key={cat.id} value={cat.id} className="bg-white rounded-xl border-0 shadow-sm px-0">
+            <AccordionTrigger className="px-6 py-4 hover:no-underline">
+              <div className="flex items-center gap-3"><div className="h-10 w-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">{cat.icon}</div><span className="font-semibold">{cat.category}</span><Badge variant="secondary" className="ml-2">{cat.strategies.length}</Badge></div>
+            </AccordionTrigger>
+            <AccordionContent className="px-6 pb-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {cat.strategies.map(strat => (
+                  <Card key={strat.id} className="border shadow-sm hover:shadow-md transition-shadow">
+                    <CardHeader className="pb-2"><div className="flex items-center justify-between"><CardTitle className="text-sm font-semibold">{strat.title}</CardTitle><DifficultyBadge difficulty={strat.difficulty} /></div></CardHeader>
+                    <CardContent className="space-y-3">
+                      <p className="text-sm text-muted-foreground leading-relaxed">{strat.description}</p>
+                      <div className="bg-emerald-50 rounded-lg p-3 border border-emerald-100">
+                        <p className="text-xs font-semibold text-emerald-700 flex items-center gap-1.5"><Lightbulb className="h-3 w-3" />Key Insight</p>
+                        <p className="text-sm text-emerald-800 mt-1 font-medium">{strat.keyInsight}</p>
+                      </div>
+                      <div className="space-y-1.5">
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Steps</p>
+                        {strat.steps.map((step, i) => (
+                          <div key={i} className="flex items-start gap-2 text-sm">
+                            <span className="h-5 w-5 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">{i + 1}</span>
+                            <span>{step}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+    </div>
+  )
+}
+
+// ─── Pricing Calculator View ──────────────────────────────────────
+function PricingView({ pricingCategory, setPricingCategory, roiNewPatients, setRoiNewPatients, roiAvgValue, setRoiAvgValue, roiPackage, setRoiPackage, selectedAddOns, setSelectedAddOns, currentPackages, selectedPkg, monthlyRevenue, annualRevenue, paybackDays, netGainY1, roiPercent, addOnTotalOnce, addOnTotalMonthly }: any) {
+  const toggleAddOn = (id: string) => setSelectedAddOns(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id])
+  const totalOnceOff = selectedPkg.price + addOnTotalOnce
+  const totalMonthly = addOnTotalMonthly
+  const year1Cost = totalOnceOff + (totalMonthly * 12)
+
+  return (
+    <div className="space-y-6">
+      <div><h2 className="text-lg font-semibold">Pricing Calculator</h2><p className="text-sm text-muted-foreground">Compare packages, calculate ROI, and build custom quotes</p></div>
+
+      {/* Package Toggle */}
+      <Card className="border-0 shadow-sm"><CardContent className="p-4">
+        <RadioGroup value={pricingCategory} onValueChange={(v: any) => setPricingCategory(v)} className="flex flex-wrap gap-2">
+          {(['dental', 'general', 'school'] as const).map(cat => (
+            <Label key={cat} htmlFor={cat} className={`flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer transition-colors ${pricingCategory === cat ? 'bg-emerald-50 border border-emerald-200' : 'bg-gray-50 border border-transparent hover:bg-gray-100'}`}>
+              <RadioGroupItem value={cat} id={cat} />
+              <span className="text-sm font-medium capitalize">{cat}</span>
+            </Label>
+          ))}
+        </RadioGroup>
+      </CardContent></Card>
+
+      {/* Package Comparison Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {currentPackages.map((pkg: any) => (
+          <Card key={pkg.name} className={`border-0 shadow-sm ${pkg.popular ? 'ring-2 ring-emerald-500' : ''}`}>
+            {pkg.popular && <div className="bg-emerald-500 text-white text-xs font-semibold text-center py-1 rounded-t-xl">Most Popular</div>}
+            <CardContent className="p-5">
+              <div className="flex items-center gap-2"><Crown className={`h-5 w-5 ${pkg.popular ? 'text-emerald-600' : 'text-gray-400'}`} /><h3 className="font-bold text-lg">{pkg.name}</h3></div>
+              <p className="text-sm text-muted-foreground mt-1">{pkg.tagline}</p>
+              <p className="text-3xl font-bold text-emerald-600 mt-3">{formatCurrency(pkg.price)}</p>
+              <p className="text-xs text-muted-foreground">once-off</p>
+              {pkg.roi && <Badge className="mt-3 bg-emerald-100 text-emerald-700 border-emerald-200 border">{pkg.roi}% ROI</Badge>}
+              <Button onClick={() => setRoiPackage(pkg.name)} variant={roiPackage === pkg.name ? 'default' : 'outline'} className={`mt-4 w-full ${roiPackage === pkg.name ? 'bg-emerald-600 hover:bg-emerald-700' : ''}`}>
+                {roiPackage === pkg.name ? 'Selected' : 'Select Package'}
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* ROI Calculator */}
+      <Card className="border-0 shadow-sm"><CardHeader><CardTitle className="text-base font-semibold">Interactive ROI Calculator</CardTitle></CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div><Label className="text-sm font-medium">New Patients/Clients per Month: <strong className="text-emerald-600">{roiNewPatients[0]}</strong></Label>
+                <Slider value={roiNewPatients} onValueChange={setRoiNewPatients} min={1} max={30} step={1} className="mt-2" /></div>
+              <div><Label className="text-sm font-medium">Average Visit/Job Value: <strong className="text-emerald-600">{formatCurrency(roiAvgValue[0])}</strong></Label>
+                <Slider value={roiAvgValue} onValueChange={setRoiAvgValue} min={500} max={5000} step={50} className="mt-2" /></div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-gray-50 rounded-lg p-3"><p className="text-xs text-muted-foreground">Monthly Revenue</p><p className="text-lg font-bold">{formatCurrency(monthlyRevenue)}</p></div>
+              <div className="bg-gray-50 rounded-lg p-3"><p className="text-xs text-muted-foreground">Annual Revenue</p><p className="text-lg font-bold">{formatCurrency(annualRevenue)}</p></div>
+              <div className="bg-gray-50 rounded-lg p-3"><p className="text-xs text-muted-foreground">Payback Period</p><p className="text-lg font-bold">{paybackDays > 365 ? 'N/A' : `~${paybackDays} days`}</p></div>
+              <div className="bg-gray-50 rounded-lg p-3"><p className="text-xs text-muted-foreground">Net Gain Year 1</p><p className="text-lg font-bold text-emerald-600">{formatCurrency(netGainY1)}</p></div>
+            </div>
+          </div>
+          <div className="bg-emerald-50 rounded-xl p-6 border border-emerald-200 text-center">
+            <p className="text-sm text-emerald-700 font-medium">Return on Investment</p>
+            <p className="text-5xl font-bold text-emerald-600 mt-1">{roiPercent}%</p>
+            <Progress value={Math.min(roiPercent, 1000)} className="mt-4 h-3" />
+            <p className="text-xs text-emerald-600 mt-2">Investment: {formatCurrency(selectedPkg.price)} → Annual return: {formatCurrency(annualRevenue)}</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Package Builder */}
+      <Card className="border-0 shadow-sm"><CardHeader><CardTitle className="text-base font-semibold">Package Builder — Add-Ons</CardTitle><CardDescription>Customize your package with optional add-ons</CardDescription></CardHeader>
+        <CardContent className="space-y-3">
+          {ADD_ONS.map(addOn => (
+            <div key={addOn.id} onClick={() => toggleAddOn(addOn.id)} className={`flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-colors border ${selectedAddOns.includes(addOn.id) ? 'bg-emerald-50 border-emerald-200' : 'hover:bg-gray-50 border-transparent'}`}>
+              <Checkbox checked={selectedAddOns.includes(addOn.id)} className="mt-0.5" />
+              <div className="flex-1"><p className="text-sm font-medium">{addOn.name}</p><p className="text-xs text-muted-foreground">{addOn.desc}</p></div>
+              <div className="text-right shrink-0"><p className="text-sm font-semibold text-emerald-600">{addOn.onceOff > 0 ? formatCurrency(addOn.onceOff) : ''}</p><p className="text-xs text-muted-foreground">{addOn.monthly > 0 ? `+ ${formatCurrency(addOn.monthly)}/mo` : addOn.onceOff === 0 ? `${formatCurrency(addOn.monthly)}/mo` : 'once-off'}</p></div>
+            </div>
+          ))}
+          <Separator />
+          <div className="grid grid-cols-3 gap-4">
+            <div className="bg-gray-50 rounded-lg p-3 text-center"><p className="text-xs text-muted-foreground">Base Package</p><p className="font-bold">{formatCurrency(selectedPkg.price)}</p></div>
+            <div className="bg-gray-50 rounded-lg p-3 text-center"><p className="text-xs text-muted-foreground">Add-Ons (Once-off)</p><p className="font-bold">{formatCurrency(addOnTotalOnce)}</p></div>
+            <div className="bg-gray-50 rounded-lg p-3 text-center"><p className="text-xs text-muted-foreground">Monthly Total</p><p className="font-bold">{formatCurrency(totalMonthly)}/mo</p></div>
+          </div>
+          <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200 flex items-center justify-between">
+            <div><p className="text-sm font-medium text-emerald-700">Total Investment (Year 1)</p><p className="text-xs text-emerald-600">Once-off + 12 months add-ons</p></div>
+            <p className="text-2xl font-bold text-emerald-600">{formatCurrency(year1Cost)}</p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+// ─── Analytics View ───────────────────────────────────────────────
+function AnalyticsView({ stats, leads, analyticsData, openLeadDetail }: {
+  stats: DashboardStats; leads: Lead[]; analyticsData: NonNullable<ReturnType<typeof Object>>; openLeadDetail: (l: Lead) => void;
+}) {
+  const d = analyticsData as any
+  return (
+    <div className="space-y-6">
+      <div><h2 className="text-lg font-semibold">Analytics</h2><p className="text-sm text-muted-foreground">Deeper insights into your sales pipeline performance</p></div>
+
+      {/* KPI row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="border-0 shadow-sm"><CardContent className="p-4"><p className="text-sm text-muted-foreground">Lead Velocity</p><p className="text-2xl font-bold">{d.leadVelocity}</p><p className="text-xs text-muted-foreground">total leads</p></CardContent></Card>
+        <Card className="border-0 shadow-sm"><CardContent className="p-4"><p className="text-sm text-muted-foreground">Avg Deal Size</p><p className="text-2xl font-bold">{d.avgDealSize > 0 ? formatCurrency(d.avgDealSize) : 'N/A'}</p><p className="text-xs text-muted-foreground">won deals</p></CardContent></Card>
+        <Card className="border-0 shadow-sm"><CardContent className="p-4"><p className="text-sm text-muted-foreground">Hot Lead Conversion</p><p className="text-2xl font-bold">{d.hotLeads > 0 ? Math.round((d.hotConverted / d.hotLeads) * 100) : 0}%</p><p className="text-xs text-muted-foreground">{d.hotConverted}/{d.hotLeads} converted</p></CardContent></Card>
+        <Card className="border-0 shadow-sm"><CardContent className="p-4"><p className="text-sm text-muted-foreground">Conversion Rate</p><p className="text-2xl font-bold">{stats.conversionRate}%</p><p className="text-xs text-muted-foreground">{stats.wonLeads}/{stats.totalLeads} won</p></CardContent></Card>
+      </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Leads by Area */}
+        <Card className="border-0 shadow-sm"><CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Leads by Area</CardTitle></CardHeader><CardContent>
+          <ChartContainer config={tierChartConfig} className="h-[300px] w-full">
+            <BarChart data={d.byArea} layout="vertical" margin={{ top: 5, right: 20, left: 80, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" horizontal={false} /><XAxis type="number" tick={{ fontSize: 11 }} /><YAxis type="category" dataKey="area" tick={{ fontSize: 11 }} width={80} />
+              <ChartTooltip content={<ChartTooltipContent />} /><Bar dataKey="count" fill="#059669" radius={[0, 4, 4, 0]} />
+            </BarChart>
+          </ChartContainer>
+        </CardContent></Card>
+
+        {/* Est Value by Sector */}
+        <Card className="border-0 shadow-sm"><CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Estimated Value by Sector</CardTitle></CardHeader><CardContent>
+          <ChartContainer config={sectorChartConfig} className="h-[300px] w-full">
+            <BarChart data={d.bySectorValue} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} /><XAxis dataKey="sector" tick={{ fontSize: 10 }} /><YAxis tick={{ fontSize: 11 }} />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Bar dataKey="value" radius={[4, 4, 0, 0]}>{d.bySectorValue.map((e: any) => <Cell key={e.sector} fill={SECTOR_COLORS[e.sector] || '#6b7280'} />)}</Bar>
+            </BarChart>
+          </ChartContainer>
+        </CardContent></Card>
+
+        {/* Conversion by Sector */}
+        <Card className="border-0 shadow-sm"><CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Conversion Rate by Sector</CardTitle></CardHeader><CardContent>
+          <ChartContainer config={sectorChartConfig} className="h-[300px] w-full">
+            <BarChart data={d.conversionBySector} layout="vertical" margin={{ top: 5, right: 20, left: 80, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" horizontal={false} /><XAxis type="number" tick={{ fontSize: 11 }} unit="%" /><YAxis type="category" dataKey="sector" tick={{ fontSize: 11 }} width={80} />
+              <ChartTooltip content={<ChartTooltipContent />} /><Bar dataKey="conversion" fill="#d97706" radius={[0, 4, 4, 0]} />
+            </BarChart>
+          </ChartContainer>
+        </CardContent></Card>
+
+        {/* Conversion by Tier */}
+        <Card className="border-0 shadow-sm"><CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Conversion Rate by Tier</CardTitle></CardHeader><CardContent>
+          <ChartContainer config={tierChartConfig} className="h-[300px] w-full">
+            <BarChart data={d.conversionByTier} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} /><XAxis dataKey="tier" tick={{ fontSize: 11 }} /><YAxis tick={{ fontSize: 11 }} unit="%" />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Bar dataKey="conversion" radius={[4, 4, 0, 0]}>{d.conversionByTier.map((_: any, i: number) => <Cell key={i} fill={['#059669', '#d97706', '#6b7280'][i]} />)}</Bar>
+            </BarChart>
+          </ChartContainer>
+        </CardContent></Card>
+      </div>
+
+      {/* Geographic Table */}
+      <Card className="border-0 shadow-sm"><CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Geographic Distribution</CardTitle></CardHeader><CardContent>
+        <Table><TableHeader><TableRow className="bg-gray-50/50"><TableHead className="text-xs font-semibold">Area</TableHead><TableHead className="text-xs font-semibold text-right">Leads</TableHead><TableHead className="text-xs font-semibold text-right">Percentage</TableHead><TableHead className="text-xs font-semibold">Distribution</TableHead></TableRow></TableHeader>
+          <TableBody>{d.byArea.map((a: any) => (
+            <TableRow key={a.area}><TableCell className="text-sm">{a.area}</TableCell><TableCell className="text-right font-semibold">{a.count}</TableCell>
+              <TableCell className="text-right text-sm">{leads.length > 0 ? ((a.count / leads.length) * 100).toFixed(1) : 0}%</TableCell>
+              <TableCell><div className="w-32 h-2 bg-gray-100 rounded-full"><div className="h-2 bg-emerald-500 rounded-full" style={{ width: `${leads.length > 0 ? (a.count / leads.length) * 100 : 0}%` }} /></div></TableCell>
+            </TableRow>
+          ))}</TableBody>
+        </Table>
+      </CardContent></Card>
+
+      {/* Stage Conversion Funnel */}
+      <Card className="border-0 shadow-sm"><CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Stage Conversion Funnel</CardTitle><CardDescription>Drop-off at each stage</CardDescription></CardHeader><CardContent>
+        <div className="space-y-2">
+          {stats.byStage.map((stage, i) => {
+            const maxCount = Math.max(...stats.byStage.map(s => s.count), 1)
+            const pct = (stage.count / maxCount) * 100
+            return (
+              <div key={stage.stage} className="flex items-center gap-3">
+                <span className="text-xs font-medium w-24 truncate">{stage.label}</span>
+                <div className="flex-1 h-8 bg-gray-100 rounded relative overflow-hidden">
+                  <div className={`h-full rounded transition-all ${stage.stage === 'won' ? 'bg-emerald-500' : stage.stage === 'lost' ? 'bg-red-400' : 'bg-emerald-400'}`} style={{ width: `${pct}%` }} />
+                  <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold">{stage.count}</span>
+                </div>
+                {i > 0 && stats.byStage[i - 1].count > 0 && (
+                  <span className="text-xs text-muted-foreground w-16 text-right">
+                    {stage.count > 0 ? Math.round((stage.count / stats.byStage[0].count) * 100) : 0}%
+                  </span>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </CardContent></Card>
+    </div>
+  )
+}
+
+// ─── Campaigns View ───────────────────────────────────────────────
+function CampaignsView({ leads, stats, navigateToEmail, openLeadDetail }: {
+  leads: Lead[]; stats: DashboardStats | null; navigateToEmail: (id?: string) => void; openLeadDetail: (l: Lead) => void;
+}) {
+  const campaigns = useMemo(() => {
+    const tier1Dental = leads.filter(l => l.sector === 'Dental' && l.tier === 1 && l.stage !== 'won' && l.stage !== 'lost')
+    const tier2Leads = leads.filter(l => l.tier === 2 && l.stage !== 'won' && l.stage !== 'lost')
+    const funeralSchools = leads.filter(l => (l.sector === 'Funeral' || l.sector === 'Education') && l.stage !== 'won' && l.stage !== 'lost')
+    return [
+      { id: 'protolead', name: 'ProtoLead Campaign', desc: 'Build demos for Tier 1 dental leads', icon: <Rocket className="h-5 w-5" />, color: 'text-emerald-600 bg-emerald-50', leads: tier1Dental },
+      { id: 'cold-email', name: 'Cold Email Blast', desc: 'Send personalized emails to Tier 2 leads', icon: <Mail className="h-5 w-5" />, color: 'text-amber-600 bg-amber-50', leads: tier2Leads },
+      { id: 'whatsapp-outreach', name: 'WhatsApp Outreach', desc: 'Message funeral homes and schools', icon: <MessageSquare className="h-5 w-5" />, color: 'text-violet-600 bg-violet-50', leads: funeralSchools },
+    ]
+  }, [leads])
+
+  const outreachQueue = useMemo(() =>
+    leads.filter(l => l.hotLead && l.stage !== 'won' && l.stage !== 'lost' && l.status === 'active').slice(0, 10),
+    [leads])
+
+  return (
+    <div className="space-y-6">
+      <div><h2 className="text-lg font-semibold">Campaigns</h2><p className="text-sm text-muted-foreground">Track outreach campaigns and daily priorities</p></div>
+
+      {/* Active Campaigns */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {campaigns.map(campaign => (
+          <Card key={campaign.id} className="border-0 shadow-sm">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-3"><div className={`h-10 w-10 rounded-xl flex items-center justify-center ${campaign.color}`}>{campaign.icon}</div>
+                <div className="min-w-0"><CardTitle className="text-sm font-semibold truncate">{campaign.name}</CardTitle><CardDescription className="text-xs">{campaign.desc}</CardDescription></div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Target Leads</span><Badge variant="secondary">{campaign.leads.length}</Badge></div>
+              <Progress value={campaign.leads.length > 0 ? Math.random() * 30 : 0} className="h-2" />
+              <ScrollArea className="max-h-[200px]">
+                <div className="space-y-1.5">
+                  {campaign.leads.length === 0 ? <p className="text-xs text-muted-foreground text-center py-4">No leads in this campaign</p> : campaign.leads.slice(0, 5).map(lead => (
+                    <div key={lead.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 text-sm">
+                      {lead.hotLead && <Flame className="h-3.5 w-3.5 text-amber-500 shrink-0" />}
+                      <span className="truncate flex-1">{lead.name}</span>
+                      <Badge variant="outline" className={`text-[10px] ${STAGE_COLORS[lead.stage]}`}>{STAGE_LABELS[lead.stage]}</Badge>
+                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-emerald-600" onClick={() => navigateToEmail(lead.id)}><Sparkles className="h-3 w-3" /></Button>
+                    </div>
+                  ))}
+                  {campaign.leads.length > 5 && <p className="text-xs text-muted-foreground text-center">+{campaign.leads.length - 5} more leads</p>}
+                </div>
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Outreach Queue */}
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2"><Flame className="h-5 w-5 text-amber-500" /><CardTitle className="text-base font-semibold">Outreach Queue</CardTitle><Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">{outreachQueue.length} hot leads</Badge></div>
+          <CardDescription>Priority leads that need contact today</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {outreachQueue.length === 0 ? <p className="text-sm text-muted-foreground text-center py-8">No hot leads in queue</p> : (
+            <div className="space-y-2">
+              {outreachQueue.map(lead => (
+                <div key={lead.id} className="flex items-center gap-3 p-3 rounded-lg bg-amber-50/50 border border-amber-100 hover:bg-amber-50 transition-colors">
+                  <Flame className="h-4 w-4 text-amber-500 shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm truncate">{lead.name}</p>
+                    <p className="text-xs text-muted-foreground">{lead.sector} · {lead.area || lead.location}</p>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {lead.phone && <Button variant="ghost" size="sm" className="h-8 text-emerald-600 hover:bg-emerald-100" onClick={() => window.open(`tel:${lead.phone}`, '_self')}><Phone className="h-3.5 w-3.5 mr-1" />Call</Button>}
+                    <Button variant="ghost" size="sm" className="h-8 text-emerald-600 hover:bg-emerald-100" onClick={() => navigateToEmail(lead.id)}><Mail className="h-3.5 w-3.5 mr-1" />Email</Button>
+                    <Button variant="ghost" size="sm" className="h-8 text-emerald-600 hover:bg-emerald-100" onClick={() => lead.phone && window.open(`https://wa.me/${lead.phone.replace(/[^0-9]/g, '')}`, '_self')}><MessageSquare className="h-3.5 w-3.5 mr-1" />WhatsApp</Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+// ─── Lead Detail Dialog ───────────────────────────────────────────
+function LeadDetailDialog({ lead, updateLeadStage, addActivity, activityType, setActivityType, activitySummary, setActivitySummary, activityOutcome, setActivityOutcome, navigateToEmail }: {
+  lead: Lead; updateLeadStage: (id: string, s: string) => void; addActivity: (id: string) => void;
+  activityType: string; setActivityType: (v: string) => void; activitySummary: string; setActivitySummary: (v: string) => void;
+  activityOutcome: string; setActivityOutcome: (v: string) => void; navigateToEmail: (id?: string) => void;
+}) {
+  return (
+    <>
+      <DialogHeader>
+        <div className="flex items-center gap-3">
+          <div><DialogTitle className="text-xl">{lead.name}</DialogTitle><DialogDescription className="mt-1">{lead.sector} · {lead.location}</DialogDescription></div>
+          <div className="ml-auto flex items-center gap-2">
+            {lead.hotLead && <Badge className="bg-amber-100 text-amber-700 border-amber-200 border"><Flame className="h-3 w-3 mr-1" />Hot Lead</Badge>}
+            <TierBadge tier={lead.tier} />
+          </div>
+        </div>
+      </DialogHeader>
+      <div className="space-y-6 mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <h4 className="text-sm font-semibold text-muted-foreground">Contact Details</h4>
+            <div className="space-y-1.5">
+              {lead.phone && <div className="flex items-center gap-2 text-sm"><Phone className="h-3.5 w-3.5 text-muted-foreground" /><a href={`tel:${lead.phone}`} className="text-emerald-600 hover:underline">{lead.phone}</a></div>}
+              {lead.address && <div className="flex items-start gap-2 text-sm"><MapPin className="h-3.5 w-3.5 text-muted-foreground mt-0.5" /><span>{lead.address}</span></div>}
+              {lead.hours && <div className="flex items-center gap-2 text-sm"><Clock className="h-3.5 w-3.5 text-muted-foreground" /><span>{lead.hours}</span></div>}
+              {lead.area && <div className="flex items-center gap-2 text-sm"><Building2 className="h-3.5 w-3.5 text-muted-foreground" /><span>{lead.area}</span></div>}
+            </div>
+          </div>
+          <div className="space-y-2">
+            <h4 className="text-sm font-semibold text-muted-foreground">Lead Profile</h4>
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Rating</span><StarRating rating={lead.rating} /></div>
+              <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Stage</span><Badge variant="outline" className={STAGE_COLORS[lead.stage]}>{STAGE_LABELS[lead.stage]}</Badge></div>
+              <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Status</span><Badge variant="outline" className={lead.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-gray-50 text-gray-700 border-gray-200'}>{lead.status}</Badge></div>
+              <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Est. Value</span><span className="font-semibold">{lead.estimatedValue > 0 ? formatCurrency(lead.estimatedValue) : 'N/A'}</span></div>
+              <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Website</span>{lead.hasWebsite ? <Globe className="h-3.5 w-3.5 text-emerald-600" /> : <span className="text-red-500 text-xs">None</span>}</div>
+            </div>
+          </div>
+        </div>
+
+        {(lead.services || lead.recommendedPackage) && (
+          <div className="space-y-2"><h4 className="text-sm font-semibold text-muted-foreground">Services & Package</h4>
+            {lead.services && <p className="text-sm bg-gray-50 rounded-lg p-3">{lead.services}</p>}
+            {lead.recommendedPackage && <div className="flex items-center gap-2"><span className="text-sm text-muted-foreground">Recommended:</span><Badge className="bg-emerald-100 text-emerald-700 border-emerald-200 border">{lead.recommendedPackage}</Badge></div>}
+          </div>
+        )}
+
+        {lead.notes && <div className="space-y-2"><h4 className="text-sm font-semibold text-muted-foreground">Notes</h4><p className="text-sm bg-gray-50 rounded-lg p-3 whitespace-pre-wrap">{lead.notes}</p></div>}
+
+        {lead.nextAction && (
+          <div className="space-y-2"><h4 className="text-sm font-semibold text-muted-foreground">Next Action</h4>
+            <div className="flex items-center gap-2 bg-amber-50 rounded-lg p-3 border border-amber-200"><ArrowRight className="h-4 w-4 text-amber-600 shrink-0" /><div><p className="text-sm font-medium text-amber-800">{lead.nextAction}</p>{lead.nextActionDate && <p className="text-xs text-amber-600 mt-0.5">Due: {formatDate(lead.nextActionDate)}</p>}</div></div>
+          </div>
+        )}
+
+        <div className="space-y-2"><h4 className="text-sm font-semibold text-muted-foreground">Update Stage</h4>
+          <Select value={lead.stage} onValueChange={(val) => updateLeadStage(lead.id, val)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{STAGES.map(s => <SelectItem key={s} value={s}>{STAGE_LABELS[s]}</SelectItem>)}</SelectContent></Select>
+        </div>
+
+        {/* Generate Email shortcut */}
+        <Button onClick={() => navigateToEmail(lead.id)} variant="outline" className="w-full border-emerald-200 text-emerald-700 hover:bg-emerald-50"><Sparkles className="h-4 w-4 mr-2" />Generate Email for {lead.name}</Button>
+
+        {/* Activities */}
+        <div className="space-y-3">
+          <h4 className="text-sm font-semibold text-muted-foreground">Activity History ({lead.activities?.length || 0})</h4>
+          <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+            <Select value={activityType} onValueChange={setActivityType}><SelectTrigger className="w-[130px]"><SelectValue /></SelectTrigger><SelectContent>
+              <SelectItem value="call">Call</SelectItem><SelectItem value="email">Email</SelectItem><SelectItem value="whatsapp">WhatsApp</SelectItem>
+              <SelectItem value="meeting">Meeting</SelectItem><SelectItem value="proposal">Proposal</SelectItem><SelectItem value="demo">Demo</SelectItem><SelectItem value="note">Note</SelectItem>
+            </SelectContent></Select>
+            <Textarea placeholder="What happened?" value={activitySummary} onChange={(e) => setActivitySummary(e.target.value)} className="min-h-[60px]" />
+            <Input placeholder="Outcome (optional)" value={activityOutcome} onChange={(e) => setActivityOutcome(e.target.value)} />
+            <Button onClick={() => addActivity(lead.id)} className="bg-emerald-600 hover:bg-emerald-700 text-white" size="sm"><Plus className="h-4 w-4 mr-1" />Add Activity</Button>
+          </div>
+          <div className="space-y-2 max-h-[300px] overflow-y-auto">
+            {!lead.activities?.length ? <p className="text-sm text-muted-foreground text-center py-6">No activities recorded</p> : lead.activities.map(act => (
+              <div key={act.id} className="flex items-start gap-3 p-3 rounded-lg border border-gray-100">
+                <div className="mt-0.5 h-7 w-7 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">{ACTIVITY_ICONS[act.type] || <AlertCircle className="h-3.5 w-3.5" />}</div>
+                <div className="flex-1 min-w-0"><div className="flex items-center gap-2"><Badge variant="outline" className="text-[10px] px-1.5 py-0">{act.type}</Badge><span className="text-xs text-muted-foreground">{formatDate(act.date)}</span></div><p className="text-sm mt-1">{act.summary}</p>{act.outcome && <p className="text-xs text-emerald-600 mt-1">→ {act.outcome}</p>}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
   )
 }

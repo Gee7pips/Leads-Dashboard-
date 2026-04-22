@@ -1,0 +1,924 @@
+================================================================================
+FULL DATA EXTRACTION SUMMARY
+Generated: Auto-compiled from 5 uploaded files
+Purpose: Dashboard data source — ALL extracted data in full detail
+================================================================================
+
+
+################################################################################
+# FILE 1: Carter_Digitals_Dental_Pricing_2026.docx
+# Description: Dental website package pricing proposal from Carter Digitals
+################################################################################
+
+## COMPANY DETAILS
+- Company: Carter Digitals (Pty) Ltd
+- Founder & Director: Kabelo Kadiaka
+- Email: kadiakakabelo4@gmail.com
+- Phone: 072 402 6893
+- Website: carterdigitals.co.za
+- CIPC Registration: 2025/907839/07
+- B-BBEE: Level 1 (135% Procurement Recognition)
+- Ownership: 100% Black-Owned, 100% Youth-Owned
+- CSD: Registered
+- Location: Soshanguve, Pretoria, Gauteng
+
+## PRODUCT: Dental Website Packages ("Molar · Crown · Implant")
+Three tiers. Free Year 1 hosting. Built for dental practices.
+
+### PRICING — THREE TIERS (All exclude VAT)
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TIER 1: MOLAR (Presence) — "Get found. Get called."                         │
+│ Price: R4,499 once-off                                                       │
+│ Optional Monthly Retainer: R449/month (hosting, updates, priority support)   │
+│ Free domain + hosting Year 1 (saves approx. R1,800)                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ TIER 2: CROWN (Growth) — "Fill the chair. Own the schedule."  ⭐ MOST POPULAR│
+│ Price: R8,999 once-off                                                       │
+│ Optional Monthly Retainer: R849/month                                        │
+│ Free domain + hosting Year 1 (saves approx. R1,800)                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ TIER 3: IMPLANT (Premium) — "The full machine. Runs while you sleep."        │
+│ Price: R16,999 once-off                                                      │
+│ Optional Monthly Retainer: R1,399/month                                      │
+│ Free domain + hosting Year 1 (saves approx. R1,800)                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+### FULL FEATURE COMPARISON TABLE
+
+Feature                                    | Molar | Crown | Implant
+-------------------------------------------|-------|-------|--------
+Domain + hosting free — Year 1             |  ✓    |   ✓   |    ✓
+WhatsApp floating contact button            |  ✓    |   ✓   |    ✓
+Click-to-call button (mobile)               |  ✓    |   ✓   |    ✓
+Google Maps embed + directions              |  ✓    |   ✓   |    ✓
+SSL certificate + POPIA notice              |  ✓    |   ✓   |    ✓
+Google Business Profile setup               |  ✓    |   ✓   |    ✓
+Mobile-first branded design                 |  ✓    |   ✓   |    ✓
+Basic on-page SEO                           |  ✓    |   ✓   |    ✓
+Online appointment booking form             |  ✗    |   ✓   |    ✓
+Auto-reply WhatsApp on booking              |  ✗    |   ✓   |    ✓
+Before / after photo gallery                |  ✗    |   ✓   |    ✓
+Medical aids accepted section               |  ✗    |   ✓   |    ✓
+Patient testimonials section                |  ✗    |   ✓   |    ✓
+Emergency dental CTA banner                 |  ✗    |   ✓   |    ✓
+SEO keyword targeting                       |  ✗    |  5 kw |  10 kw
+Google Analytics + Search Console           |  ✗    |   ✓   |    ✓
+AI chatbot (24/7 FAQ + triage)              |  ✗    |   ✗   |    ✓
+WhatsApp AI bot — after hours               |  ✗    |   ✗   |    ✓
+Sanity CMS — self-manage content            |  ✗    |   ✗   |    ✓
+Google review automation flow               |  ✗    |   ✗   |    ✓
+Digital new patient intake form             |  ✗    |   ✗   |    ✓
+Staff / practitioner portal                 |  ✗    |   ✗   |    ✓
+Priority support (4hr SLA)                  |  ✗    |   ✗   |    ✓
+Monthly retainer (optional)                 | R449  | R849  | R1,399
+
+### ROI CALCULATION TABLE
+
+Package        | New pts/mo | Avg visit | Payback    | Annual Revenue | Net Gain (Yr1) | ROI
+---------------|------------|-----------|------------|----------------|-----------------|-----
+Molar — R4,499 | 5 patients | R750      | ~36 days   | R45,000        | R40,501         | 901%
+Crown — R8,999 | 9 patients | R900      | ~37 days   | R97,200        | R88,201         | 981%
+Implant — R16,999| 13 patients| R1,050   | ~37 days   | R163,800       | R146,801        | 864%
+
+Based on conservative estimates: 5-13 new patients per month from organic search.
+
+### OPTIONAL ADD-ONS (Can be added to any package)
+
+Add-on                               | What it does                                              | Once-off   | Monthly
+-------------------------------------|-----------------------------------------------------------|------------|--------
+AI Chatbot + WhatsApp Automation     | 24/7 bot — FAQs, appt capture, after-hours triage         | R4,999     | R499/mo
+SEO Boost Pack                       | 5 extra keywords, competitor analysis, backlinks           | R1,999     | —
+Google Review Automation             | Post-visit SMS/WhatsApp review request sequence            | R1,499     | R149/mo
+Social Media Starter Pack            | Branded FB + IG setup, 6 dental content templates          | R2,499     | —
+Emergency Dental Landing Page        | Dedicated emergency page, click-to-call, Google Ads-ready  | R1,999     | —
+Monthly Content Retainer             | 2 blog posts/mo, social captions, GBP posts                | —          | R699/mo
+Hosting + Domain Renewal (Year 2+)   | Vercel hosting, .co.za domain, SSL renewal                | —          | R199/mo
+
+### WORKING PROCESS (6 Steps)
+
+Step 1: Discovery call (30 min) — Confirm practice details, services, team, hours
+Step 2: 50% deposit to begin — R2,250–R8,500 upfront
+Step 3: Design & build (Days 1–5) — Staging URL for review
+Step 4: Review + approve — Revisions within 24 hours
+Step 5: Go live (Day 5–7) — Domain, hosting, SSL, GBP linked
+Step 6: Handover + training — Admin login, WhatsApp setup, quick-start guide
+
+### VALUE PROPOSITION (With vs Without Website)
+
+WITHOUT WEBSITE:                           WITH CARTER DIGITALS WEBSITE:
+- Invisible to patients searching online   - Patients find you on Google first
+- Losing patients to competitors weekly    - 8-15 new patient enquiries/month
+- No services/team/medical aids shown      - Services, team, medical aids visible 24/7
+- No after-hours emergency contact         - WhatsApp button captures emergencies
+- Reviews build slowly with no system      - Review request flow turns patients into advocates
+
+
+################################################################################
+# FILE 2: Lead_Intelligence_Report_for_Carter_Digitals.pdf
+# Description: SA digital landscape analysis + multi-sector lead database
+################################################################################
+
+## SECTION 1: SA DIGITAL LANDSCAPE ANALYSIS
+
+### 1.1 SME Website Penetration
+- 60-65% of SA SMEs have some form of digital presence
+- Only 35-40% possess a functional, professional website
+- Online retail grew 35% in 2024
+- Internet penetration: 78.9% (50.8 million users) by early 2025
+
+### 1.2 SA Web Design & Digital Services Market Size
+- Digital Media Market: USD 6.7 billion (2023) → USD 16.3 billion (2030 projected)
+- Digital Transformation CAGR: 31.8% (2025-2030)
+- ICT Market: USD 3.02 billion (2024) → USD 8.28 billion (2033)
+- ICT CAGR: 11.84%
+- Digital Marketing CAGR: 8.5% (2025-2031)
+
+### 1.3 Digitally Underserved Sectors in Gauteng
+- Funeral Parlours
+- Guesthouses
+- Law Firms (smaller practices)
+- Dental Practices
+- Logistics and Construction Firms
+- Township Businesses
+
+### 1.4 Average Website Development Prices in SA (2024-2025)
+
+Category            | Price Range (ZAR)    | Typical Features
+--------------------|---------------------|-------------------
+Budget/Freelancer   | R1,500 - R7,000     | 3-5 pages, template, basic contact form
+Mid-Market Agency   | R10,000 - R30,000   | 5-10 pages, custom design, basic SEO
+Premium Studio      | R30,000 - R100,000+ | E-commerce, custom apps, advanced SEO/CRO
+
+Ongoing Costs:
+- Domain registration: R70-R300/year
+- Web hosting: R30-R300+/month
+- Maintenance/updates: R500-R2,500/month
+
+### SECTION 2: MARKET VERDICT
+YES — website development is highly lucrative for a boutique Pretoria studio targeting Gauteng SMEs.
+- Substantial project values: R10,000 - R100,000+
+- Recurring revenue from maintenance and optimization
+
+## SECTION 3: FULL LEAD DATABASE TABLE (24 Leads)
+
+#  | Business Name                    | Sector          | Location       | Website    | Quality | Maps | Phone
+---|----------------------------------|-----------------|----------------|------------|---------|------|------------
+1  | Matshona Attorneys              | Law Firm        | Pretoria CBD   | NO WEBSITE | 1       | Yes  | +27 72 993 0963
+2  | Mfene Attorneys                 | Legal Services  | Pretoria CBD   | NO WEBSITE | 1       | Yes  | +27 12 321 2206
+3  | SF Sibiya Attorneys             | Law Firm        | Pretoria CBD   | NO WEBSITE | 1       | Yes  | N/A
+4  | Nthite Attorneys                | Law Firm        | Pretoria CBD   | NO WEBSITE | 1       | Yes  | +27 76 308 3874
+5  | The Resting View Guesthouse     | Hospitality     | Pretoria East  | NO WEBSITE | 1       | Yes  | N/A
+6  | Camellia Haven                  | Guest House     | Pretoria East  | NO WEBSITE | 1       | Yes  | N/A
+7  | PTA East Guest Rooms            | Hospitality     | Pretoria East  | NO WEBSITE | 1       | Yes  | N/A
+8  | Soweto Funeral Services         | Funeral Home    | Soweto         | NO WEBSITE | 1       | Yes  | +27 82 068 7015
+9  | Mabona Funeral Undertakers      | Funeral Home    | Soweto         | NO WEBSITE | 1       | Yes  | +27 11 936 9000
+10 | Kwa Ndhlovu And Sons Funerals   | Funeral Home    | Soweto         | NO WEBSITE | 1       | Yes  | +27 82 740 2336
+11 | Awethu Funeral Directors        | Funeral Home    | Soweto         | NO WEBSITE | 1       | Yes  | +27 79 257 6600
+12 | RB & Son Transport Gauteng CC   | Transportation  | Gauteng        | NO WEBSITE | 1       | Yes  | +27 11 974 5984
+13 | No Boundaries Logistics         | Freight Forward | Gauteng        | NO WEBSITE | 1       | Yes  | +27 67 178 9297
+14 | CLC SA Commercial Logistics     | Logistics       | Gauteng        | NO WEBSITE | 1       | Yes  | +27 86 122 2252
+15 | TYAN Construction               | Construction    | Gauteng        | NO WEBSITE | 1       | Yes  | +27 11 493 3300
+16 | Sanjo Construction              | Construction    | Gauteng        | NO WEBSITE | 1       | Yes  | +27 86 117 2656
+17 | Cross Over School               | Private School  | Gauteng        | NO WEBSITE | 1       | Yes  | +27 10 534 7495
+18 | Japari School                   | Private School  | Gauteng        | NO WEBSITE | 1       | Yes  | +27 11 646 2132
+19 | Brandcliff House Private School | Private School  | Gauteng        | NO WEBSITE | 1       | Yes  | +27 11 476 4174
+20 | Poplar Academy                  | Private School  | Gauteng        | NO WEBSITE | 1       | Yes  | +27 82 655 0723
+21 | The Medical Centre              | Medical Center  | Gauteng        | NO WEBSITE | 1       | Yes  | +27 11 622 6254
+22 | Dr. Cajee (Parkstation)         | General Pract.  | Gauteng        | NO WEBSITE | 1       | Yes  | +27 11 333 4597
+23 | Dr H Haffejee                   | General Pract.  | Gauteng        | NO WEBSITE | 1       | Yes  | +27 11 834 1554
+24 | Dr Marlin J McKay               | Medical Center  | Gauteng        | NO WEBSITE | 1       | Yes  | +27 11 672 2129
+25 | The Thinc Clinic                | Dental Clinic   | Gauteng        | NO WEBSITE | 1       | Yes  | +27 11 788 6218
+26 | Cosmo City Dental Centre        | Dental Clinic   | Gauteng        | NO WEBSITE | 1       | Yes  | +27 61 524 2458
+27 | Eden Dental Centre              | Dental Clinic   | Gauteng        | NO WEBSITE | 1       | Yes  | +27 11 453 7612
+28 | Cahi Dental Practice            | Dentist         | Gauteng        | NO WEBSITE | 1       | Yes  | +27 11 305 9300
+29 | Molar Bear Dental               | Dentist         | Gauteng        | NO WEBSITE | 1       | Yes  | +27 11 482 1592
+30 | Ziyaad Dental Surgery           | Dental Clinic   | Gauteng        | NO WEBSITE | 1       | Yes  | +27 11 403 6786
+
+## SECTION 4: TOP 5 PRIORITY LEADS (with outreach strategies)
+
+### 1. The Thinc Clinic (Dental Clinic, Gauteng)
+- Why: 4.9 rating from 335 Google reviews, highly successful practice, no website
+- Estimated price tag: R30k-R50k
+- Strategy: Cold call receptionist → tailored email/WhatsApp with Loom video mockup
+
+### 2. TYAN CONSTRUCTION (Construction, Gauteng)
+- Why: Operating 24 hours, high-ticket projects, needs portfolio for tenders
+- Strategy: Direct cold call (+27 11 493 3300) to director/procurement manager
+
+### 3. CLC SA — Commercial Logistics Centre SA (Logistics, Gauteng)
+- Why: Missing contact details online, frustrated reviewers, losing business
+- Strategy: Cold call (+27 86 122 2252) to operations manager
+
+### 4. Matshona Attorneys (Law Firm, Pretoria CBD)
+- Why: 4.9 rating, heart of CBD, Suit 428, 217 Pretorius St
+- Strategy: Walk-in with printed mockup/brochure
+- Candidate for R20k+ corporate site
+
+### 5. Soweto Funeral Services (Funeral Home, Soweto)
+- Why: Highly lucrative industry, solid physical presence, zero digital footprint
+- Strategy: WhatsApp message (+27 82 068 7015) with respectful intro and demo link
+
+## SECTION 5: OUTREACH SCRIPT TEMPLATES
+
+### WhatsApp Opener Template:
+"Hi [Name/Owner], I hope you're having a great week. I'm [Your Name] from Carter Digitals,
+a boutique web studio right here in Pretoria..."
+
+### Cold Email Template:
+Subject: "Missing out on local searches for [Industry] in [Area]?"
+Includes mention of 3-minute video showing what their website could look like.
+
+### LinkedIn DM Template:
+For B2B / Corporate Leads — professional tone, asking for brief chat.
+
+
+################################################################################
+# FILE 3: Carter Digitals (Pty) Ltd Company Profile 2026_compressed.pdf
+# Description: Official company profile — 13-page presentation (image-based PDF, OCR'd)
+################################################################################
+
+## COVER PAGE
+- Tagline: "Built Different. Built African. Built to Win."
+- Subtitle: Company Profile 2025/2026
+- Website: carterdigitals.co.za
+- Location: Pretoria, Gauteng, South Africa
+
+## ABOUT (Page 2)
+- Full name: Carter Digitals (Pty) Ltd
+- Description: Pretoria's Digital Studio — Built for Real Institutions
+- Specialises in: High-performance websites, bespoke web applications, internal business tools
+- Target sectors: Schools, Law Firms, Medical Practices, Guesthouses, SMEs, Government-aligned institutions
+- Tagline: "Translating real-world value into digital systems"
+- Founded: 2023
+- Ownership: 100% Black & Youth-Owned
+- CIPC: 2025/907839/07
+
+## COMPLIANCE & TRUST (Page 3)
+┌─────────────────────────┬──────────────────────────────────────────┐
+│ B-BBEE Status           │ Level 1 (Level 7 in OCR, confirmed L1)   │
+│ B-BBEE Contributor      │ 100% Black-Owned                         │
+│ Ownership               │ 100% Youth-Owned                         │
+│ EME Status              │ Empowerment Management Entity            │
+│ Procurement Recognition │ 135%                                     │
+│ CSD Registration        │ Active (# Active)                        │
+│ POPIA                   │ Compliant                                │
+│ Delivery Guarantee      │ 5-7 Business Days                        │
+└─────────────────────────┴──────────────────────────────────────────┘
+- SARS: 9382428234
+- Full compliance across all data handling, storage, and processing operations
+
+## CORE SERVICES PORTFOLIO (Pages 4-9)
+
+### 1. Website Development (FLAGSHIP)
+- Built on Next.js, deployed on Vercel
+- 5-7 Business Day Delivery
+- Features: Mobile-First, SEO From Day One, Hosting & Domain (Year 1 free), Core Web Vitals, WhatsApp + Maps, Google Business Profile setup
+
+### 2. Small Business Website Packages (3 Tiers)
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TIER 1: Vula — "Get online and start getting calls"                         │
+│ Price: R3,999 once-off                                                      │
+│ Optional Retainer: R399/month                                               │
+│ Features: Up to 4 pages, hosting/domain Year 1 free, lead form, WhatsApp,  │
+│           GBP setup, mobile-first, basic SEO                                 │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ TIER 2: Khula — "Convert visitors into paying clients" ⭐ MOST POPULAR      │
+│ Price: R7,999 once-off                                                      │
+│ Optional Retainer: R799/month                                               │
+│ Features: Up to 8 pages incl. Portfolio & Blog, WhatsApp chatbot 24/7,     │
+│           quote/booking system, SEO (3 keywords), Google Analytics,         │
+│           Search Console                                                     │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ TIER 3: — "A fully managed digital engine"                                  │
+│ Price: R14,999 once-off                                                     │
+│ Optional Retainer: R1,199/month                                             │
+│ Features: Sanity CMS, AI chatbot 24/7, e-commerce ready, advanced SEO +    │
+│           monthly ranking report, custom integrations (CRM, payments)       │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+### 3. Specialized School Website Packages (3 Tiers)
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TIER 1: Presenca — "Be found and trusted online"                            │
+│ Price: R4,999 once-off                                                      │
+│ Optional Retainer: R499/month                                               │
+│ Features: 5 pages (Home, About, Grades, News, Contact), hosting/domain Y1, │
+│           WhatsApp, Google Maps, basic SEO                                   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ TIER 2: Ikredibo — "Build community trust & enrolment" ⭐ MOST POPULAR      │
+│ Price: R9,999 once-off                                                      │
+│ Optional Retainer: R899/month                                               │
+│ Features: 10 pages (Staff, Gallery, Admissions+), news & announcements,     │
+│           parent enquiry/enrolment form, Google Analytics, branded email    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ TIER 3: Isibindi — "Full content control + 24/7 AI" ⭐ MOST RECOMMENDED     │
+│ Price: R18,999 once-off                                                     │
+│ Optional Retainer: R1,499/month                                             │
+│ Features: Sanity CMS, AI chatbot 24/7, unlimited pages + downloads,        │
+│           Staff/SGB portal with login, advanced SEO + Search Console        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+### 4. Bespoke Web Applications & Internal Tools
+- Secure Login Portals
+- Operations Dashboards (KPIs, Kanban, project pipelines)
+- Booking & Scheduling Systems
+- AI-Powered Tools (chatbots, document processors, automated reporting)
+- Quoting, Invoicing & CRM
+- E-Commerce & Payments (online stores, booking funnels, payment gateways)
+
+### 5. Design Services
+- Flyers, Posters & Print Media
+- Logo & Brand Identity (logo design, colour systems, typography, identity packages)
+- Pitch Decks & Company Profiles (investor decks, tender profiles, funding applications)
+
+### 6. Strategic Add-On Services
+
+Add-on                              | Once-off    | Monthly
+------------------------------------|-------------|--------
+AI Chatbot & WhatsApp Automation    | R4,999      | R499/mo
+SEO & Google Setup                  | R999        | —
+Hosting & Domain Management         | R1,990/year | R199/mo
+Sanity CMS Setup & Training         | R3,499      | R349/mo
+Company Profile & Pitch Deck        | R1,999      | —
+
+## DELIVERY METHODOLOGY (Page 10) — 5-Phase Framework
+1. Discovery & Alignment — Map goals, stakeholders, technical constraints, compliance
+2. Architecture & Wireflow — Design information hierarchy, user journeys, system architecture
+3. Design & Build — Develop using modern, secure frameworks (Next.js, React)
+4. QA & Compliance — Cross-device testing, security, accessibility, SEO, regulatory standards
+5. Launch, Handover & Enablement — Deploy, document, equip client's team
+
+## FOUNDER PROFILE (Page 11)
+- Name: Kabelo Kadiaka
+- Title: Founder & Director, Carter Digitals (Pty) Ltd
+- Email: kabelokadiaka4@gmail.com
+- Phone: 072 402 6893
+- Website: carterdigitals.co.za
+- Description: "AI-Augmented. Human-Driven. Built to Deliver."
+- Deep expertise: Full-stack web dev, enterprise cloud architecture, AI-augmented systems engineering
+- Named in tribute to a close friend who passed away in April 2021
+
+### Technical Stack:
+Next.js | React | Python/FastAPI | PostgreSQL | GCP/Vertex AI | Vercel | Sanity CMS | WhatsApp API | Make.com
+
+## ENGAGEMENT MODELS (Page 12)
+1. Project-Based — Fixed scope, fixed cost, milestone-driven, no hidden fees
+2. Retainer & Ongoing Support — Continuous monitoring, content updates, predictable monthly cost
+3. Prototype-to-Production — Functional pilot before full rollout, real-world validation
+
+All models: 5-7 day delivery, POPIA compliant, B-BBEE Level 1
+
+## CONTACT (Page 13)
+- Phone: 072 402 6893
+- Email: kabelokadiaka4@gmail.com
+- Website: carterdigitals.co.za
+- Location: Soshanguve, Pretoria, Gauteng, South Africa
+- Response: Within one business day
+
+
+################################################################################
+# FILE 4: Dental_Leads_Report_Pretoria_2026.docx
+# Description: ProtoLead Intelligence — 20 dental leads in Pretoria & Centurion
+################################################################################
+
+## REPORT HEADER
+- Report Date: April 2026
+- Market: Pretoria & Centurion, Gauteng, South Africa
+- Total Leads: 20 dental practices
+- Compiled by: Kabelo Kadiaka, Carter Digitals (Pty) Ltd
+- Contact: kadiakakabelo4@gmail.com | 072 402 6893
+
+## METHODOLOGY
+Sources: Google Maps, Snupit, WhatClinic, Medpages, Facebook, Old Mutual Dentistry Network, D7 Lead Finder, Polomap, Infoisinfo.co.za, WhoDoYou
+Coverage: Hatfield, Pretoria North, East, Sunnyside, Centurion, Laudium, Atteridgeville
+
+## LEAD TIER SUMMARY
+- Tier 1 (4.7-5.0★): 4 leads — HIGH PRIORITY (build ProtoLead demo first)
+- Tier 2 (4.0-4.6★): 10 leads — SOLID OPPORTUNITY (call direct, demo on request)
+- Tier 3 (Under 4.0★): 6 leads — EMERGING PRACTICE (phone outreach, affordable pitch)
+- Areas Covered: 7
+
+## GEOGRAPHIC DISTRIBUTION
+
+Area                          | Leads | Notable Practices
+------------------------------|-------|-----------------------------------------------
+Hatfield                      |   3   | Dr. Elaine de Lange (4.9★), Dr Kellerman & Bosch (4.7★)
+Pretoria North                |   4   | DR MOTHUPI (5.0★), Dental Care Centre (4.7★), Dr Olckers (4.2★)
+Centurion                     |   2   | The Dental Doc (4.9★), Refresh Dental (5.0★)
+Pretoria East / Faerie Glen   |   3   | Dr Jordaan (4.6★), The Family Dentist (4.4★), Dr Mahlase (3.9★)
+Sunnyside                     |   1   | Dr ML Geldenhuys (4.3★)
+Laudium                       |   2   | Dr Shaerah Mohamed (4.3★), Dr F Khan / Smile Corner (5.0★)
+Atteridgeville / Saulsville   |   3   | Nkwashu O A (5.0★), Dr Phalandwa (4.3★), Drs Behrens (3.5★)
+Queenswood                    |   2   | Pretoria Smile (4.2★), Dr Larochelle vd Bergh (4.0★)
+
+## OUTREACH STRATEGY (ProtoLead Method)
+Step 1: Build ProtoLead demo sites for Tier 1 leads (1-2 days work)
+Step 2: Initial phone call — no pitch, just "I built something for your practice"
+Step 3: WhatsApp follow-up with demo link + 15-second voice note
+Step 4: In-person visit for Tier 1 only (Hatfield, Pretoria North)
+Step 5: 50% deposit (R2,000-R4,000 upfront)
+
+## FULL LEAD DATABASE (All 20 Leads — Complete Detail)
+
+### TIER 1 — HIGH PRIORITY (Build ProtoLead demo first, call second)
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ #1: Dr. Elaine de Lange Dentist — ⭐ SINGLE HIGHEST-PRIORITY LEAD           │
+│ Rating: 4.9★ | Tier 1                                                       │
+│ Phone: +27 67 163 8738                                                     │
+│ Address: Hatfield Wellness Centre, 454 Hilda St, Hatfield, 0028            │
+│ Area: Hatfield, Pretoria                                                    │
+│ Hours: Mon/Wed: 8AM-4PM | Tue/Thu/Fri: 8AM-1PM                            │
+│ Services: General Dentistry, Cosmetic, Dental Hygiene, Pediatric           │
+│ Online: Facebook (562 likes, 9 check-ins), Medpages, Old Mutual, Polomap   │
+│ Website: NONE                                                              │
+│ Notes: Glowing reviews for root canal work and pregnancy care. Built        │
+│        audience, zero digital home. Conversion-ready prospect.              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ #2: The Dental Doc (Dr Mythili Swaminathan)                                │
+│ Rating: 4.9★ | Tier 1                                                       │
+│ Phone: +27 12 658 3094                                                     │
+│ Address: Shop 18, Eldo Square Shopping Centre, Willem Botha Dr, Centurion  │
+│ Area: Eldoraigne, Centurion                                                │
+│ Hours: Tue-Thu: 8AM-5PM | Sat: 8AM-1PM                                     │
+│ Services: General Dentistry                                                 │
+│ Online: Google Maps only. No social media, no directories.                  │
+│ Website: NONE                                                              │
+│ Notes: High-rated practice in busy Centurion mall. Zero web/social presence.│
+│        Purely reliant on walk-ins and word of mouth.                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ #3: DR MOTHUPI DENTAL STUDIO                                               │
+│ Rating: 5.0★ (Perfect) | Tier 1                                            │
+│ Phone: +27 79 927 4487                                                     │
+│ Address: 404 West St, Pretoria North, 0116                                 │
+│ Area: Pretoria North                                                       │
+│ Hours: Mon-Sat: 9AM-5PM                                                    │
+│ Services: General Dentistry                                                 │
+│ Online: Google Maps only                                                    │
+│ Website: NONE                                                              │
+│ Notes: Perfect 5.0 rating. Saturday hours. B-BBEE angle works here.         │
+│        Community-serving clientele. Ideal for Vula or Khula package.        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ #4: Refresh Dental                                                         │
+│ Rating: 5.0★ (Perfect) | Tier 1                                            │
+│ Phone: +27 61 416 4649                                                     │
+│ Address: 153 River Rd, Lyttelton Manor, Centurion, 0157                    │
+│ Area: Lyttelton Manor, Centurion                                           │
+│ Hours: Mon-Fri: 9AM-5PM | Sat: 9AM-1PM                                     │
+│ Services: General Dentistry                                                 │
+│ Online: Google Maps only                                                    │
+│ Website: NONE                                                              │
+│ Notes: Perfect 5-star in affluent Lyttelton Manor. Premium market.          │
+│        Patients expect online booking capability. Khula package ideal.      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+### TIER 2 — SOLID OPPORTUNITY (Call direct, demo on request)
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ #5: Dr G Kellerman & Dr C Bosch Dentists                                  │
+│ Rating: 4.7★ | Tier 2                                                       │
+│ Phone: +27 12 342 3105                                                     │
+│ Address: 252 Grosvenor St, Hatfield, Pretoria, 0083                        │
+│ Area: Hatfield, Pretoria                                                    │
+│ Hours: Mon-Thu: 7:30AM-4PM | Fri: 7:30AM-3:30PM                           │
+│ Services: General Dentistry                                                 │
+│ Online: Google Maps only. Possible second listing.                          │
+│ Website: NONE                                                              │
+│ Notes: Two-practitioner practice. Student + professional market.            │
+│        Shared budget decision. Pitch as credibility + patient-acquisition.  │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ #6: Dental Care Centre                                                     │
+│ Rating: 4.7★ | Tier 2                                                       │
+│ Phone: +27 12 546 6863                                                     │
+│ Address: De Jongh Sentrum, c/o Rachel De Beer & Ben Viljoen St, Pta N 0182 │
+│ Area: Pretoria North                                                       │
+│ Hours: Mon-Thu: 8AM-5PM | Fri: 8AM-4PM | Sat: 8AM-1PM                     │
+│ Services: General Dentistry                                                 │
+│ Online: Google Maps only                                                    │
+│ Website: NONE                                                              │
+│ Notes: Well-established at shopping centre intersection. Strong 4.7.       │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ #7: Dr. Yolande Jordaan                                                    │
+│ Rating: 4.6★ | Tier 2                                                       │
+│ Phone: +27 12 004 2510                                                     │
+│ Address: 823 Old Farm Rd, Faerie Glen, Pretoria East, 0081                 │
+│ Area: Faerie Glen, Pretoria East                                           │
+│ Hours: Mon/Wed: 8AM-4PM | Tue/Thu/Fri: 8AM-1PM                             │
+│ Services: General Dentistry                                                 │
+│ Online: Google Maps, Polomap                                               │
+│ Website: NONE                                                              │
+│ Notes: Affluent Faerie Glen. Patients research online. Need before/after   │
+│        photos, services, booking form.                                      │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ #8: Dr Shaerah Mohamed                                                     │
+│ Rating: 4.3★ | Tier 2                                                       │
+│ Phone: +27 12 374 6199                                                     │
+│ Address: 290 Tangerine St, Laudium, Pretoria, 0037                         │
+│ Area: Laudium, Pretoria                                                    │
+│ Hours: Standard business hours (not publicly confirmed)                     │
+│ Services: General Dentistry                                                 │
+│ Online: Google Maps. Shares address with Dr MI Khan Orthodontist (has site) │
+│ Website: NONE                                                              │
+│ Notes: Shares premises with orthodontist who HAS website. Missed capture.   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ #9: Dr ML Geldenhuys (Dental Surgeon)                                      │
+│ Rating: 4.3★ | Tier 2                                                       │
+│ Phone: +27 12 430 4121                                                     │
+│ Address: 409 Kirkness St, Sunnyside, Pretoria, 0002                        │
+│ Area: Sunnyside, Pretoria                                                  │
+│ Hours: Standard weekday hours                                              │
+│ Services: General, Cosmetic, Orthodontics, Dental Surgery                   │
+│ Online: Google Maps, Snupit, WhoDoYou                                      │
+│ Website: NONE                                                              │
+│ Notes: Full-spectrum surgeon in central Sunnyside. Website especially       │
+│        valuable for patients searching specific procedures.                  │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ #10: Dr Vanessa Olckers                                                    │
+│ Rating: 4.2★ | Tier 2                                                       │
+│ Phone: +27 12 546 0792                                                     │
+│ Address: West Street Medical Centre, 240 Rachel de Beer St, Pta N 0182      │
+│ Area: Pretoria North                                                       │
+│ Hours: Mon-Thu: 8AM-5PM | Fri: 8AM-3PM | Sat: 8AM-1PM                     │
+│ Services: General Dentistry                                                 │
+│ Online: Old Mutual Dentistry Network (Practice #054), Google Maps           │
+│ Website: NONE                                                              │
+│ Notes: Medical-aid panel registered. Old Mutual patients search by name.   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ #17: Dentist Consulting Rooms — Eloffsdal                                  │
+│ Rating: 4.1★ | Tier 2                                                       │
+│ Phone: 012 xxx xxxx (VERIFY via Snupit)                                    │
+│ Address: Eloffsdal, Pretoria, Gauteng                                      │
+│ Area: Eloffsdal, Pretoria                                                  │
+│ Hours: Standard weekday hours                                              │
+│ Services: General Dentistry                                                 │
+│ Online: Snupit directory only                                              │
+│ Website: NONE                                                              │
+│ Notes: Adjacent to Pretoria North. Legacy practice not yet invested.       │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ #18: Pretoria Smile — Queenswood                                           │
+│ Rating: 4.2★ | Tier 2                                                       │
+│ Phone: VERIFY via Snupit / Google Maps                                     │
+│ Address: Queenswood, Pretoria, Gauteng                                     │
+│ Area: Queenswood, Pretoria                                                 │
+│ Hours: Standard business hours                                              │
+│ Services: General Dentistry, Cosmetic Dentistry                            │
+│ Online: Snupit listing only                                                │
+│ Website: NONE                                                              │
+│ Notes: Cosmetic/smile focus. Portfolio website almost mandatory. Middle-   │
+│        to-upper income suburb. Khula with before/after gallery.             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ #19: The Family Dentist — Faerie Glen                                      │
+│ Rating: 4.4★ | Tier 2                                                       │
+│ Phone: VERIFY via Snupit listing                                           │
+│ Address: Faerie Glen, Pretoria East, 0081                                  │
+│ Area: Faerie Glen, Pretoria East                                           │
+│ Hours: Weekdays + possible Saturday                                         │
+│ Services: Family Dentistry, General, Pediatric                             │
+│ Online: Snupit listing only                                                │
+│ Website: NONE                                                              │
+│ Notes: Family branding in premium suburb. Parents book online, check       │
+│        hours, look for child-friendly environments. "Kids Welcome" section. │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ #20: Dr Larochelle vd Bergh — Queenswood Medical Centre                    │
+│ Rating: 4.0★ | Tier 2                                                       │
+│ Phone: VERIFY via Queenswood Medical Centre                                │
+│ Address: Queenswood Medical Centre, Queenswood, Pretoria                   │
+│ Area: Queenswood, Pretoria                                                 │
+│ Hours: Medical centre hours (Mon-Fri)                                      │
+│ Services: General Dentistry                                                 │
+│ Online: Snupit (via Queenswood Medical Centre listing)                     │
+│ Website: NONE                                                              │
+│ Notes: New dentist within medical centre. Walk-in referrals from GPs.      │
+│        Needs independent patient base.                                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+### TIER 3 — EMERGING PRACTICE (Phone outreach, affordable pitch)
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ #11: Dr. Thomas J. Phalandwa                                               │
+│ Rating: 4.3★ | Tier 3                                                       │
+│ Phone: +27 12 375 6456                                                     │
+│ Address: Shop 1D, Hlakola St, Saulsville, Pretoria, 0125                   │
+│ Area: Saulsville, Pretoria                                                 │
+│ Hours: Not publicly listed                                                 │
+│ Services: General Dentistry                                                 │
+│ Online: Google Maps only                                                    │
+│ Website: NONE                                                              │
+│ Notes: Township-area practice. Vula package is the right entry point.       │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ #12: Nkwashu O A                                                           │
+│ Rating: 5.0★ (Perfect) | Tier 3                                            │
+│ Phone: +27 12 373 6997                                                     │
+│ Address: Attmed Health Center, 85 Komane St, Atteridgeville, 0008           │
+│ Area: Atteridgeville, Pretoria                                             │
+│ Hours: Not publicly confirmed                                              │
+│ Services: General Dentistry                                                 │
+│ Online: Google Maps only                                                    │
+│ Website: NONE                                                              │
+│ Notes: Perfect rating at shared health facility. No independent digital ID. │
+│        Vula landing-page-style site ideal.                                  │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ #13: Dr F Khan — Smile Corner Dental Surgery                               │
+│ Rating: 5.0★ (Perfect) | Tier 3                                            │
+│ Phone: +27 62 597 5083                                                     │
+│ Address: 290 Jewel St, Laudium, Pretoria, 0037                             │
+│ Area: Laudium, Pretoria                                                    │
+│ Hours: Not publicly confirmed                                              │
+│ Services: General Dentistry, Emergency Dental, Dental Clinic               │
+│ Online: Google Maps — WhatsApp link only (no proper website)                │
+│ Website: NONE                                                              │
+│ Notes: Emergency dental = high-value search intent. Emergency CTA button   │
+│        would immediately drive bookings.                                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ #14: Pretoria East Dentist — Dr J M Mahlase                                │
+│ Rating: 3.9★ | Tier 3                                                       │
+│ Phone: +27 79 555 8049                                                     │
+│ Address: 20 Glenwood Rd, Lynnwood Glen, Pretoria, 0081                     │
+│ Area: Lynnwood Glen, Pretoria East                                         │
+│ Hours: Not publicly confirmed                                              │
+│ Services: General Dentistry                                                 │
+│ Online: Google Maps only                                                    │
+│ Website: NONE                                                              │
+│ Notes: "Pretoria East Dentist" label shows SEO awareness. Website could    │
+│        rebuild trust and attract new patients.                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ #15: Drs A & E Behrens                                                     │
+│ Rating: 3.5★ | Tier 3                                                       │
+│ Phone: +27 12 373 5481                                                     │
+│ Address: Shop C2B, Attlyn Shopping Centre, 320 Phudufuhu St, Atteridgeville│
+│ Area: Atteridgeville, Pretoria                                             │
+│ Hours: Mon-Fri: 8AM-4PM | Sat: 8AM-12:30PM                                 │
+│ Services: General Dentistry                                                 │
+│ Online: Google Maps only                                                    │
+│ Website: NONE                                                              │
+│ Notes: Shopping-centre based. Saturday hours. Lower rating = reputation    │
+│        management opportunity via website with reviews section.             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ #16: Dr. L.M. Shange                                                       │
+│ Rating: 3.1★ | Tier 3                                                       │
+│ Phone: +27 12 373 6446                                                     │
+│ Address: Attmed Health Centre, 85 Komane St, Atteridgeville, 0008           │
+│ Area: Atteridgeville, Pretoria                                             │
+│ Hours: Mon-Fri: 9AM-5PM (Fri until 1PM) | Sat-Sun: 8AM-1PM                │
+│ Services: General Dentistry                                                 │
+│ Online: Google Maps only                                                    │
+│ Website: NONE                                                              │
+│ Notes: WEEKEND HOURS (including Sunday!) — major differentiator. Website   │
+│        advertising "7 days a week" would attract patients others turn away. │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+## QUICK REFERENCE — ALL 20 LEADS
+
+#  | Practice Name                          | Rating | Tier | Phone              | Area
+---|----------------------------------------|--------|------|--------------------|--------------------
+1  | Dr. Elaine de Lange Dentist            | 4.9★   | T1   | +27 67 163 8738    | Hatfield
+2  | The Dental Doc (Dr M Swaminathan)      | 4.9★   | T1   | +27 12 658 3094    | Eldoraigne, Centurion
+3  | DR MOTHUPI DENTAL STUDIO              | 5.0★   | T1   | +27 79 927 4487    | Pretoria North
+4  | Refresh Dental                         | 5.0★   | T1   | +27 61 416 4649    | Lyttelton Manor, Centurion
+5  | Dr G Kellerman & Dr C Bosch           | 4.7★   | T2   | +27 12 342 3105    | Hatfield
+6  | Dental Care Centre                     | 4.7★   | T2   | +27 12 546 6863    | Pretoria North
+7  | Dr. Yolande Jordaan                    | 4.6★   | T2   | +27 12 004 2510    | Faerie Glen
+8  | Dr Shaerah Mohamed                     | 4.3★   | T2   | +27 12 374 6199    | Laudium
+9  | Dr ML Geldenhuys (Dental Surgeon)      | 4.3★   | T2   | +27 12 430 4121    | Sunnyside
+10 | Dr Vanessa Olckers                     | 4.2★   | T2   | +27 12 546 0792    | Pretoria North
+11 | Dr. Thomas J. Phalandwa                | 4.3★   | T3   | +27 12 375 6456    | Saulsville
+12 | Nkwashu O A                            | 5.0★   | T3   | +27 12 373 6997    | Atteridgeville
+13 | Dr F Khan — Smile Corner Dental        | 5.0★   | T3   | +27 62 597 5083    | Laudium
+14 | Pretoria East Dentist — Dr J M Mahlase | 3.9★   | T3   | +27 79 555 8049    | Lynnwood Glen
+15 | Drs A & E Behrens                      | 3.5★   | T3   | +27 12 373 5481    | Atteridgeville
+16 | Dr. L.M. Shange                        | 3.1★   | T3   | +27 12 373 6446    | Atteridgeville
+17 | Dentist Consulting Rooms — Eloffsdal   | 4.1★   | T2   | 012 xxx xxxx (V)   | Eloffsdal
+18 | Pretoria Smile — Queenswood            | 4.2★   | T2   | Verify             | Queenswood
+19 | The Family Dentist — Faerie Glen       | 4.4★   | T2   | Verify             | Faerie Glen
+20 | Dr Larochelle vd Bergh                 | 4.0★   | T2   | Verify             | Queenswood
+
+(V) = Verify number before outreach
+
+## RECOMMENDED PACKAGES FOR DENTAL
+
+Package    | Price        | Retainer  | Best For
+-----------|-------------|-----------|-------------------------------------------
+Vula       | R3,999      | R399/mo   | Tier 2/3, budget-conscious leads
+Khula      | R7,999      | R799/mo   | Tier 1, cosmetic/multi-service practices (RECOMMENDED)
+Elevate    | R14,999     | R1,199/mo | Larger multi-practitioner practices
+
+NOTE: These are the SMALL BUSINESS packages (Vula/Khula/Elevate naming), which differ
+from the DENTAL-SPECIFIC packages in File 1 (Molar/Crown/Implant naming). The dental
+pricing in File 1 is higher: R4,499/R8,999/R16,999.
+
+
+################################################################################
+# FILE 5: Comprehensive Report — Dentists in Pretoria, High Reviews, No Website.pdf
+# Description: Broader market research report identifying 16 dentists without websites
+# Date: 2026-04-02
+# Sources: Google Maps, Snupit, WhatClinic, D7 Lead Finder, Facebook, Medpages
+################################################################################
+
+## KEY FINDING
+The vast majority of highly-reviewed dentists in Pretoria DO have websites. However,
+15+ dental practices with notable Google ratings have NO dedicated website — significant
+business opportunity.
+
+## TOP DENTISTS BY REVIEW VOLUME (Context — those WITH websites)
+
+Rank | Dentist                  | Google Reviews | Rating | Has Website?
+-----|--------------------------|----------------|--------|-------------
+1    | Dr J Vally-Omar DENTIST  | 458            | 4.8★   | ✅ Yes
+2    | Hatfield Dental Studio   | 163            | 4.7★   | ✅ Yes
+3    | Smile Dental Care-Brooklyn| 62            | 4.8★   | ✅ Yes
+4    | Smile Solutions Dental   | 61             | 4.4★   | ✅ Yes
+5    | I Love My Smile Dental   | 41             | 4.8★   | ✅ Yes
+6    | Angel Smiles             | 29             | —      | ❓ To verify
+7    | Intercare Tramshed       | 27             | —      | ✅ Yes
+8    | Dr Ivan Marx             | 22             | —      | ❓ To verify
+9    | Dr. Adrian Van der Wal   | 21             | —      | ❓ To verify
+10   | Dazzling Smile Dental    | 15             | —      | ❓ To verify
+
+## PRIMARY TARGET LIST: 16 Dentists with Good Ratings & NO Website
+
+### TIER 1 — High-Rating, Strong Presence (4 leads)
+
+1. 🏆 Dr. Elaine de Lange Dentist
+   - Rating: 4.9/5 | Location: Hatfield Wellness Centre, 454 Hilda St, Hatfield
+   - Phone: +27 67 163 8738
+   - Services: General, Cosmetic, Hygiene, Pediatric
+   - Facebook: 562 likes, 9 check-ins
+   - Hours: Mon: 8AM-4PM, Tue: 8AM-1PM, Wed: 8AM-4PM, Thu: 8AM-1PM, Fri: 8AM-1PM
+   - Notes: Standout opportunity. Reviews: "thorough," "calm, caring, professional"
+   - Listed on: Old Mutual Dentistry Network, Medpages, Polomap
+
+2. 🏆 The Dental Doc — Dr Mythili Swaminathan
+   - Rating: 4.9/5 | Location: Shop 18, Eldo Square, Centurion
+   - Phone: +27 12 658 3094
+   - Hours: Tue-Thu: 8AM-5PM, Sat: 8AM-1PM
+   - Notes: No website or social media. Walk-ins and Google Maps only.
+
+3. 🏆 DR MOTHUPI DENTAL STUDIO
+   - Rating: 5.0/5 | Location: 404 West St, Pretoria North
+   - Phone: +27 79 927 4487
+   - Hours: Mon-Sat: 9AM-5PM
+   - Notes: Perfect 5.0 rating. Newer/smaller practice.
+
+4. 🏆 Refresh Dental
+   - Rating: 5.0/5 | Location: 153 River Rd, Lyttelton Manor, Centurion
+   - Phone: +27 61 416 4649
+   - Hours: Mon-Fri: 9AM-5PM, Sat: 9AM-1PM
+   - Notes: Perfect 5-star in affluent area.
+
+### TIER 2 — Good Rating, Established Practices (6 leads)
+
+5. Dr G Kellerman & Dr C Bosch Dentists (4.7★, Hatfield)
+   - Phone: +27 12 342 3105
+   - Two-practitioner practice, possible second listing
+
+6. Dental Care Centre (4.7★, Pretoria North)
+   - Phone: +27 12 546 6863
+   - De Jongh Sentrum, Saturday hours
+
+7. Dr. Yolande Jordaan (4.6★, Faerie Glen)
+   - Phone: +27 12 004 2510
+   - Affluent area, patients research online
+
+8. DENTIST DR SHAERAH MOHAMED (4.3★, Laudium)
+   - Phone: +27 12 374 6199
+   - Shares address with Dr MI Khan Orthodontist (who HAS website)
+
+9. Dr ML Geldenhuys (4.3★, Sunnyside)
+   - Phone: +27 12 430 4121
+   - Full-spectrum: General, Cosmetic, Orthodontics, Surgery
+   - Listed on Snupit, WhoDoYou, D7 Lead Finder
+
+10. Dr Vanessa Olckers (4.2★, Pretoria North)
+    - Phone: +27 12 546 0792
+    - Old Mutual Dentistry Network Practice #054
+
+### TIER 3 — Smaller/Emerging Practices (6 leads)
+
+11. Dr. Thomas J. Phalandwa (4.3★, Saulsville)
+    - Phone: +27 12 375 6456
+
+12. Pretoria East Dentist Dr J M Mahlase (3.9★, Lynnwood Glen)
+    - Phone: +27 79 555 8049
+
+13. Nkwashu O A (5.0★, Atteridgeville)
+    - Phone: +27 12 373 6997
+    - At Attmed Health Center
+
+14. Drs A & E Behrens (3.5★, Atteridgeville)
+    - Phone: +27 12 373 5481
+    - Attlyn Shopping Centre, Saturday hours
+
+15. DENTIST - DR F KHAN (Smile Corner Dental Surgery) (5.0★, Laudium)
+    - Phone: +27 62 597 5083
+    - Emergency dental services, WhatsApp link only
+
+16. Dr. L.M. Shange (3.1★, Atteridgeville)
+    - Phone: +27 12 373 6446
+    - WEEKEND hours including Sunday (Sat-Sun: 8AM-1PM)
+
+## GEOGRAPHIC DISTRIBUTION
+
+Area                      | Count | Notable Practices
+--------------------------|-------|------------------------------------------
+Hatfield                  |   2   | Dr. Elaine de Lange (4.9★), Kellerman & Bosch (4.7★)
+Pretoria North            |   4   | MOTHUPI (5.0★), Dental Care Centre (4.7★), Olckers (4.2★)
+Faerie Glen / East        |   2   | Dr Jordaan (4.6★), Dr Mahlase (3.9★)
+Sunnyside                 |   1   | Dr ML Geldenhuys (4.3★)
+Centurion                 |   2   | The Dental Doc (4.9★), Refresh Dental (5.0★)
+Laudium                   |   2   | Dr Shaerah Mohamed (4.3★), Dr F Khan (5.0★)
+Atteridgeville/Saulsville |   4   | Dr Phalandwa (4.3★), Nkwashu (5.0★), Behrens (3.5★), Shange (3.1★)
+                          |       |
+TOTAL                     |  17*  | *includes Dr Olckers in Pta North count
+
+## PLATFORM PRESENCE SUMMARY
+- ✅ Google Maps (primary listing) — ALL
+- ✅ Old Mutual / GEMS / BPMAS Dental Networks — SOME
+- ⚠ Facebook pages — FEW (Dr. de Lange, Heavenly Crowns - closed)
+- ❌ No Snupit, WhatClinic, or personal website — MOST
+
+## QUICK CONTACT REFERENCE (16 leads)
+
+#  | Practice Name                    | Rating | Phone              | Area
+---|----------------------------------|--------|--------------------|--------------------
+1  | Dr. Elaine de Lange              | 4.9★   | +27 67 163 8738    | Hatfield
+2  | The Dental Doc                   | 4.9★   | +27 12 658 3094    | Centurion
+3  | DR MOTHUPI DENTAL STUDIO        | 5.0★   | +27 79 927 4487    | Pretoria North
+4  | Refresh Dental                   | 5.0★   | +27 61 416 4649    | Centurion
+5  | Dr G Kellerman & Dr C Bosch     | 4.7★   | +27 12 342 3105    | Hatfield
+6  | Dental Care Centre               | 4.7★   | +27 12 546 6863    | Pretoria North
+7  | Dr. Yolande Jordaan              | 4.6★   | +27 12 004 2510    | Faerie Glen
+8  | Dr Shaerah Mohamed               | 4.3★   | +27 12 374 6199    | Laudium
+9  | Dr ML Geldenhuys                 | 4.3★   | +27 12 430 4121    | Sunnyside
+10 | Dr. Thomas J. Phalandwa          | 4.3★   | +27 12 375 6456    | Saulsville
+11 | Dr Vanessa Olckers               | 4.2★   | +27 12 546 0792    | Pretoria North
+12 | Dr J M Mahlase                   | 3.9★   | +27 79 555 8049    | Lynnwood Glen
+13 | Nkwashu O A                      | 5.0★   | +27 12 373 6997    | Atteridgeville
+14 | Dr F Khan (Smile Corner)         | 5.0★   | +27 62 597 5083    | Laudium
+15 | Drs A & E Behrens                | 3.5★   | +27 12 373 5481    | Atteridgeville
+16 | Dr. L.M. Shange                  | 3.1★   | +27 12 373 6446    | Atteridgeville
+
+## IMPORTANT NOTES
+1. Heavenly Crowns Dental Pretoria — identified but PERMANENTLY CLOSED
+2. Review counts for no-website dentists generally in 5-50 range (estimated)
+3. Dr. Elaine de Lange = single best opportunity (4.9★, 562 FB likes, multi-network)
+4. All contact details verified across Google Maps + directory listings
+
+
+################################################################################
+# CROSS-FILE ANALYSIS & DASHBOARD-READY DATA POINTS
+################################################################################
+
+## PRICING DISCREPANCY NOTED
+The Company Profile (File 3) lists general/small business packages at LOWER prices
+than the dental-specific pricing (File 1):
+- Vula (R3,999) vs Molar (R4,499) — difference: R500
+- Khula (R7,999) vs Crown (R8,999) — difference: R1,000
+- Elevate (R14,999) vs Implant (R16,999) — difference: R2,000
+
+The dental packages are R500-R2,000 MORE than the equivalent general packages.
+
+## COMBINED LEAD COUNTS
+- Dental leads (File 4): 20 unique leads
+- Dental leads (File 5): 16 unique leads (subset, minus 4 from File 4)
+- Multi-sector leads (File 2): 30 leads across 7+ sectors
+  - Law Firms: 4
+  - Funeral Homes: 4
+  - Guesthouses: 3
+  - Transportation/Logistics: 4
+  - Construction: 2
+  - Private Schools: 4
+  - Medical/General Practice: 4
+  - Dental Clinics: 6 (Gauteng-wide, separate from File 4's Pretoria focus)
+- TOTAL UNIQUE LEADS ACROSS ALL FILES: ~60+
+
+## POTENTIAL REVENUE PIPELINE (Conservative Estimates)
+Dental only (20 leads):
+- If 30% convert (6 leads) at average Crown package: 6 × R8,999 = R53,994 once-off
+- Plus retainers: 6 × R849 × 12 = R61,128/year recurring
+
+All sectors (30+ multi-sector leads):
+- If 20% convert (6 leads) at average R15,000: R90,000 once-off
+- Plus bespoke projects (logistics, schools): potential R30k-R100k each
+
+## KEY METRICS FOR DASHBOARD
+- Total leads identified: 50+
+- Tier 1 priority leads: 9 (4 dental + 5 multi-sector)
+- Average Google rating of leads: 4.1-4.5★
+- Coverage areas: 10+ suburbs/areas
+- Sectors targeted: 8 (Dental, Legal, Funeral, Hospitality, Logistics, Construction, Education, Medical)
+- Cheapest package: R3,999 (Vula) / R4,499 (Molar)
+- Most expensive package: R18,999 (Isibindi School) / R16,999 (Implant Dental)
+- Highest potential single deal: R30k-R50k (The Thinc Clinic, bespoke)
+- Total addressable leads with verified phones: ~45 (5 need verification)
+
+================================================================================
+END OF DATA EXTRACTION SUMMARY
+================================================================================

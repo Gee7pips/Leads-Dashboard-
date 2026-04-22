@@ -1,0 +1,577 @@
+================================================================================
+MARKETING SKILLS ANALYSIS — Lead Monitoring, Conversion & Sales Enablement
+================================================================================
+Generated: Comprehensive extraction from 12 marketing skill files
+Source: /home/z/my-project/.agents/skills/
+================================================================================
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. LEAD MAGNETS (lead-magnets)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CORE PURPOSE:
+Plan lead magnets that capture emails, generate qualified leads, and naturally
+lead to product adoption.
+
+KEY FRAMEWORKS & METHODOLOGIES:
+• Buyer Stage Matching: Awareness → Consideration → Decision
+  - Awareness: Educate (checklists, cheat sheets, guides, quizzes)
+  - Consideration: Evaluate (comparisons, assessments, case studies, webinars)
+  - Decision: Implement (templates, free trials, implementation guides, ROI calculators)
+• Gating Strategy Matrix (Full gate / Partial gate / Ungated / Content upgrade)
+• Progressive Commitment Pattern: Email only → Password + name → Customization
+
+ACTIONABLE STRATEGIES:
+• Solve ONE specific pain point, not a broad topic
+• High perceived value, low time investment (< 30 min, ideally < 10 min)
+• Create a natural path to product — demonstrate expertise for a gap your product fills
+• Content upgrades convert 2-5x better than generic sidebar CTAs
+• Every extra form field reduces conversion by 5-10%
+• Optimize the thank-you page: confirm delivery, offer next step, share prompt
+
+SCORING MODELS / BENCHMARKS:
+• Landing page conversion: 20-40% (warm traffic), 5-15% (cold)
+• Lead-to-customer rate: 1-5% (B2B)
+• Email engagement: 30-50% open, 2-5% click
+• Lead quality signals: higher-than-average email engagement, trial/demo progression,
+  low unsubscribe rate, ICP demographic match
+
+TEMPLATES / OUTPUT FORMAT:
+1. Lead Magnet Recommendation (format, topic, buyer stage, effort)
+2. Content Outline (sections, length, unique value)
+3. Gating & Capture Plan (form fields, landing page structure)
+4. Distribution Plan (promotion channels, content upgrades, paid)
+5. Measurement Plan (KPIs, A/B test priorities)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. SALES ENABLEMENT (sales-enablement)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CORE PURPOSE:
+Create sales collateral that reps actually use — decks, one-pagers, objection docs,
+demo scripts, and playbooks that help close deals.
+
+KEY FRAMEWORKS & METHODOLOGIES:
+• 10-12 Slide Pitch Deck Framework:
+  1. Current World Problem → 2. Cost of the Problem → 3. The Shift Happening →
+  4. Your Approach → 5. Product Walkthrough (3-4 workflows) → 6. Proof Points →
+  7. Case Study → 8. Implementation/Timeline → 9. ROI/Value →
+  10. Pricing Overview → 11. Next Steps/CTA
+• Objection Handling Categories: Price, Timing, Competition, Authority,
+  Status Quo, Technical
+• Buyer Persona Types: Economic, Technical, End User, Champion, Blocker
+• Qualification Frameworks: BANT, MEDDIC
+• Value Prop by Persona Matrix (CTO, VP Sales, CFO, End User)
+
+ACTIONABLE STRATEGIES:
+• Involve reps in creation — use their language, not marketing's
+• Tailor to persona, deal stage, and use case
+• Scannable over comprehensive — reps need info in 3 seconds, not 30
+• Every claim connects to revenue, efficiency, or risk reduction
+• Demo AFTER discovery, not before — customize to their use case
+• One-pagers: literally one page, scannable in 30 seconds
+• Proposals: 5-7 pages max, customize exec summary at minimum
+• Playbooks: review quarterly, assign an owner, test with top performers first
+
+SCORING MODELS / TEMPLATES:
+• Objection Response Framework: 1) Objection statement → 2) Why they say it →
+  3) Response approach → 4) Proof point → 5) Follow-up question
+• ROI Calculator: Inputs (current state) → Calculations (value formula) →
+  Outputs (annual ROI %, payback period, 3-year value)
+• Buyer Persona Cards: Role, Goals, Pains, Top objections, Evaluation criteria,
+  Buying process, Messaging angle
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. SIGNUP FLOW CRO (signup-flow-cro)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CORE PURPOSE:
+Reduce friction, increase completion rates, and set users up for successful
+activation in signup/registration/trial flows.
+
+KEY FRAMEWORKS & METHODOLOGIES:
+• Field Priority Hierarchy:
+  - Essential: Email, Password
+  - Often needed: Name
+  - Usually deferrable: Company, Role, Team size, Phone, Address
+• Single-Step vs. Multi-Step Decision Matrix
+• Progressive Commitment Pattern: Email only → Password + name → Customization
+• Field-Level Drop-Off Analysis
+
+ACTIONABLE STRATEGIES:
+• Minimize required fields — every field reduces conversion
+• Show value BEFORE asking for commitment
+• Show progress if multi-step; use smart defaults; pre-fill when possible
+• Password UX: allow paste, show strength meter, consider passwordless
+• Social auth: place prominently (Google for B2B CTOs, Microsoft for B2B)
+• Inline validation, not just on submit; don't clear form on error
+• Error messages: specific ("Email already registered" + recovery path)
+• Mobile: 44px+ touch targets, appropriate keyboard types, sticky CTA
+• A/B test: single vs. multi-step, credit card required vs. not, trial length
+
+KEY METRICS:
+• Form start rate, completion rate, field-level drop-off
+• Time to complete, error rate by field, mobile vs. desktop completion
+• Social auth vs. email signup ratio
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. COLD EMAIL (cold-email)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CORE PURPOSE:
+Write B2B cold emails and follow-up sequences that get replies.
+
+KEY FRAMEWORKS & METHODOLOGIES:
+• Copy Frameworks:
+  - Observation → Problem → Proof → Ask
+  - Question → Value → Ask
+  - Trigger → Insight → Ask
+  - Story → Bridge → Ask
+• 4-Level Personalization System (see references/personalization.md)
+• Follow-Up Cadence: 3-5 total emails, increasing gaps, each stands alone
+• Voice Calibration by Audience:
+  - C-suite: ultra-brief, peer-level, understated
+  - Mid-level: specific value, slightly more detail
+  - Technical: precise, no fluff
+
+ACTIONABLE STRATEGIES:
+• Write like a peer, not a vendor — conversational but not sloppy
+• Every sentence must earn its place — ruthlessly short
+• Personalization MUST connect to the problem (not just swapped-in names)
+• Lead with their world, not yours ("you/your" > "I/we")
+• One ask, low friction — interest-based CTAs beat meeting requests
+• Subject lines: 2-4 words, lowercase, internal-looking, no punctuation tricks
+• Each follow-up adds something NEW — a different angle, fresh proof
+• "Just checking in" gives no reason to respond
+• The breakup email is your last touch — honor it
+
+QUALITY CHECK:
+1. Does it sound human? (Read aloud)
+2. Would YOU reply to this?
+3. Does every sentence serve the reader, not the sender?
+4. Is personalization connected to the problem?
+5. One clear, low-friction ask?
+
+AVOID AT ALL COSTS:
+"I hope this email finds you well," "My name is X and I work at Y," jargon
+("synergy," "leverage," "circle back"), feature dumps, HTML/images, fake "Re:"
+subject lines, 30-minute call requests in first touch
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. EMAIL SEQUENCE (email-sequence)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CORE PURPOSE:
+Create email sequences that nurture relationships, drive action, and move people
+toward conversion.
+
+KEY FRAMEWORKS & METHODOLOGIES:
+• Core Principles: One Email One Job / Value Before Ask / Relevance Over Volume /
+  Clear Path Forward
+• Sequence Type Frameworks:
+  - Welcome (5-7 emails, 12-14 days): Deliver → Quick win → Story/Why →
+    Social proof → Overcome objection → Feature highlight → Conversion
+  - Lead Nurture (6-8 emails, 2-3 weeks): Lead magnet → Expand → Problem
+    deep-dive → Solution framework → Case study → Differentiation →
+    Objection handler → Direct offer
+  - Re-Engagement (3-4 emails, 2 weeks, trigger: 30-60 days inactivity)
+  - Onboarding (5-7 emails, 14 days): Coordinate with in-app onboarding
+
+ACTIONABLE STRATEGIES:
+• Subject lines: Clear > Clever, 40-60 characters, patterns: question, how-to,
+  number, direct, story tease
+• Preview text: ~90-140 chars, don't repeat subject line, add intrigue
+• Email length: 50-125 words (transactional), 150-300 (educational),
+  300-500 (story-driven)
+• CTA guidelines: Buttons for primary, links for secondary, one primary per email
+• Format: Short paragraphs, white space, mobile-first
+• Timing: Welcome = immediate, early = 1-2 days apart, nurture = 2-4 days
+• Exit conditions: Always define when they leave the sequence
+
+SUBJECT LINE PATTERNS THAT WORK:
+• Question: "Still struggling with X?"
+• How-to: "How to [achieve outcome] in [timeframe]"
+• Number: "3 ways to [benefit]"
+• Direct: "[First name], your [thing] is ready"
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. PAGE CRO (page-cro)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CORE PURPOSE:
+Analyze marketing pages and provide actionable recommendations to improve
+conversion rates.
+
+KEY FRAMEWORKS & METHODOLOGIES:
+• 7-Dimension CRO Analysis Framework (in order of impact):
+  1. Value Proposition Clarity (highest impact) — 5-second test
+  2. Headline Effectiveness — outcome-focused, specificity, social proof
+  3. CTA Placement, Copy, Hierarchy — one clear primary action, visible above fold
+  4. Visual Hierarchy and Scannability — scanning test, white space
+  5. Trust Signals and Social Proof — logos, testimonials, case studies, reviews
+  6. Objection Handling — FAQ, guarantees, comparisons, transparency
+  7. Friction Points — form fields, unclear next steps, mobile issues, load times
+
+ACTIONABLE STRATEGIES:
+• Strong headline patterns: "Get [outcome] without [pain]", include numbers/
+  timeframes, "Join 10,000+ teams who..."
+• CTA hierarchy: Weak ("Submit", "Sign Up", "Learn More") → Strong
+  ("Start Free Trial", "Get My Report", "See Pricing")
+• Trust signals near CTAs and after benefit claims
+• Page-specific tactics:
+  - Homepage: Clear positioning, quick conversion path, handle both ready-to-buy
+    and researching
+  - Landing page: Message match with traffic source, single CTA, remove nav
+  - Pricing: Clear comparison, recommended plan indication
+  - Blog: Contextual CTAs at natural stopping points
+
+OUTPUT STRUCTURE:
+• Quick Wins (implement now) → High-Impact Changes (prioritize) →
+  Test Ideas (A/B test) → Copy Alternatives (2-3 per key element)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. CHURN PREVENTION (churn-prevention)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CORE PURPOSE:
+Reduce both voluntary churn (customer choice) and involuntary churn (failed
+payments) through cancel flows, save offers, proactive retention, and dunning.
+
+KEY FRAMEWORKS & METHODOLOGIES:
+• Two-Type Churn Model:
+  - Voluntary (50-70% of total): Cancel flows, save offers, exit surveys
+  - Involuntary (30-50% of total): Dunning emails, smart retries, card updaters
+• Cancel Flow Sequence: Trigger → Survey → Dynamic Offer → Confirmation → Post-Cancel
+• Dynamic Offer-to-Reason Mapping:
+  - Too expensive → Discount (20-30% for 2-3 months) / Downgrade
+  - Not using enough → Pause (1-3 months) / Free onboarding session
+  - Missing feature → Roadmap preview + timeline / Workaround guide
+  - Switching competitor → Comparison + discount / Feedback session
+  - Technical issues → Escalate to support / Credit + priority fix
+  - Temporary/seasonal → Pause subscription / Downgrade
+• Health Score Model (0-100):
+  Health Score = Login freq (×0.30) + Feature usage (×0.25) + Support sentiment
+  (×0.15) + Billing health (×0.15) + Engagement (×0.15)
+  80-100: Healthy (upsell) | 60-79: Needs attention (check-in) |
+  40-59: At risk (intervention) | 0-39: Critical (personal outreach)
+• Dunning Stack: Pre-dunning → Smart retry → Dunning emails → Grace period →
+  Hard cancel
+• Churn Risk Signals (with timeframe): Login drop 50%+ (2-4 weeks), key feature
+  stops (1-3 weeks), support tickets spike then stop (1-2 weeks), billing page
+  visits (days), data export (critical — days), NPS < 6 (1-3 months)
+
+ACTIONABLE STRATEGIES:
+• Never use the same offer for every reason — match to the specific concern
+• Avoid 50%+ discounts (trains cancel-for-deals behavior)
+• Pause max 3 months (longer rarely reactivates); 60-80% of pausers return
+• Pre-dunning: card expiry alerts (30/15/7 days), backup payment method,
+  card updater services
+• Smart retry: Day 1, Day 3, Day 5, Day 7; retry on original success day
+• For high-value accounts (top 10-20% MRR): route to CS / founder personal email
+• Post-cancel: make reactivation easy, trigger win-back emails
+
+BENCHMARKS:
+• Monthly churn: <5% B2C, <2% B2B
+• Cancel flow save rate: 25-35%
+• Offer acceptance: 15-25%
+• Pause reactivation: 60-80%
+• Dunning recovery: 50-60%
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. REVOPS (revops)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CORE PURPOSE:
+Design and optimize the systems connecting marketing, sales, and customer success
+into a unified revenue engine.
+
+KEY FRAMEWORKS & METHODOLOGIES:
+• Lead Lifecycle Framework (7 stages):
+  Subscriber → Lead → MQL → SQL → Opportunity → Customer → Evangelist
+  (Each with entry criteria, exit criteria, and owner)
+• MQL Definition = Fit Score + Engagement Score (neither alone sufficient)
+• Lead Scoring Dimensions:
+  - Explicit (fit): company size, industry, revenue, title, seniority, tech stack
+  - Implicit (engagement): page visits, downloads, webinar attendance, email
+    engagement, product usage
+  - Negative scoring: competitor domains, student emails, unsubscribes, title
+    mismatches
+• Routing Methods: Round-robin, Territory-based, Account-based, Skill-based
+• Pipeline Stages: Qualified → Discovery → Demo/Evaluation → Proposal →
+  Negotiation → Closed Won/Lost
+• Deal Desk Approval Tiers: Auto-approved → Sales manager (10-20% discount) →
+  VP Sales (20-40%) → Deal desk review (40%+) → Finance+Legal (multi-year)
+
+ACTIONABLE STRATEGIES:
+• Speed-to-lead is #1 conversion factor:
+  - Contact within 5 minutes = 21x more likely to qualify
+  - After 30 minutes, conversion drops 10x
+  - After 24 hours, lead is effectively cold
+• MQL-to-SQL Handoff SLA: Contact within 4 hours, qualify/reject within 48 hours
+• Pipeline coverage ratio target: 3-4x quota
+• Stage hygiene: Required fields per stage, stale deal alerts (2x average days),
+  stage skip detection, close date discipline
+• Quarterly audit: Dedup, validate emails, archive 12+ month inactive contacts,
+  audit lifecycle distribution
+• Data enrichment: Clearbit (tech), Apollo (prospecting), ZoomInfo (enterprise)
+
+KEY BENCHMARKS:
+• Lead-to-MQL: 5-15% | MQL-to-SQL: 30-50% | SQL-to-Opportunity: 50-70%
+• Win rate: 20-30% | LTV:CAC ratio: 3:1 to 5:1
+• Pipeline velocity = (# deals × avg deal size × win rate) / avg sales cycle
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. ANALYTICS TRACKING (analytics-tracking)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CORE PURPOSE:
+Set up tracking that provides actionable insights for marketing and product
+decisions.
+
+KEY FRAMEWORKS & METHODOLOGIES:
+• 4 Core Principles: Track for Decisions (not data) / Start with Questions /
+  Name Things Consistently / Maintain Data Quality
+• Tracking Plan Structure: Event Name | Category | Properties | Trigger | Notes
+• Event Naming Convention: Object-Action format (signup_completed, button_clicked)
+• UTM Standard Parameters: source, medium, campaign, content, term
+• GTM Container: Tags (code) → Triggers (when) → Variables (values)
+• Data Layer Pattern for GTM implementation
+
+ACTIONABLE STRATEGIES:
+• Every event should inform a decision — avoid vanity metrics
+• Work backwards: What do you need to know? → What action will you take?
+  → What to track
+• Essential marketing events: cta_clicked, form_submitted, signup_completed,
+  demo_requested
+• Essential product events: onboarding_step_completed, feature_used,
+  purchase_completed, subscription_cancelled
+• Standard properties: Page (title, location, referrer), User (id, type, plan),
+  Campaign (UTM params), Product (id, name, price)
+• UTM naming: Lowercase, consistent separators, be specific
+• Privacy: Cookie consent in EU/UK/CA, no PII in properties, IP anonymization
+
+VALIDATION CHECKLIST:
+□ Events firing on correct triggers
+□ Property values populating correctly
+□ No duplicate events
+□ Cross-browser and mobile
+□ Conversions recorded
+□ No PII leaking
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+10. LAUNCH STRATEGY (launch-strategy)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CORE PURPOSE:
+Plan launches that build momentum, capture attention, and convert interest
+into users.
+
+KEY FRAMEWORKS & METHODOLOGIES:
+• ORB Framework (channel types):
+  - Owned: Email, blog, podcast, community, website (get more effective over time)
+  - Rented: Social media, app stores, YouTube, Reddit (algorithms shift)
+  - Borrowed: Guest content, collaborations, speaking, influencers (instant
+    credibility)
+  Rule: Everything should ultimately lead back to owned channels
+• Five-Phase Launch Approach:
+  Phase 1: Internal Launch (validate with friendly users)
+  Phase 2: Alpha Launch (landing page + early access signup)
+  Phase 3: Beta Launch (work through waitlist, start marketing with teasers)
+  Phase 4: Early Access Launch (leak details, gather usage data, scale up)
+  Phase 5: Full Launch (open signups, charge, announce across all channels)
+• Update Prioritization Matrix: Major (full campaign) / Medium (targeted) /
+  Minor (changelog only)
+
+ACTIONABLE STRATEGIES:
+• Start with 1-2 owned channels based on audience
+• Borrowed channels: List industry leaders → Pitch win-win → Set up affiliate
+  incentives
+• Product Hunt: Build relationships BEFORE launch day, optimize listing, treat
+  as all-day event, respond to every comment in real-time
+• Stagger announcements instead of shipping everything at once
+• Post-launch: onboarding email sequence, comparison pages, interactive demo,
+  roundup email inclusion
+• Reuse high-performing tactics across launches
+
+LAUNCH CHECKLIST:
+Pre-Launch: Landing page, email capture, early access list, owned channels,
+  rented channel presence, borrowed opportunities, assets, onboarding, tracking
+Launch Day: Announcement email, blog post, social posts, in-app announcement,
+  website banner, team ready
+Post-Launch: Onboarding emails active, follow-up engaged prospects, comparison
+  pages, interactive demo, gather feedback, plan next launch
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+11. COPYWRITING (copywriting)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CORE PURPOSE:
+Write marketing copy that is clear, compelling, and drives action.
+
+KEY FRAMEWORKS & METHODOLOGIES:
+• 6 Copywriting Principles:
+  1. Clarity Over Cleverness
+  2. Benefits Over Features
+  3. Specificity Over Vagueness
+  4. Customer Language Over Company Language
+  5. One Idea Per Section
+  6. Simple/Active/Confident/Honest writing style
+• Page Structure Framework:
+  Above the Fold (Headline + Subheadline + Primary CTA) →
+  Social Proof → Problem/Pain → Solution/Benefits (3-5) → How It Works (3-4
+  steps) → Objection Handling (FAQ) → Final CTA
+• Headline Formulas:
+  - "{Achieve outcome} without {pain point}"
+  - "The {category} for {audience}"
+  - "Never {unpleasant event} again"
+  - "{Question highlighting main pain point}"
+
+ACTIONABLE STRATEGIES:
+• Be direct — get to the point, don't bury the value
+• Use rhetorical questions to engage readers
+• Use analogies for abstract concepts
+• CTA formula: [Action Verb] + [What They Get] + [Qualifier if needed]
+  Strong: "Start My Free Trial", "Get the Complete Checklist", "See Pricing for
+  My Team"
+  Weak: "Submit", "Sign Up", "Learn More", "Click Here"
+• Voice/tone calibration by brand (casual, professional, formal) but maintain
+  consistency
+• Use voice-of-customer language from reviews, interviews, support tickets
+• Quick quality check: Jargon? Sentences doing too much? Passive voice?
+  Exclamation points? Marketing buzzwords without substance?
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+12. MARKETING PSYCHOLOGY (marketing-psychology)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CORE PURPOSE:
+Apply psychological principles, mental models, and behavioral science to
+marketing for better influence, persuasion, and decision-making.
+
+KEY FRAMEWORKS & METHODOLOGIES:
+(40+ mental models organized into 5 categories)
+
+CATEGORY 1 — FOUNDATIONAL THINKING MODELS:
+• First Principles: Break down to basic truths, build up (5 Whys technique)
+• Jobs to Be Done: Frame around the job, not features
+• Inversion: "What would guarantee failure?" — then avoid those things
+• Pareto Principle (80/20): Find the 20% driving 80% of results
+• Theory of Constraints: Find the ONE bottleneck limiting throughput
+• Second-Order Thinking: Consider effects of effects
+• Barbell Strategy: 80% proven channels + 20% experimental bets
+• Local vs. Global Optima: Zoom out before optimizing the wrong thing
+
+CATEGORY 2 — UNDERSTANDING BUYERS:
+• Endowment Effect: Free trials make customers reluctant to give up
+• IKEA Effect: Customization increases perceived value and commitment
+• Zero-Price Effect: Free is psychologically different, disproportionate appeal
+• Hyperbolic Discounting: Emphasize immediate benefits over future ones
+• Status-Quo Bias: Reduce friction to switch, make transition feel safe
+• Paradox of Choice: Limit options — 3 pricing tiers beat 7
+• Goal-Gradient Effect: Show progress bars, "almost there" messaging
+• Zeigarnik Effect: "You're 80% done" creates pull to finish
+• Mimetic Desire: Show desirable people want your product
+• Mere Exposure Effect: Consistent presence builds preference
+
+CATEGORY 3 — INFLUENCING BEHAVIOR:
+• Reciprocity: Give first → people want to give back
+• Commitment & Consistency: Small commitments lead to larger ones (foot-in-door)
+• Loss Aversion: "Don't miss out" beats "You could gain" (losses feel 2x worse)
+• Anchoring: Show higher price first to anchor expectations
+• Decoy Effect: Add inferior third option to make preferred option shine
+• Framing: "90% success rate" > "10% failure rate"
+• Social Proof / Bandwagon: Customer counts, testimonials, logos, reviews
+• Scarcity: Limited-time offers, low-stock warnings (only when genuine)
+• Door-in-the-Face: Show enterprise price first, then affordable plan
+
+CATEGORY 4 — PRICING PSYCHOLOGY:
+• Charm Pricing: $99 feels much cheaper than $100 (left-digit effect)
+• Rounded Prices: $500/month = premium; $497/month = value
+• Rule of 100: Under $100 → percentage discount; Over $100 → absolute discount
+• Mental Accounting: "$3/day" feels cheaper than "$90/month"
+
+CATEGORY 5 — DESIGN & BEHAVIOR:
+• BJ Fogg Behavior Model: Behavior = Motivation × Ability × Prompt
+• EAST Framework: Make behaviors Easy, Attractive, Social, Timely
+• Nudge Theory: Default selections, strategic ordering, friction reduction
+• Hick's Law: More choices = slower decisions = more abandonment
+• Activation Energy: Make the first step trivially easy
+• AIDA Funnel: Attention → Interest → Desire → Action
+• Rule of 7: ~7 touchpoints before converting
+
+QUICK REFERENCE — CHALLENGE → MODEL MAPPING:
+• Low conversions: Hick's Law, Activation Energy, BJ Fogg
+• Price objections: Anchoring, Framing, Mental Accounting, Loss Aversion
+• Building trust: Authority, Social Proof, Reciprocity, Pratfall Effect
+• Increasing urgency: Scarcity, Loss Aversion, Zeigarnik Effect
+• Retention/churn: Endowment Effect, Switching Costs, Status-Quo Bias
+• Growth stalling: Theory of Constraints, Local vs Global Optima, Compounding
+• Decision paralysis: Paradox of Choice, Default Effect, Nudge Theory
+• Onboarding: Goal-Gradient, IKEA Effect, Commitment & Consistency
+
+
+================================================================================
+CROSS-SKILL SYNTHESIS: LEAD CONVERSION PIPELINE
+================================================================================
+
+The 12 skills form a complete lead-to-revenue system:
+
+AWARENESS & CAPTURE:
+  lead-magnets → page-cro → signup-flow-cro → analytics-tracking
+
+NURTURE & ENGAGEMENT:
+  email-sequence → copywriting → marketing-psychology
+
+CONVERSION & CLOSE:
+  sales-enablement → cold-email → revops
+
+RETENTION & EXPANSION:
+  churn-prevention → launch-strategy (ongoing launches feed retention)
+
+TOP 10 HIGHEST-IMPACT STRATEGIES ACROSS ALL SKILLS:
+
+1. SPEED-TO-LEAD: Contact within 5 minutes = 21x more likely to qualify
+   (RevOps)
+
+2. MATCH OFFERS TO REASONS: Dynamic save offers based on cancel reason,
+   not blanket discounts (Churn Prevention)
+
+3. REDUCE FRICTION AT EVERY STEP: Every extra field = 5-10% fewer conversions;
+   progressive commitment pattern (Signup Flow CRO, Lead Magnets)
+
+4. WRITE LIKE A PEER: Human-sounding cold emails with interest-based CTAs
+   outperform templates (Cold Email)
+
+5. HEALTH SCORE MODEL: Weighted signals (login freq ×0.30, feature usage ×0.25,
+   etc.) to predict and prevent churn (Churn Prevention)
+
+6. ONE EMAIL ONE JOB: Single CTA per email, value before ask, relevance over
+   volume (Email Sequence)
+
+7. 5-SECOND VALUE PROP TEST: Can visitors understand what it is and why they
+   should care within 5 seconds? (Page CRO)
+
+8. OWNED > RENTED > BORROWED CHANNELS: Build assets that compound
+   (Launch Strategy)
+
+9. LOSS AVERSION OVER GAIN FRAMING: "Don't miss out" beats "You could gain";
+   losses feel 2x worse than equivalent gains (Marketing Psychology)
+
+10. REPS NEED INFO IN 3 SECONDS: Scannable sales collateral with outcome-focused
+    messaging, not feature tours (Sales Enablement)
+
+================================================================================
+END OF ANALYSIS
+================================================================================

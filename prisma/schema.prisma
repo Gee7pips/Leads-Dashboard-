@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Lead {
+  id          String   @id @default(cuid())
+  name        String
+  sector      String
+  subSector   String   @default("")
+  location    String
+  area        String   @default("")
+  phone       String   @default("")
+  rating      Float    @default(0)
+  tier        Int      @default(3)
+  stage       String   @default("new") // new, contacted, demo_sent, meeting_booked, proposal_sent, negotiation, won, lost
+  status      String   @default("active") // active, inactive, converted, lost
+  source      String   @default("research") // research, referral, inbound, outbound
+  notes       String   @default("")
+  address     String   @default("")
+  hours       String   @default("")
+  services    String   @default("")
+  onlinePresence String @default("")
+  recommendedPackage String @default("")
+  estimatedValue Float   @default(0)
+  hasWebsite  Boolean  @default(false)
+  lastContact DateTime?
+  nextAction  String   @default("")
+  nextActionDate DateTime?
+  hotLead     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  activities  Activity[]
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  leadId    String
+  type      String   // call, email, whatsapp, meeting, proposal, demo, note
+  summary   String
+  outcome   String   @default("")
+  date      DateTime @default(now())
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}

@@ -54,6 +54,11 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { toast } from 'sonner'
+import {
+  ALL_TEMPLATES, renderTemplate, generateFullSequence,
+  getTemplatesForCategory, getTemplatesForChannel,
+  type LeadContext, type TemplateResult, type TemplateIndexEntry, type SequenceStep,
+} from '@/lib/email-templates'
 
 // ─── Types ───────────────────────────────────────────────────────────
 interface LeadActivity {
@@ -218,6 +223,40 @@ function formatDate(dateStr: string|null): string {
 function formatRelativeDate(dateStr: string): string {
   const d=Math.floor((Date.now()-new Date(dateStr).getTime())/(1000*60*60*24))
   if(d===0)return'Today';if(d===1)return'Yesterday';if(d<7)return`${d} days ago`;return formatDate(dateStr)
+}
+
+function leadToContext(lead: Lead): LeadContext {
+  return {
+    name: lead.name,
+    sector: lead.sector,
+    subSector: lead.subSector,
+    location: lead.location,
+    area: lead.area,
+    rating: lead.rating,
+    tier: lead.tier,
+    services: lead.services,
+    recommendedPackage: lead.recommendedPackage,
+    estimatedValue: lead.estimatedValue,
+    phone: lead.phone,
+    onlinePresence: lead.onlinePresence,
+    notes: lead.notes,
+  }
+}
+
+function ChannelBadge({ channel }: { channel: string }) {
+  const styles: Record<string, string> = {
+    email: 'bg-sky-100 text-sky-700 border-sky-200',
+    whatsapp: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+    linkedin: 'bg-violet-100 text-violet-700 border-violet-200',
+    phone: 'bg-amber-100 text-amber-700 border-amber-200',
+  }
+  const icons: Record<string, React.ReactNode> = {
+    email: <Mail className="h-3 w-3"/>,
+    whatsapp: <MessageSquare className="h-3 w-3"/>,
+    linkedin: <UserCircle className="h-3 w-3"/>,
+    phone: <Phone className="h-3 w-3"/>,
+  }
+  return <Badge variant="outline" className={`text-[10px] font-medium gap-1 ${styles[channel]||'bg-gray-100 text-gray-700'}`}>{icons[channel]}{channel.charAt(0).toUpperCase()+channel.slice(1)}</Badge>
 }
 
 // ─── Animated Count Hook ─────────────────────────────────────────────
@@ -585,13 +624,63 @@ function DashboardView({ stats, leads, openLeadDetail }: { stats: DashboardStats
 }
 
 // ─── Leads View ──────────────────────────────────────────────────────
-function LeadsView({ leads, searchQuery, setSearchQuery, filterSector, setFilterSector, filterTier, setFilterTier, filterStage, setFilterStage, filterHot, setFilterHot, openLeadDetail, stats }: {
+function LeadsView({ leads, searchQuery, setSearchQuery, filterSector, setFilterSector, filterTier, setFilterTier, filterStage, setFilterStage, filterHot, setFilterHot, openLeadDetail, stats, navigateToEmail }: {
   leads:Lead[];searchQuery:string;setSearchQuery:(v:string)=>void;filterSector:string;setFilterSector:(v:string)=>void;
   filterTier:string;setFilterTier:(v:string)=>void;filterStage:string;setFilterStage:(v:string)=>void;
   filterHot:string;setFilterHot:(v:string)=>void;openLeadDetail:(l:Lead)=>void;stats:DashboardStats|null;
+  navigateToEmail:(leadId?:string)=>void;
 }) {
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [bulkStage, setBulkStage] = useState('')
+
+  const allSelected = leads.length > 0 && leads.every(l => selectedIds.has(l.id))
+
+  const toggleSelectAll = () => {
+    if (allSelected) { setSelectedIds(new Set()) }
+    else { setSelectedIds(new Set(leads.map(l => l.id))) }
+  }
+
+  const toggleSelect = (id: string) => {
+    const next = new Set(selectedIds)
+    if (next.has(id)) next.delete(id); else next.add(id)
+    setSelectedIds(next)
+  }
+
+  const avgRating = leads.length > 0 ? (leads.reduce((s,l) => s + l.rating, 0) / leads.length).toFixed(1) : '0'
+  const totalValue = leads.reduce((s,l) => s + (l.estimatedValue||0), 0)
+
+  const daysSinceContact = (lastContact: string | null) => {
+    if (!lastContact) return '—'
+    const d = Math.floor((Date.now() - new Date(lastContact).getTime()) / (1000*60*60*24))
+    if (d === 0) return 'Today'
+    if (d === 1) return '1d'
+    if (d < 30) return `${d}d`
+    return `${Math.floor(d/30)}mo`
+  }
+
   return (
     <motion.div className="space-y-4" {...fadeInUp}>
+      {/* Stats Summary Row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <Card className="border-0 shadow-sm"><CardContent className="p-3 flex items-center gap-3">
+          <div className="h-9 w-9 rounded-lg bg-emerald-50 flex items-center justify-center"><Users className="h-4 w-4 text-emerald-600"/></div>
+          <div><p className="text-xs text-muted-foreground">Total Leads</p><p className="text-lg font-bold">{stats?.totalLeads||0}</p></div>
+        </CardContent></Card>
+        <Card className="border-0 shadow-sm"><CardContent className="p-3 flex items-center gap-3">
+          <div className="h-9 w-9 rounded-lg bg-amber-50 flex items-center justify-center"><Flame className="h-4 w-4 text-amber-500"/></div>
+          <div><p className="text-xs text-muted-foreground">Hot Leads</p><p className="text-lg font-bold text-amber-600">{stats?.hotLeads||0}</p></div>
+        </CardContent></Card>
+        <Card className="border-0 shadow-sm"><CardContent className="p-3 flex items-center gap-3">
+          <div className="h-9 w-9 rounded-lg bg-sky-50 flex items-center justify-center"><Star className="h-4 w-4 text-sky-600"/></div>
+          <div><p className="text-xs text-muted-foreground">Avg Rating</p><p className="text-lg font-bold">{avgRating}★</p></div>
+        </CardContent></Card>
+        <Card className="border-0 shadow-sm"><CardContent className="p-3 flex items-center gap-3">
+          <div className="h-9 w-9 rounded-lg bg-violet-50 flex items-center justify-center"><DollarSign className="h-4 w-4 text-violet-600"/></div>
+          <div><p className="text-xs text-muted-foreground">Total Value</p><p className="text-lg font-bold">{formatCurrency(totalValue)}</p></div>
+        </CardContent></Card>
+      </div>
+
+      {/* Filters */}
       <Card className="border-0 shadow-sm"><CardContent className="p-4">
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/><Input placeholder="Search by name, sector, or location..." value={searchQuery} onChange={(e)=>setSearchQuery(e.target.value)} className="pl-9"/></div>
@@ -603,26 +692,41 @@ function LeadsView({ leads, searchQuery, setSearchQuery, filterSector, setFilter
           </div>
         </div>
       </CardContent></Card>
+
+      {/* Table */}
       <Card className="border-0 shadow-sm"><CardContent className="p-0">
         <div className="overflow-x-auto"><Table><TableHeader><TableRow className="bg-gray-50/50">
+          <TableHead className="text-xs font-semibold w-10"><Checkbox checked={allSelected} onCheckedChange={toggleSelectAll}/></TableHead>
           <TableHead className="text-xs font-semibold">Name</TableHead><TableHead className="text-xs font-semibold">Sector</TableHead>
           <TableHead className="text-xs font-semibold hidden sm:table-cell">Tier</TableHead><TableHead className="text-xs font-semibold hidden md:table-cell">Rating</TableHead>
-          <TableHead className="text-xs font-semibold">Stage</TableHead><TableHead className="text-xs font-semibold hidden lg:table-cell">Area</TableHead>
-          <TableHead className="text-xs font-semibold hidden sm:table-cell">Value</TableHead><TableHead className="text-xs font-semibold text-center">Hot</TableHead>
+          <TableHead className="text-xs font-semibold">Stage</TableHead>
+          <TableHead className="text-xs font-semibold hidden lg:table-cell">Last Action</TableHead>
+          <TableHead className="text-xs font-semibold hidden sm:table-cell">Days</TableHead>
+          <TableHead className="text-xs font-semibold hidden sm:table-cell">Value</TableHead>
+          <TableHead className="text-xs font-semibold text-center">Hot</TableHead>
           <TableHead className="text-xs font-semibold text-right">Actions</TableHead>
         </TableRow></TableHeader><TableBody>
-          {leads.length===0?<TableRow><TableCell colSpan={9} className="text-center py-12 text-muted-foreground">No leads found</TableCell></TableRow>:
+          {leads.length===0?<TableRow><TableCell colSpan={11} className="text-center py-12 text-muted-foreground">No leads found</TableCell></TableRow>:
             leads.map(lead=>(
-              <TableRow key={lead.id} className="cursor-pointer hover:bg-emerald-50/30" onClick={()=>openLeadDetail(lead)}>
+              <TableRow key={lead.id} className={`cursor-pointer hover:bg-emerald-50/30 ${selectedIds.has(lead.id)?'bg-emerald-50/50':''}`} onClick={()=>openLeadDetail(lead)}>
+                <TableCell onClick={(e)=>e.stopPropagation()}><Checkbox checked={selectedIds.has(lead.id)} onCheckedChange={()=>toggleSelect(lead.id)}/></TableCell>
                 <TableCell><div className="flex items-center gap-2">{lead.hotLead&&<Flame className="h-3.5 w-3.5 text-amber-500 shrink-0"/>}<span className="font-medium text-sm truncate max-w-[160px]">{lead.name}</span></div></TableCell>
                 <TableCell><div className="flex items-center gap-1.5">{SECTOR_ICONS[lead.sector]||<Building2 className="h-3.5 w-3.5"/>}<span className="text-sm">{lead.sector}</span></div></TableCell>
                 <TableCell className="hidden sm:table-cell"><TierBadge tier={lead.tier}/></TableCell>
                 <TableCell className="hidden md:table-cell"><StarRating rating={lead.rating}/></TableCell>
                 <TableCell><Badge variant="outline" className={`text-[11px] ${STAGE_COLORS[lead.stage]}`}>{STAGE_LABELS[lead.stage]}</Badge></TableCell>
-                <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">{lead.area||lead.location}</TableCell>
+                <TableCell className="hidden lg:table-cell text-xs text-muted-foreground max-w-[120px] truncate">{lead.nextAction||'—'}</TableCell>
+                <TableCell className="hidden sm:table-cell text-xs text-muted-foreground">{daysSinceContact(lead.lastContact)}</TableCell>
                 <TableCell className="hidden sm:table-cell text-sm font-medium">{lead.estimatedValue>0?formatCurrency(lead.estimatedValue):'—'}</TableCell>
                 <TableCell className="text-center">{lead.hotLead?<Flame className="h-4 w-4 text-amber-500 mx-auto"/>:<span className="text-muted-foreground">—</span>}</TableCell>
-                <TableCell className="text-right"><Button variant="ghost" size="sm" onClick={(e)=>{e.stopPropagation();openLeadDetail(lead)}} className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"><Eye className="h-4 w-4"/></Button></TableCell>
+                <TableCell className="text-right" onClick={(e)=>e.stopPropagation()}>
+                  <div className="flex items-center justify-end gap-0.5">
+                    <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-sky-600 hover:text-sky-700 hover:bg-sky-50" onClick={()=>toast.info(`Call ${lead.phone}`)}><Phone className="h-3.5 w-3.5"/></Button></TooltipTrigger><TooltipContent>Call</TooltipContent></Tooltip>
+                    <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50" onClick={()=>toast.info('Opening WhatsApp...')}><MessageSquare className="h-3.5 w-3.5"/></Button></TooltipTrigger><TooltipContent>WhatsApp</TooltipContent></Tooltip>
+                    <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-violet-600 hover:text-violet-700 hover:bg-violet-50" onClick={()=>navigateToEmail(lead.id)}><Mail className="h-3.5 w-3.5"/></Button></TooltipTrigger><TooltipContent>Email</TooltipContent></Tooltip>
+                    <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="sm" onClick={()=>openLeadDetail(lead)} className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 h-7 w-7 p-0"><Eye className="h-3.5 w-3.5"/></Button></TooltipTrigger><TooltipContent>View Details</TooltipContent></Tooltip>
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
         </TableBody>
@@ -631,45 +735,164 @@ function LeadsView({ leads, searchQuery, setSearchQuery, filterSector, setFilter
       </CardContent>
     </Card>
     <p className="text-xs text-muted-foreground text-center">Showing {leads.length} lead{leads.length !== 1 ? 's' : ''}</p>
+
+    {/* Bulk Action Bar */}
+    <AnimatePresence>
+      {selectedIds.size > 0 && (
+        <motion.div initial={{y:80,opacity:0}} animate={{y:0,opacity:1}} exit={{y:80,opacity:0}} transition={{type:'spring',stiffness:300,damping:30}}>
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-gray-900 text-white rounded-2xl shadow-2xl px-5 py-3 flex items-center gap-4">
+            <span className="text-sm font-medium">{selectedIds.size} selected</span>
+            <Separator orientation="vertical" className="h-6 bg-gray-600"/>
+            <Select value={bulkStage} onValueChange={(v)=>{if(v!=='_'){toast.success(`Moving ${selectedIds.size} leads to ${STAGE_LABELS[v]}`);setSelectedIds(new Set());setBulkStage('')}}}>
+              <SelectTrigger className="w-[150px] h-8 text-xs bg-gray-800 border-gray-700 text-white"><SelectValue placeholder="Move to Stage"/></SelectTrigger>
+              <SelectContent>{STAGES.filter(s=>s!=='won'&&s!=='lost').map(s=><SelectItem key={s} value={s}>{STAGE_LABELS[s]}</SelectItem>)}</SelectContent>
+            </Select>
+            <Button size="sm" variant="ghost" className="h-8 text-xs text-amber-400 hover:text-amber-300 hover:bg-gray-800" onClick={()=>{toast.success(`Marked ${selectedIds.size} leads as hot`);setSelectedIds(new Set())}}>
+              <Flame className="h-3.5 w-3.5 mr-1"/>Mark Hot
+            </Button>
+            <Button size="sm" variant="ghost" className="h-8 text-xs text-emerald-400 hover:text-emerald-300 hover:bg-gray-800" onClick={()=>toast.info('Exporting selected leads...')}>
+              <Download className="h-3.5 w-3.5 mr-1"/>Export
+            </Button>
+            <Button size="sm" variant="ghost" className="h-8 text-xs text-gray-400 hover:text-white hover:bg-gray-800" onClick={()=>setSelectedIds(new Set())}>
+              <X className="h-3.5 w-3.5"/>
+            </Button>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
     </motion.div>
   )
 }
 
 // ─── Pipeline View ────────────────────────────────────────────────────
-function PipelineView({ leads, stats, pipelineStages, updateLeadStage, openLeadDetail }: {
-  leads:Lead[];stats:DashboardStats|null;pipelineStages:readonly string[];updateLeadStage:(id:string,s:string)=>void;openLeadDetail:(l:Lead)=>void;
+function PipelineView({ leads, stats, pipelineStages, updateLeadStage, openLeadDetail, navigateToEmail }: {
+  leads:Lead[];stats:DashboardStats|null;pipelineStages:readonly string[];updateLeadStage:(id:string,s:string)=>void;openLeadDetail:(l:Lead)=>void;navigateToEmail:(leadId?:string)=>void;
 }) {
+  const [pipelineSearch, setPipelineSearch] = useState('')
+
+  const filteredLeads = useMemo(() => {
+    if (!pipelineSearch.trim()) return leads
+    const q = pipelineSearch.toLowerCase()
+    return leads.filter(l => l.name.toLowerCase().includes(q) || l.sector.toLowerCase().includes(q) || (l.area||l.location).toLowerCase().includes(q))
+  }, [leads, pipelineSearch])
+
+  const avgDealSize = useMemo(() => {
+    const active = leads.filter(l => l.stage !== 'won' && l.stage !== 'lost')
+    const total = active.reduce((s,l) => s + (l.estimatedValue||0), 0)
+    return active.length > 0 ? total / active.length : 0
+  }, [leads])
+
+  const stageSummaries = useMemo(() => {
+    return pipelineStages.map(stage => {
+      const sl = leads.filter(l => l.stage === stage)
+      const value = sl.reduce((s,l) => s + (l.estimatedValue||0), 0)
+      return { stage, count: sl.length, value }
+    })
+  }, [leads, pipelineStages])
+
   return (
     <motion.div className="space-y-4" {...fadeInUp}>
-      <div className="flex items-center justify-between">
-        <div><h2 className="text-lg font-semibold">Sales Pipeline</h2><p className="text-sm text-muted-foreground">Update lead stages by selecting a new stage</p></div>
-        <Badge variant="outline" className="border-emerald-200 bg-emerald-50 text-emerald-700">{stats?.activePipeline||0} active · {formatCurrency(stats?.pipelineValue||0)}</Badge>
+      {/* Pipeline Metrics Bar */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <Card className="border-0 shadow-sm"><CardContent className="p-3 flex items-center gap-3">
+          <div className="h-9 w-9 rounded-lg bg-emerald-50 flex items-center justify-center"><DollarSign className="h-4 w-4 text-emerald-600"/></div>
+          <div><p className="text-xs text-muted-foreground">Pipeline Value</p><p className="text-lg font-bold">{formatCurrency(stats?.pipelineValue||0)}</p></div>
+        </CardContent></Card>
+        <Card className="border-0 shadow-sm"><CardContent className="p-3 flex items-center gap-3">
+          <div className="h-9 w-9 rounded-lg bg-amber-50 flex items-center justify-center"><TrendingUp className="h-4 w-4 text-amber-600"/></div>
+          <div><p className="text-xs text-muted-foreground">Avg Deal Size</p><p className="text-lg font-bold">{formatCurrency(avgDealSize)}</p></div>
+        </CardContent></Card>
+        <Card className="border-0 shadow-sm"><CardContent className="p-3 flex items-center gap-3">
+          <div className="h-9 w-9 rounded-lg bg-sky-50 flex items-center justify-center"><Activity className="h-4 w-4 text-sky-600"/></div>
+          <div><p className="text-xs text-muted-foreground">Velocity (week)</p><p className="text-lg font-bold">3 <span className="text-xs font-normal text-muted-foreground">moved</span></p></div>
+        </CardContent></Card>
+        <Card className="border-0 shadow-sm"><CardContent className="p-3 flex items-center gap-3">
+          <div className="h-9 w-9 rounded-lg bg-violet-50 flex items-center justify-center"><CheckCircle2 className="h-4 w-4 text-violet-600"/></div>
+          <div><p className="text-xs text-muted-foreground">Win Rate</p><p className="text-lg font-bold">{stats?.conversionRate||0}%</p></div>
+        </CardContent></Card>
       </div>
+
+      {/* Search + Header */}
+      <div className="flex items-center gap-3 flex-col sm:flex-row">
+        <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/><Input placeholder="Search leads across all stages..." value={pipelineSearch} onChange={(e)=>setPipelineSearch(e.target.value)} className="pl-9"/></div>
+        <Badge variant="outline" className="border-emerald-200 bg-emerald-50 text-emerald-700">{stats?.activePipeline||0} active leads</Badge>
+      </div>
+
+      {/* Kanban Board */}
       <div className="flex gap-4 overflow-x-auto pb-4">
         {pipelineStages.map(stage=>{
-          const stageLeads=leads.filter(l=>l.stage===stage)
+          const stageLeads=filteredLeads.filter(l=>l.stage===stage)
           const stageCount=stats?.byStage.find(s=>s.stage===stage)?.count||0
+          const stageValue=stageSummaries.find(s=>s.stage===stage)?.value||0
           return (
             <div key={stage} className="flex-shrink-0 w-[280px] sm:w-[300px]">
-              <div className="flex items-center gap-2 mb-3 px-1"><div className="h-2.5 w-2.5 rounded-full" style={{backgroundColor:STAGE_BG_COLORS[stage]}}/><h3 className="text-sm font-semibold">{STAGE_LABELS[stage]}</h3><Badge variant="secondary" className="ml-auto text-xs">{stageCount}</Badge></div>
-              <div className="space-y-2 max-h-[calc(100vh-240px)] overflow-y-auto pr-1">
-                {stageLeads.length===0?<div className="border border-dashed border-gray-200 rounded-xl p-6 text-center"><p className="text-xs text-muted-foreground">No leads</p></div>:stageLeads.map(lead=>(
-                  <motion.div key={lead.id} className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer" whileHover={{y:-2}} onClick={()=>openLeadDetail(lead)}>
-                    <div className="flex items-start justify-between gap-2"><div className="min-w-0"><p className="font-medium text-sm truncate">{lead.name}</p><p className="text-xs text-muted-foreground mt-0.5">{lead.sector}</p></div>{lead.hotLead&&<Flame className="h-4 w-4 text-amber-500 shrink-0"/>}</div>
-                    <div className="flex items-center justify-between mt-2"><div className="flex items-center gap-1.5"><TierBadge tier={lead.tier}/><span className="text-xs text-muted-foreground">{lead.rating.toFixed(1)}★</span></div>{lead.estimatedValue>0&&<span className="text-xs font-semibold text-emerald-600">{formatCurrency(lead.estimatedValue)}</span>}</div>
-                    <div className="mt-2 pt-2 border-t border-gray-100">
+              <div className="flex items-center gap-2 mb-3 px-1">
+                <div className="h-2.5 w-2.5 rounded-full" style={{backgroundColor:STAGE_BG_COLORS[stage]}}/>
+                <h3 className="text-sm font-semibold">{STAGE_LABELS[stage]}</h3>
+                <Badge variant="secondary" className="ml-auto text-xs">{stageCount}</Badge>
+              </div>
+              <div className="space-y-2 max-h-[calc(100vh-360px)] overflow-y-auto pr-1">
+                {stageLeads.length===0?<div className="border border-dashed border-gray-200 rounded-xl p-6 text-center"><p className="text-xs text-muted-foreground">No leads</p></div>:stageLeads.map(lead=>{
+                  const daysInStage = lead.updatedAt ? Math.floor((Date.now()-new Date(lead.updatedAt).getTime())/(1000*60*60*24)) : 0
+                  return (
+                  <motion.div key={lead.id} className={`bg-white rounded-xl border p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer ${lead.hotLead?'border-l-4 border-l-amber-400 border-r border-t border-b border-gray-200':'border border-gray-200'}`} whileHover={{y:-2}} onClick={()=>openLeadDetail(lead)}>
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="font-medium text-sm truncate">{lead.name}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{lead.sector}</p>
+                      </div>
+                      {lead.hotLead&&<Flame className="h-4 w-4 text-amber-500 shrink-0"/>}
+                    </div>
+                    <div className="flex items-center justify-between mt-2">
+                      <div className="flex items-center gap-1.5">
+                        <TierBadge tier={lead.tier}/>
+                        <span className="text-xs text-muted-foreground">{lead.rating.toFixed(1)}★</span>
+                      </div>
+                      {lead.estimatedValue>0&&<span className="text-xs font-semibold text-emerald-600">{formatCurrency(lead.estimatedValue)}</span>}
+                    </div>
+                    {/* Quick Actions */}
+                    <div className="flex items-center gap-1 mt-2 pt-2 border-t border-gray-100" onClick={(e)=>e.stopPropagation()}>
+                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-sky-600 hover:text-sky-700 hover:bg-sky-50" onClick={()=>toast.info(`Call ${lead.phone}`)}><Phone className="h-3 w-3"/></Button>
+                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50" onClick={()=>toast.info('Opening WhatsApp...')}><MessageSquare className="h-3 w-3"/></Button>
+                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-violet-600 hover:text-violet-700 hover:bg-violet-50" onClick={()=>navigateToEmail(lead.id)}><Mail className="h-3 w-3"/></Button>
+                      <span className="ml-auto text-[10px] text-muted-foreground">{daysInStage}d</span>
+                    </div>
+                    <div className="mt-2">
                       <Select value={lead.stage} onValueChange={(val)=>updateLeadStage(lead.id,val)} onOpenChange={(open)=>{if(!open)return}}>
                         <SelectTrigger className="h-7 text-xs border-gray-200 w-full" onClick={(e)=>e.stopPropagation()}><SelectValue/></SelectTrigger>
                         <SelectContent onClick={(e)=>e.stopPropagation()}>{STAGES.map(s=><SelectItem key={s} value={s} className="text-xs">{STAGE_LABELS[s]}</SelectItem>)}</SelectContent>
                       </Select>
                     </div>
                   </motion.div>
-                ))}
+                )})}
               </div>
+              <div className="mt-2 px-1 text-xs text-muted-foreground">{formatCurrency(stageValue)} total</div>
             </div>
           )
         })}
       </div>
+
+      {/* Stage Summary Bar */}
+      <Card className="border-0 shadow-sm"><CardContent className="p-4">
+        <h3 className="text-sm font-semibold mb-3">Stage Summary</h3>
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+          {stageSummaries.map((s, i) => {
+            const convRate = i > 0 && stageSummaries[0].count > 0
+              ? Math.round((s.count / stageSummaries[0].count) * 100) : 100
+            return (
+              <div key={s.stage} className="text-center">
+                <div className="h-2 w-2 rounded-full mx-auto mb-1.5" style={{backgroundColor:STAGE_BG_COLORS[s.stage]}}/>
+                <p className="text-xs text-muted-foreground">{STAGE_LABELS[s.stage]}</p>
+                <p className="text-sm font-bold">{s.count}</p>
+                <p className="text-[10px] text-muted-foreground">{formatCurrency(s.value)}</p>
+                <p className="text-[10px] font-medium text-emerald-600">{convRate}% conv</p>
+              </div>
+            )
+          })}
+        </div>
+      </CardContent></Card>
+
+      {/* Won/Lost */}
       <div className="grid grid-cols-2 gap-4">
         <Card className="border-0 shadow-sm border-l-4 border-l-emerald-500"><CardContent className="p-4"><div className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-emerald-600"/><span className="font-semibold">Won</span><span className="ml-auto text-2xl font-bold text-emerald-600">{stats?.wonLeads||0}</span></div></CardContent></Card>
         <Card className="border-0 shadow-sm border-l-4 border-l-red-400"><CardContent className="p-4"><div className="flex items-center gap-2"><XCircle className="h-5 w-5 text-red-500"/><span className="font-semibold">Lost</span><span className="ml-auto text-2xl font-bold text-red-500">{stats?.lostLeads||0}</span></div></CardContent></Card>
@@ -678,28 +901,76 @@ function PipelineView({ leads, stats, pipelineStages, updateLeadStage, openLeadD
   )
 }
 
-// ─── Email Generator View ─────────────────────────────────────────────
-function EmailGeneratorView({ leads, emailLeadId, setEmailLeadId, emailType, setEmailType, emailTone, setEmailTone, emailSubject, emailBody, emailGenerating, emailEditing, emailEditedBody, setEmailEditedBody, setEmailEditing, generateEmail, copyEmailToClipboard, saveEmailAsActivity, navigateToEmail, openLeadDetail }: {
-  leads:Lead[];emailLeadId:string;setEmailLeadId:(v:string)=>void;emailType:string;setEmailType:(v:string)=>void;
-  emailTone:string;setEmailTone:(v:string)=>void;emailSubject:string;emailBody:string;emailGenerating:boolean;
-  emailEditing:boolean;emailEditedBody:string;setEmailEditedBody:(v:string)=>void;setEmailEditing:(v:boolean)=>void;
-  generateEmail:()=>void;copyEmailToClipboard:()=>void;saveEmailAsActivity:()=>void;
-  navigateToEmail:(id?:string)=>void;openLeadDetail:(l:Lead)=>void;
+// ─── Email Generator View (Template Library) ───────────────────────────
+const TEMPLATE_CATEGORIES = [
+  { id:'all', label:'All Templates', count: 35 },
+  { id:'cold', label:'Cold Outreach', count: 6 },
+  { id:'followup', label:'Follow-Up', count: 5 },
+  { id:'whatsapp', label:'WhatsApp', count: 8 },
+  { id:'linkedin', label:'LinkedIn', count: 4 },
+  { id:'phone', label:'Phone Scripts', count: 5 },
+  { id:'proposal', label:'Proposals', count: 3 },
+  { id:'special', label:'Special', count: 4 },
+] as const
+
+function EmailGeneratorView({ leads, emailLeadId, setEmailLeadId, selectedTemplateId, setSelectedTemplateId, emailCategoryFilter, setEmailCategoryFilter, emailEditedBody, setEmailEditedBody, emailEditing, setEmailEditing, showFullSequence, setShowFullSequence, addActivity, openLeadDetail }: {
+  leads:Lead[];emailLeadId:string;setEmailLeadId:(v:string)=>void;
+  selectedTemplateId:string|null;setSelectedTemplateId:(v:string|null)=>void;
+  emailCategoryFilter:string;setEmailCategoryFilter:(v:string)=>void;
+  emailEditedBody:string;setEmailEditedBody:(v:string)=>void;
+  emailEditing:boolean;setEmailEditing:(v:boolean)=>void;
+  showFullSequence:boolean;setShowFullSequence:(v:boolean)=>void;
+  addActivity:(leadId:string)=>Promise<void>;
+  openLeadDetail:(l:Lead)=>void;
 }) {
   const selectedLead = leads.find(l=>l.id===emailLeadId)
   const sortedLeads = [...leads].sort((a,b)=>{if(a.hotLead!==b.hotLead)return a.hotLead?-1:1;return b.rating-a.rating})
-  const wordCount = emailBody.split(/\s+/).filter(Boolean).length
-  const charCount = emailBody.length
 
-  const applyTemplate = (template: typeof EMAIL_TEMPLATES[0]) => {
-    setEmailType(template.type); setEmailTone(template.tone)
-    if (emailLeadId) { setTimeout(generateEmail, 100) }
-    toast.success(`Template applied: ${template.name}`)
+  const filteredTemplates = useMemo(() => {
+    if (emailCategoryFilter === 'all') return ALL_TEMPLATES
+    return getTemplatesForCategory(emailCategoryFilter as any)
+  }, [emailCategoryFilter])
+
+  const renderedTemplate = useMemo<TemplateResult | null>(() => {
+    if (!selectedLead || !selectedTemplateId) return null
+    try { return renderTemplate(selectedTemplateId, leadToContext(selectedLead)) }
+    catch { return null }
+  }, [selectedLead, selectedTemplateId])
+
+  const fullSequence = useMemo<SequenceStep[]>(() => {
+    if (!selectedLead || !showFullSequence) return []
+    return generateFullSequence(leadToContext(selectedLead))
+  }, [selectedLead, showFullSequence])
+
+  const displayedBody = emailEditing ? emailEditedBody : (renderedTemplate?.body || '')
+
+  const copyToClipboard = () => {
+    let text = displayedBody
+    if (renderedTemplate?.subject) text = `Subject: ${renderedTemplate.subject}\n\n${text}`
+    navigator.clipboard.writeText(text).then(()=>toast.success('Copied to clipboard!')).catch(()=>toast.error('Failed to copy'))
   }
+
+  const saveAsActivity = async () => {
+    if (!emailLeadId || !displayedBody.trim()) return
+    try {
+      await fetch(`/api/leads/${emailLeadId}/activities`, {
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          type: renderedTemplate?.channel === 'whatsapp' ? 'whatsapp' : renderedTemplate?.channel === 'phone' ? 'call' : 'email',
+          summary: `Template: ${renderedTemplate?.name || selectedTemplateId}`,
+          outcome: displayedBody.substring(0, 200)
+        })
+      })
+      toast.success('Saved as activity!')
+    } catch { toast.error('Failed to save activity') }
+  }
+
+  const wordCount = displayedBody.split(/\s+/).filter(Boolean).length
+  const charCount = displayedBody.length
 
   return (
     <motion.div className="space-y-6" {...fadeInUp}>
-      <div><h2 className="text-lg font-semibold">AI Email Generator</h2><p className="text-sm text-muted-foreground">Generate personalized outreach emails using AI</p></div>
+      <div><h2 className="text-lg font-semibold">Template Library</h2><p className="text-sm text-muted-foreground">Browse, preview, and send outreach templates from the library</p></div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left: Lead Selector */}
@@ -708,7 +979,7 @@ function EmailGeneratorView({ leads, emailLeadId, setEmailLeadId, emailType, set
           <CardContent><div className="space-y-1.5 max-h-[calc(100vh-320px)] overflow-y-auto">
             {sortedLeads.length===0?<p className="text-sm text-muted-foreground text-center py-8">No leads available</p>:
               sortedLeads.map(lead=>(
-                <button key={lead.id} onClick={()=>setEmailLeadId(lead.id)}
+                <button key={lead.id} onClick={()=>{setEmailLeadId(lead.id);setSelectedTemplateId(null);setEmailEditing(false);setShowFullSequence(false)}}
                   className={`w-full text-left p-3 rounded-lg transition-all ${emailLeadId===lead.id?'bg-emerald-50 border border-emerald-200 shadow-sm':'hover:bg-gray-50 border border-transparent'}`}>
                   <div className="flex items-center gap-2">{lead.hotLead&&<Flame className="h-3.5 w-3.5 text-amber-500 shrink-0"/>}<span className="font-medium text-sm truncate">{lead.name}</span>
                     <Eye className="h-3.5 w-3.5 text-muted-foreground ml-auto shrink-0 cursor-pointer hover:text-emerald-600" onClick={(e)=>{e.stopPropagation();openLeadDetail(lead)}}/></div>
@@ -726,69 +997,110 @@ function EmailGeneratorView({ leads, emailLeadId, setEmailLeadId, emailType, set
                 <div className="flex items-center gap-2">{selectedLead.hotLead&&<Badge className="bg-amber-100 text-amber-700 border-amber-200 border"><Flame className="h-3 w-3 mr-1"/>Hot</Badge>}<TierBadge tier={selectedLead.tier}/></div></div>
               {selectedLead.recommendedPackage&&(<div className="mt-2 flex items-center gap-2"><span className="text-xs text-muted-foreground">Recommended:</span><Badge className="bg-emerald-100 text-emerald-700 border-emerald-200 border">{selectedLead.recommendedPackage}</Badge>{selectedLead.estimatedValue>0&&<span className="text-xs font-semibold text-emerald-600">{formatCurrency(selectedLead.estimatedValue)}</span>}</div>)}
             </CardContent>
-          </Card>
-        </motion.div>
+          </Card></motion.div>
 
-            {/* Template Presets */}
-            <motion.div {...scaleIn} transition={{delay:0.05}}><Card className="border-0 shadow-sm"><CardHeader className="pb-3"><CardTitle className="text-sm font-semibold flex items-center gap-2"><MailPlus className="h-4 w-4 text-emerald-600"/>Quick Templates</CardTitle></CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                  {EMAIL_TEMPLATES.map(t=>(
-                    <button key={t.id} onClick={()=>applyTemplate(t)} className={`p-2.5 rounded-lg border text-left transition-all hover:shadow-sm ${emailType===t.type?'border-emerald-200 bg-emerald-50':'border-gray-200 hover:border-gray-300'}`}>
-                      <p className="text-xs font-semibold truncate">{t.name}</p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5 line-clamp-1">{t.desc}</p>
-                    </button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-        </motion.div>
-
-            {/* Controls */}
-            <motion.div {...scaleIn} transition={{delay:0.1}}><Card className="border-0 shadow-sm"><CardContent className="p-4 space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div><Label className="text-sm font-medium mb-2 block">Email Type</Label>
-                  <Select value={emailType} onValueChange={setEmailType}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>
-                    <SelectItem value="cold">Cold Email</SelectItem><SelectItem value="whatsapp">WhatsApp Opener</SelectItem>
-                    <SelectItem value="linkedin">LinkedIn DM</SelectItem><SelectItem value="followup">Follow-Up</SelectItem><SelectItem value="breakup">Breakup Email</SelectItem>
-                  </SelectContent></Select></div>
-                <div><Label className="text-sm font-medium mb-2 block">Tone</Label>
-                  <Select value={emailTone} onValueChange={setEmailTone}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>
-                    <SelectItem value="professional">Professional</SelectItem><SelectItem value="casual">Casual</SelectItem><SelectItem value="direct">Direct</SelectItem><SelectItem value="friendly">Friendly</SelectItem>
-                  </SelectContent></Select></div>
-              </div>
-              <Button onClick={generateEmail} disabled={emailGenerating} className="bg-emerald-600 hover:bg-emerald-700 text-white w-full sm:w-auto">
-                {emailGenerating?<><div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"/>Generating...</>:<><Sparkles className="h-4 w-4 mr-2"/>Generate Email</>}
-              </Button>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-            {/* Generated Email */}
-            {(emailSubject||emailBody)&&(
-              <motion.div {...scaleIn} transition={{delay:0.15}}><Card className="border-0 shadow-sm">
-                <CardHeader className="pb-3"><div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-semibold">Generated Email</CardTitle>
-                  <div className="flex items-center gap-1.5">
-                    <Button variant="ghost" size="sm" onClick={copyEmailToClipboard} className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"><Copy className="h-4 w-4 mr-1"/>Copy</Button>
-                    <Button variant="ghost" size="sm" onClick={generateEmail} disabled={emailGenerating} className="text-gray-600 hover:bg-gray-100"><RefreshCw className="h-4 w-4 mr-1"/>Regenerate</Button>
-                    <Button variant="ghost" size="sm" onClick={()=>setEmailEditing(!emailEditing)} className="text-gray-600 hover:bg-gray-100"><Pencil className="h-4 w-4 mr-1"/>{emailEditing?'Preview':'Edit'}</Button>
-                    <Button variant="ghost" size="sm" onClick={saveEmailAsActivity} className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"><Save className="h-4 w-4 mr-1"/>Save</Button>
-                  </div></div></CardHeader>
-                <CardContent className="space-y-3">
-                  {emailSubject&&emailType!=='whatsapp'&&emailType!=='linkedin'&&(<div><p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Subject Line</p><div className="bg-gray-50 rounded-lg p-3"><p className="font-medium text-sm">{emailSubject}</p></div></div>)}
-                  <div><p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">{emailType==='whatsapp'?'Message':emailType==='linkedin'?'DM':'Body'}</p>
-                    {emailEditing?(<Textarea value={emailEditedBody} onChange={(e)=>setEmailEditedBody(e.target.value)} className="min-h-[200px] text-sm"/>):(<div className="bg-gray-50 rounded-lg p-4 whitespace-pre-wrap text-sm leading-relaxed">{emailBody}</div>)}
+            {/* Category Tabs + Template Library */}
+            <motion.div {...scaleIn} transition={{delay:0.05}}>
+              <Card className="border-0 shadow-sm">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm font-semibold flex items-center gap-2"><BookOpen className="h-4 w-4 text-emerald-600"/>Template Library</CardTitle>
+                    <Button variant="outline" size="sm" className="text-xs border-emerald-200 text-emerald-700 hover:bg-emerald-50" onClick={()=>{setShowFullSequence(!showFullSequence);setSelectedTemplateId(null);setEmailEditing(false)}}>
+                      {showFullSequence?<><X className="h-3 w-3 mr-1"/>Close Sequence</>:<><Play className="h-3 w-3 mr-1"/>Full Sequence (7 Touches)</>}
+                    </Button>
                   </div>
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground"><span>{wordCount} words</span><span>{charCount} characters</span></div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Category Tabs */}
+                  <div className="flex gap-1.5 overflow-x-auto pb-1">
+                    {TEMPLATE_CATEGORIES.map(cat=>(
+                      <button key={cat.id} onClick={()=>{setEmailCategoryFilter(cat.id);setSelectedTemplateId(null)}}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${emailCategoryFilter===cat.id?'bg-emerald-600 text-white shadow-sm':'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                        {cat.label} <span className="ml-1 opacity-70">({cat.count})</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Full Sequence View */}
+                  {showFullSequence ? (
+                    <div className="space-y-3 max-h-[500px] overflow-y-auto">
+                      {fullSequence.length === 0 ? <p className="text-sm text-muted-foreground text-center py-8">Select a lead to generate sequence</p> :
+                        fullSequence.map((step, i) => (
+                          <motion.div key={i} initial={{opacity:0,x:-10}} animate={{opacity:1,x:0}} transition={{delay:i*0.04}}>
+                            <div className={`rounded-lg border p-3 ${i===0?'border-emerald-200 bg-emerald-50/30':'border-gray-200'}`}>
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="h-6 w-6 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-bold">{step.touch}</span>
+                                  <span className="text-xs font-medium">Day {step.day}</span>
+                                  <ChannelBadge channel={step.channel}/>
+                                </div>
+                                <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={()=>{const txt=step.subject?`Subject: ${step.subject}\n\n${step.body}`:step.body;navigator.clipboard.writeText(txt).then(()=>toast.success(`Touch ${step.touch} copied!`))}}><Copy className="h-3 w-3"/></Button>
+                              </div>
+                              {step.subject && <p className="text-xs font-semibold text-sky-700 mb-1">Subject: {step.subject}</p>}
+                              <p className="text-xs text-muted-foreground whitespace-pre-wrap line-clamp-4">{step.body}</p>
+                              <p className="text-[10px] text-muted-foreground mt-1.5 italic">{step.context}</p>
+                            </div>
+                          </motion.div>
+                        ))
+                      }
+                    </div>
+                  ) : (
+                  /* Template List */
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[400px] overflow-y-auto">
+                    {filteredTemplates.length===0?<p className="text-sm text-muted-foreground text-center py-8 col-span-2">No templates in this category</p>:
+                      filteredTemplates.map(tmpl=>(
+                        <button key={tmpl.id} onClick={()=>{setSelectedTemplateId(tmpl.id);setEmailEditing(false);setShowFullSequence(false)}}
+                          className={`p-3 rounded-lg border text-left transition-all hover:shadow-sm ${selectedTemplateId===tmpl.id?'border-emerald-200 bg-emerald-50 shadow-sm':'border-gray-200 hover:border-gray-300'}`}>
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="text-xs font-semibold truncate">{tmpl.name}</p>
+                            <ChannelBadge channel={tmpl.channel}/>
+                          </div>
+                          <p className="text-[10px] text-muted-foreground mt-1 line-clamp-2">{tmpl.context}</p>
+                        </button>
+                      ))
+                    }
+                  </div>
+                  )}
                 </CardContent>
               </Card>
-        </motion.div>
+            </motion.div>
+
+            {/* Template Preview Panel */}
+            {renderedTemplate && !showFullSequence && (
+              <motion.div {...scaleIn} transition={{delay:0.1}}>
+                <Card className="border-0 shadow-sm">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <div className="flex items-center gap-2">
+                        <CardTitle className="text-sm font-semibold">{renderedTemplate.name}</CardTitle>
+                        <ChannelBadge channel={renderedTemplate.channel}/>
+                        <Badge variant="secondary" className="text-[10px]">{renderedTemplate.category}</Badge>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Button variant="ghost" size="sm" onClick={copyToClipboard} className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"><Copy className="h-4 w-4 mr-1"/>Copy</Button>
+                        <Button variant="ghost" size="sm" onClick={()=>{setEmailEditing(!emailEditing);if(!emailEditing)setEmailEditedBody(renderedTemplate.body)}} className="text-gray-600 hover:bg-gray-100"><Pencil className="h-4 w-4 mr-1"/>{emailEditing?'Preview':'Edit'}</Button>
+                        <Button variant="ghost" size="sm" onClick={saveAsActivity} className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"><Save className="h-4 w-4 mr-1"/>Save</Button>
+                        <Button variant="ghost" size="sm" onClick={()=>{setShowFullSequence(true);setSelectedTemplateId(null)}} className="text-gray-600 hover:bg-gray-100"><Play className="h-4 w-4 mr-1"/>Sequence</Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {renderedTemplate.subject&&(<div><p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Subject Line</p><div className="bg-gray-50 rounded-lg p-3"><p className="font-medium text-sm">{renderedTemplate.subject}</p></div></div>)}
+                    <div><p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">{renderedTemplate.channel==='whatsapp'?'Message':renderedTemplate.channel==='phone'?'Script':renderedTemplate.channel==='linkedin'?'DM':'Body'}</p>
+                      {emailEditing?(<Textarea value={emailEditedBody} onChange={(e)=>setEmailEditedBody(e.target.value)} className="min-h-[200px] text-sm"/>):(<div className="bg-gray-50 rounded-lg p-4 whitespace-pre-wrap text-sm leading-relaxed">{displayedBody}</div>)}
+                    </div>
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      <span>{renderedTemplate.wordCount} words</span>
+                      <span>{charCount} characters</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
             )}
           </>):(
             <Card className="border-0 shadow-sm"><CardContent className="flex flex-col items-center justify-center py-20 text-center">
-              <Sparkles className="h-12 w-12 text-gray-300 mb-4"/><h3 className="font-semibold text-gray-600">Select a Lead</h3>
-              <p className="text-sm text-muted-foreground mt-1 max-w-sm">Choose a lead from the list to generate a personalized outreach email using AI.</p>
+              <BookOpen className="h-12 w-12 text-gray-300 mb-4"/><h3 className="font-semibold text-gray-600">Select a Lead</h3>
+              <p className="text-sm text-muted-foreground mt-1 max-w-sm">Choose a lead to browse and preview personalized outreach templates.</p>
             </CardContent></Card>
           )}
         </div>
@@ -1108,13 +1420,11 @@ export default function DashboardPage() {
   const [activitySummary,setActivitySummary]=useState('')
   const [activityOutcome,setActivityOutcome]=useState('')
   const [emailLeadId,setEmailLeadId]=useState('')
-  const [emailType,setEmailType]=useState('cold')
-  const [emailTone,setEmailTone]=useState('professional')
-  const [emailSubject,setEmailSubject]=useState('')
-  const [emailBody,setEmailBody]=useState('')
-  const [emailGenerating,setEmailGenerating]=useState(false)
-  const [emailEditing,setEmailEditing]=useState(false)
+  const [selectedTemplateId,setSelectedTemplateId]=useState<string|null>(null)
+  const [emailCategoryFilter,setEmailCategoryFilter]=useState('all')
   const [emailEditedBody,setEmailEditedBody]=useState('')
+  const [emailEditing,setEmailEditing]=useState(false)
+  const [showFullSequence,setShowFullSequence]=useState(false)
   const [pricingCategory,setPricingCategory]=useState<'dental'|'general'|'school'>('dental')
   const [roiNewPatients,setRoiNewPatients]=useState([5])
   const [roiAvgValue,setRoiAvgValue]=useState([750])
@@ -1136,12 +1446,6 @@ export default function DashboardPage() {
   const openLeadDetail=(lead:Lead)=>{setSelectedLead(lead);setLeadDialogOpen(true)}
   const updateLeadStage=async(leadId:string,newStage:string)=>{try{const res=await fetch(`/api/leads/${leadId}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({stage:newStage})});setSelectedLead(await res.json());fetchStats();fetchLeads();toast.success(`Lead moved to ${STAGE_LABELS[newStage]}`)}catch{toast.error('Failed to update stage')}}
   const addActivity=async(leadId:string)=>{if(!activitySummary.trim()){toast.error('Enter an activity summary');return}try{await fetch(`/api/leads/${leadId}/activities`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:activityType,summary:activitySummary,outcome:activityOutcome})});setActivitySummary('');setActivityOutcome('');const res=await fetch(`/api/leads/${leadId}`);setSelectedLead(await res.json());fetchStats();toast.success('Activity added')}catch{toast.error('Failed to add activity')}}
-  const generateEmail=async()=>{const lead=leads.find(l=>l.id===emailLeadId);if(!lead)return;setEmailGenerating(true);setEmailSubject('');setEmailBody('');setEmailEditing(false)
-    try{const res=await fetch('/api/generate-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({leadName:lead.name,sector:lead.sector,tier:lead.tier,rating:lead.rating,notes:lead.notes,location:lead.location,area:lead.area,services:lead.services,recommendedPackage:lead.recommendedPackage,estimatedValue:lead.estimatedValue,phone:lead.phone,onlinePresence:lead.onlinePresence,emailType,tone:emailTone})})
-      const data=await res.json();if(data.error){toast.error(data.error);return}setEmailSubject(data.subject);setEmailBody(data.body);setEmailEditedBody(data.body);toast.success('Email generated!')}catch{toast.error('Failed to generate email')}finally{setEmailGenerating(false)}}
-  const copyEmailToClipboard=()=>{const text=emailType==='whatsapp'||emailType==='linkedin'?emailBody:`Subject: ${emailSubject}\n\n${emailBody}`;navigator.clipboard.writeText(text).then(()=>toast.success('Copied to clipboard!')).catch(()=>toast.error('Failed to copy'))}
-  const saveEmailAsActivity=async()=>{if(!emailLeadId||!emailBody)return;try{await fetch(`/api/leads/${emailLeadId}/activities`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'email',summary:`Generated ${emailType}: ${emailSubject||emailType}`,outcome:emailBody.substring(0,200)})});fetchStats();fetchLeads();toast.success('Email saved as activity!')}catch{toast.error('Failed to save activity')}}
-
   const currentPackages=PRICING_PACKAGES[pricingCategory]
   const selectedPkg=currentPackages.find(p=>p.name===roiPackage)||currentPackages[0]
   const monthlyRevenue=roiNewPatients[0]*roiAvgValue[0];const annualRevenue=monthlyRevenue*12
@@ -1161,7 +1465,7 @@ export default function DashboardPage() {
 
   const pipelineStages=STAGES.filter(s=>s!=='won'&&s!=='lost')
   const pageTitle=ALL_NAV_ITEMS.find(n=>n.id===activePage)?.label||'Dashboard'
-  const navigateToEmail=(leadId?:string)=>{setActivePage('email');if(leadId)setEmailLeadId(leadId)}
+  const navigateToEmail=(leadId?:string)=>{setActivePage('email');if(leadId){setEmailLeadId(leadId);setSelectedTemplateId(null);setEmailEditing(false);setShowFullSequence(false)}}
 
   const SidebarContent=()=>(
     <div className="flex flex-col h-full">
@@ -1273,9 +1577,9 @@ export default function DashboardPage() {
               <AnimatePresence mode="wait">
                 <motion.div key={activePage} initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-10}} transition={{duration:0.2}}>
                   {activePage==='dashboard'&&stats&&<DashboardView stats={stats} leads={leads} openLeadDetail={openLeadDetail}/>}
-                  {activePage==='leads'&&<LeadsView leads={leads} searchQuery={searchQuery} setSearchQuery={setSearchQuery} filterSector={filterSector} setFilterSector={setFilterSector} filterTier={filterTier} setFilterTier={setFilterTier} filterStage={filterStage} setFilterStage={setFilterStage} filterHot={filterHot} setFilterHot={setFilterHot} openLeadDetail={openLeadDetail} stats={stats}/>}
-                  {activePage==='pipeline'&&<PipelineView leads={leads} stats={stats} pipelineStages={pipelineStages} updateLeadStage={updateLeadStage} openLeadDetail={openLeadDetail}/>}
-                  {activePage==='email'&&<EmailGeneratorView leads={leads} emailLeadId={emailLeadId} setEmailLeadId={setEmailLeadId} emailType={emailType} setEmailType={setEmailType} emailTone={emailTone} setEmailTone={setEmailTone} emailSubject={emailSubject} emailBody={emailBody} emailGenerating={emailGenerating} emailEditing={emailEditing} emailEditedBody={emailEditedBody} setEmailEditedBody={setEmailEditedBody} setEmailEditing={setEmailEditing} generateEmail={generateEmail} copyEmailToClipboard={copyEmailToClipboard} saveEmailAsActivity={saveEmailAsActivity} navigateToEmail={navigateToEmail} openLeadDetail={openLeadDetail}/>}
+                  {activePage==='leads'&&<LeadsView leads={leads} searchQuery={searchQuery} setSearchQuery={setSearchQuery} filterSector={filterSector} setFilterSector={setFilterSector} filterTier={filterTier} setFilterTier={setFilterTier} filterStage={filterStage} setFilterStage={setFilterStage} filterHot={filterHot} setFilterHot={setFilterHot} openLeadDetail={openLeadDetail} stats={stats} navigateToEmail={navigateToEmail}/>}
+                  {activePage==='pipeline'&&<PipelineView leads={leads} stats={stats} pipelineStages={pipelineStages} updateLeadStage={updateLeadStage} openLeadDetail={openLeadDetail} navigateToEmail={navigateToEmail}/>}
+                  {activePage==='email'&&<EmailGeneratorView leads={leads} emailLeadId={emailLeadId} setEmailLeadId={setEmailLeadId} selectedTemplateId={selectedTemplateId} setSelectedTemplateId={setSelectedTemplateId} emailCategoryFilter={emailCategoryFilter} setEmailCategoryFilter={setEmailCategoryFilter} emailEditedBody={emailEditedBody} setEmailEditedBody={setEmailEditedBody} emailEditing={emailEditing} setEmailEditing={setEmailEditing} showFullSequence={showFullSequence} setShowFullSequence={setShowFullSequence} addActivity={addActivity} openLeadDetail={openLeadDetail}/>}
                   {activePage==='strategies'&&<StrategiesView/>}
                   {activePage==='pricing'&&<PricingView pricingCategory={pricingCategory} setPricingCategory={setPricingCategory} roiNewPatients={roiNewPatients} setRoiNewPatients={setRoiNewPatients} roiAvgValue={roiAvgValue} setRoiAvgValue={setRoiAvgValue} roiPackage={roiPackage} setRoiPackage={setRoiPackage} selectedAddOns={selectedAddOns} setSelectedAddOns={setSelectedAddOns} currentPackages={currentPackages} selectedPkg={selectedPkg} monthlyRevenue={monthlyRevenue} annualRevenue={annualRevenue} paybackDays={paybackDays} netGainY1={netGainY1} roiPercent={roiPercent} addOnTotalOnce={addOnTotalOnce} addOnTotalMonthly={addOnTotalMonthly}/>}
                   {activePage==='analytics'&&analyticsData&&<AnalyticsView stats={stats} leads={leads} analyticsData={analyticsData} openLeadDetail={openLeadDetail}/>}

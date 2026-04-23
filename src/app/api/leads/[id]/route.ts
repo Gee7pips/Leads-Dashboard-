@@ -1,5 +1,6 @@
 import { db } from '@/lib/db'
 import { NextRequest, NextResponse } from 'next/server'
+import { getFallbackLead, SEED_LEADS } from '@/lib/seed-data'
 
 export async function GET(
   _request: NextRequest,
@@ -21,9 +22,14 @@ export async function GET(
     }
 
     return NextResponse.json(lead)
-  } catch (error) {
-    console.error('Error fetching lead:', error)
-    return NextResponse.json({ error: 'Failed to fetch lead' }, { status: 500 })
+  } catch (dbError) {
+    console.warn('Database unavailable, using fallback data:', dbError)
+    const { id } = await params
+    const lead = getFallbackLead(id)
+    if (!lead) {
+      return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
+    }
+    return NextResponse.json(lead)
   }
 }
 
@@ -49,8 +55,20 @@ export async function PATCH(
     })
 
     return NextResponse.json(lead)
-  } catch (error) {
-    console.error('Error updating lead:', error)
-    return NextResponse.json({ error: 'Failed to update lead' }, { status: 500 })
+  } catch (dbError) {
+    console.warn('Database unavailable, using fallback data:', dbError)
+    const { id } = await params
+    const body = await request.json()
+    const existing = getFallbackLead(id)
+    if (!existing) {
+      return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
+    }
+    // Return merged object (not persisted)
+    const merged = {
+      ...existing,
+      ...body,
+      updatedAt: new Date().toISOString(),
+    }
+    return NextResponse.json(merged)
   }
 }

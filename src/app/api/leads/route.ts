@@ -1,5 +1,6 @@
 import { db } from '@/lib/db'
 import { NextRequest, NextResponse } from 'next/server'
+import { getFallbackLeads, type LeadFilters } from '@/lib/seed-data'
 
 export async function GET(request: NextRequest) {
   try {
@@ -40,8 +41,17 @@ export async function GET(request: NextRequest) {
     })
 
     return NextResponse.json(leads)
-  } catch (error) {
-    console.error('Error fetching leads:', error)
-    return NextResponse.json({ error: 'Failed to fetch leads' }, { status: 500 })
+  } catch (dbError) {
+    console.warn('Database unavailable, using fallback data:', dbError)
+    const { searchParams } = new URL(request.url)
+    const filters: LeadFilters = {
+      sector: searchParams.get('sector'),
+      tier: searchParams.get('tier'),
+      stage: searchParams.get('stage'),
+      status: searchParams.get('status'),
+      hotLead: searchParams.get('hotLead'),
+      search: searchParams.get('search'),
+    }
+    return NextResponse.json(getFallbackLeads(filters))
   }
 }

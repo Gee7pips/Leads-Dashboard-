@@ -91,13 +91,17 @@ const STAGE_LABELS: Record<string,string> = {
   proposal_sent:'Proposal Sent',negotiation:'Negotiation',won:'Won',lost:'Lost',
 }
 const STAGE_COLORS: Record<string,string> = {
-  new:'bg-slate-100 text-slate-700 border-slate-200',contacted:'bg-sky-100 text-sky-700 border-sky-200',
-  demo_sent:'bg-violet-100 text-violet-700 border-violet-200',meeting_booked:'bg-amber-100 text-amber-700 border-amber-200',
-  proposal_sent:'bg-orange-100 text-orange-700 border-orange-200',negotiation:'bg-rose-100 text-rose-700 border-rose-200',
-  won:'bg-emerald-100 text-emerald-700 border-emerald-200',lost:'bg-red-100 text-red-700 border-red-200',
+  new:'bg-zinc-800 text-zinc-300 border-zinc-700',
+  contacted:'bg-sky-950 text-sky-400 border-sky-800',
+  demo_sent:'bg-violet-950 text-violet-400 border-violet-800',
+  meeting_booked:'bg-amber-950 text-amber-400 border-amber-800',
+  proposal_sent:'bg-orange-950 text-orange-400 border-orange-800',
+  negotiation:'bg-rose-950 text-rose-400 border-rose-800',
+  won:'bg-emerald-950 text-emerald-400 border-emerald-800',
+  lost:'bg-red-950 text-red-400 border-red-800',
 }
 const STAGE_BG_COLORS: Record<string,string> = {
-  new:'#94a3b8',contacted:'#0ea5e9',demo_sent:'#8b5cf6',meeting_booked:'#f59e0b',
+  new:'#52525b',contacted:'#0ea5e9',demo_sent:'#8b5cf6',meeting_booked:'#f59e0b',
   proposal_sent:'#f97316',negotiation:'#f43f5e',won:'#10b981',lost:'#ef4444',
 }
 const SECTOR_ICONS: Record<string,React.ReactNode> = {
@@ -107,8 +111,8 @@ const SECTOR_ICONS: Record<string,React.ReactNode> = {
   Education:<GraduationCap className="h-4 w-4"/>,Medical:<HeartPulse className="h-4 w-4"/>,
 }
 const SECTOR_COLORS: Record<string,string> = {
-  Dental:'#059669',Legal:'#d97706',Funeral:'#dc2626',Hospitality:'#7c3aed',
-  Logistics:'#0891b2',Construction:'#ea580c',Education:'#2563eb',Medical:'#db2777',
+  Dental:'#10b981',Legal:'#f59e0b',Funeral:'#ef4444',Hospitality:'#a78bfa',
+  Logistics:'#22d3ee',Construction:'#fb923c',Education:'#60a5fa',Medical:'#f472b6',
 }
 const ACTIVITY_ICONS: Record<string,React.ReactNode> = {
   call:<Phone className="h-3.5 w-3.5"/>,email:<Mail className="h-3.5 w-3.5"/>,
@@ -120,18 +124,18 @@ const ACTIVITY_ICONS: Record<string,React.ReactNode> = {
 interface NavSection { label: string; items: { id: PageId; label: string; icon: React.ReactNode }[] }
 const NAV_SECTIONS: NavSection[] = [
   { label: 'MAIN', items: [
-    { id:'dashboard', label:'Dashboard', icon:<LayoutDashboard className="h-5 w-5"/> },
-    { id:'leads', label:'Leads', icon:<Users className="h-5 w-5"/> },
-    { id:'pipeline', label:'Pipeline', icon:<GitBranch className="h-5 w-5"/> },
+    { id:'dashboard', label:'Overview', icon:<LayoutDashboard className="h-4 w-4"/> },
+    { id:'leads', label:'Leads', icon:<Users className="h-4 w-4"/> },
+    { id:'pipeline', label:'Pipeline', icon:<GitBranch className="h-4 w-4"/> },
   ]},
   { label: 'TOOLS', items: [
-    { id:'email', label:'Email Generator', icon:<Sparkles className="h-5 w-5"/> },
-    { id:'strategies', label:'Strategies', icon:<Target className="h-5 w-5"/> },
-    { id:'pricing', label:'Pricing Calculator', icon:<Calculator className="h-5 w-5"/> },
+    { id:'email', label:'Email Generator', icon:<Sparkles className="h-4 w-4"/> },
+    { id:'strategies', label:'Strategies', icon:<Target className="h-4 w-4"/> },
+    { id:'pricing', label:'Pricing Calc', icon:<Calculator className="h-4 w-4"/> },
   ]},
   { label: 'INSIGHTS', items: [
-    { id:'analytics', label:'Analytics', icon:<TrendingUp className="h-5 w-5"/> },
-    { id:'campaigns', label:'Campaigns', icon:<ClipboardList className="h-5 w-5"/> },
+    { id:'analytics', label:'Analytics', icon:<TrendingUp className="h-4 w-4"/> },
+    { id:'campaigns', label:'Campaigns', icon:<ClipboardList className="h-4 w-4"/> },
   ]},
 ]
 const ALL_NAV_ITEMS = NAV_SECTIONS.flatMap(s => s.items)
@@ -160,16 +164,6 @@ const ADD_ONS = [
   { id:'social-media',name:'Social Media Starter Pack',desc:'Branded FB + IG setup, 6 content templates',onceOff:2499,monthly:0 },
   { id:'emergency-page',name:'Emergency Landing Page',desc:'Dedicated emergency page, click-to-call, Ads-ready',onceOff:1999,monthly:0 },
   { id:'content-retainer',name:'Monthly Content Retainer',desc:'2 blog posts/mo, social captions, GBP posts',onceOff:0,monthly:699 },
-]
-
-const EMAIL_TEMPLATES = [
-  { id:'cold-intro', name:'Cold Introduction', type:'cold', tone:'professional', desc:'First contact email introducing Carter Digitals' },
-  { id:'follow-up', name:'Follow-Up Touch', type:'followup', tone:'friendly', desc:'Second touch with added value angle' },
-  { id:'demo-invite', name:'Demo Invite', type:'cold', tone:'casual', desc:'Invite to see a custom-built demo site' },
-  { id:'proposal-follow', name:'Proposal Follow-Up', type:'followup', tone:'professional', desc:'Check in after sending a proposal' },
-  { id:'breakup', name:'Breakup Email', type:'breakup', tone:'professional', desc:'Professional closing — leave the door open' },
-  { id:'whatsapp-opener', name:'WhatsApp Opener', type:'whatsapp', tone:'casual', desc:'Short conversational WhatsApp message' },
-  { id:'linkedin-connect', name:'LinkedIn Connection', type:'linkedin', tone:'professional', desc:'Connection request with personalized note' },
 ]
 
 const STRATEGIES_DATA = [
@@ -224,31 +218,22 @@ function formatRelativeDate(dateStr: string): string {
   const d=Math.floor((Date.now()-new Date(dateStr).getTime())/(1000*60*60*24))
   if(d===0)return'Today';if(d===1)return'Yesterday';if(d<7)return`${d} days ago`;return formatDate(dateStr)
 }
-
 function leadToContext(lead: Lead): LeadContext {
   return {
-    name: lead.name,
-    sector: lead.sector,
-    subSector: lead.subSector,
-    location: lead.location,
-    area: lead.area,
-    rating: lead.rating,
-    tier: lead.tier,
-    services: lead.services,
-    recommendedPackage: lead.recommendedPackage,
-    estimatedValue: lead.estimatedValue,
-    phone: lead.phone,
-    onlinePresence: lead.onlinePresence,
-    notes: lead.notes,
+    name: lead.name, sector: lead.sector, subSector: lead.subSector,
+    location: lead.location, area: lead.area, rating: lead.rating,
+    tier: lead.tier, services: lead.services, recommendedPackage: lead.recommendedPackage,
+    estimatedValue: lead.estimatedValue, phone: lead.phone,
+    onlinePresence: lead.onlinePresence, notes: lead.notes,
   }
 }
 
 function ChannelBadge({ channel }: { channel: string }) {
   const styles: Record<string, string> = {
-    email: 'bg-sky-100 text-sky-700 border-sky-200',
-    whatsapp: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-    linkedin: 'bg-violet-100 text-violet-700 border-violet-200',
-    phone: 'bg-amber-100 text-amber-700 border-amber-200',
+    email: 'bg-sky-950 text-sky-400 border-sky-800',
+    whatsapp: 'bg-emerald-950 text-emerald-400 border-emerald-800',
+    linkedin: 'bg-violet-950 text-violet-400 border-violet-800',
+    phone: 'bg-amber-950 text-amber-400 border-amber-800',
   }
   const icons: Record<string, React.ReactNode> = {
     email: <Mail className="h-3 w-3"/>,
@@ -256,21 +241,20 @@ function ChannelBadge({ channel }: { channel: string }) {
     linkedin: <UserCircle className="h-3 w-3"/>,
     phone: <Phone className="h-3 w-3"/>,
   }
-  return <Badge variant="outline" className={`text-[10px] font-medium gap-1 ${styles[channel]||'bg-gray-100 text-gray-700'}`}>{icons[channel]}{channel.charAt(0).toUpperCase()+channel.slice(1)}</Badge>
+  return <Badge variant="outline" className={`text-[10px] font-medium gap-1 ${styles[channel]||'bg-zinc-800 text-zinc-400'}`}>{icons[channel]}{channel.charAt(0).toUpperCase()+channel.slice(1)}</Badge>
 }
 
 // ─── Animated Count Hook ─────────────────────────────────────────────
 function useAnimatedCount(target: number, duration = 1200) {
   const [count, setCount] = useState(0)
-  const ref = useRef<HTMLElement>(null)
   useEffect(() => {
-    let start = 0; const startTime = performance.now()
+    let startTime: number
     const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime
       const elapsed = currentTime - startTime
       const progress = Math.min(elapsed / duration, 1)
       const eased = 1 - Math.pow(1 - progress, 3)
-      start = Math.floor(eased * target)
-      setCount(start)
+      setCount(Math.floor(eased * target))
       if (progress < 1) requestAnimationFrame(animate)
     }
     requestAnimationFrame(animate)
@@ -280,109 +264,107 @@ function useAnimatedCount(target: number, duration = 1200) {
 
 // ─── Small Components ────────────────────────────────────────────────
 function TierBadge({ tier }: { tier: number }) {
-  const c={1:'bg-emerald-100 text-emerald-700 border-emerald-200',2:'bg-amber-100 text-amber-700 border-amber-200',3:'bg-slate-100 text-slate-700 border-slate-200'}
-  return <Badge variant="outline" className={c[tier]||c[3]}>Tier {tier}</Badge>
+  const c={1:'bg-emerald-950 text-emerald-400 border-emerald-800',2:'bg-amber-950 text-amber-400 border-amber-800',3:'bg-zinc-800 text-zinc-400 border-zinc-700'}
+  return <Badge variant="outline" className={`text-[10px] ${c[tier as keyof typeof c]||c[3]}`}>T{tier}</Badge>
 }
 function StarRating({ rating }: { rating: number }) {
-  return (<div className="flex items-center gap-0.5">{[1,2,3,4,5].map(s=><Star key={s} className={`h-3.5 w-3.5 ${s<=Math.round(rating)?'text-amber-400 fill-amber-400':'text-gray-300'}`}/>)}
+  return (<div className="flex items-center gap-0.5">{[1,2,3,4,5].map(s=><Star key={s} className={`h-3.5 w-3.5 ${s<=Math.round(rating)?'text-amber-400 fill-amber-400':'text-zinc-700'}`}/>)}
   <span className="ml-1 text-xs text-muted-foreground">{rating.toFixed(1)}</span></div>)
 }
 function DifficultyBadge({ difficulty }: { difficulty: string }) {
-  const d:Record<string,string>={Beginner:'bg-emerald-100 text-emerald-700',Intermediate:'bg-amber-100 text-amber-700',Advanced:'bg-rose-100 text-rose-700'}
+  const d:Record<string,string>={Beginner:'bg-emerald-950 text-emerald-400',Intermediate:'bg-amber-950 text-amber-400',Advanced:'bg-rose-950 text-rose-400'}
   return <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${d[difficulty]||d.Beginner}`}>{difficulty}</span>
 }
 function LoadingSpinner() {
-  return (<div className="flex items-center justify-center py-20"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"/></div>)
+  return (<div className="flex items-center justify-center py-20"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"/></div>)
 }
 function SkeletonCard() {
-  return <Card className="border-0 shadow-sm"><CardContent className="p-6"><Skeleton className="h-4 w-24 mb-2"/><Skeleton className="h-8 w-16 mb-1"/><Skeleton className="h-3 w-32"/></CardContent></Card>
+  return (
+    <div className="card-premium p-6 rounded-xl">
+      <Skeleton className="h-4 w-24 mb-3 bg-zinc-800"/>
+      <Skeleton className="h-8 w-20 mb-2 bg-zinc-800"/>
+      <Skeleton className="h-3 w-32 bg-zinc-800"/>
+    </div>
+  )
 }
 
 // ─── Chart Configs ───────────────────────────────────────────────────
 const sectorChartConfig: ChartConfig = {
-  Dental:{label:'Dental',color:'#059669'},Legal:{label:'Legal',color:'#d97706'},Funeral:{label:'Funeral',color:'#dc2626'},
-  Hospitality:{label:'Hospitality',color:'#7c3aed'},Logistics:{label:'Logistics',color:'#0891b2'},
-  Construction:{label:'Construction',color:'#ea580c'},Education:{label:'Education',color:'#2563eb'},Medical:{label:'Medical',color:'#db2777'},
+  Dental:{label:'Dental',color:'#10b981'},Legal:{label:'Legal',color:'#f59e0b'},
+  Funeral:{label:'Funeral',color:'#ef4444'},Hospitality:{label:'Hospitality',color:'#a78bfa'},
+  Logistics:{label:'Logistics',color:'#22d3ee'},Construction:{label:'Construction',color:'#fb923c'},
+  Education:{label:'Education',color:'#60a5fa'},Medical:{label:'Medical',color:'#f472b6'},
 }
-const tierChartConfig: ChartConfig = { count:{label:'Leads',color:'#059669'} }
-const funnelChartConfig: ChartConfig = { count:{label:'Leads',color:'#059669'} }
+const tierChartConfig: ChartConfig = { count:{label:'Leads',color:'#10b981'} }
 const pipelineChartConfig: ChartConfig = {
-  count:{label:'Leads',color:'#059669'},value:{label:'Value (R)',color:'#d97706'}
+  count:{label:'Leads',color:'#10b981'},value:{label:'Value (R)',color:'#f59e0b'}
 }
 
 // ─── Motion Variants ─────────────────────────────────────────────────
-const fadeInUp = { initial:{opacity:0,y:20},animate:{opacity:1,y:0},transition:{duration:0.4} }
-const staggerContainer = { animate:{transition:{staggerChildren:0.08}} }
-const scaleIn = { initial:{opacity:0,scale:0.95},animate:{opacity:1,scale:1},transition:{duration:0.3} }
+const fadeInUp = { initial:{opacity:0,y:16},animate:{opacity:1,y:0},transition:{duration:0.35} }
+const staggerContainer = { animate:{transition:{staggerChildren:0.07}} }
+const scaleIn = { initial:{opacity:0,scale:0.96},animate:{opacity:1,scale:1},transition:{duration:0.25} }
 
-// ─── Animated KPI Card ──────────────────────────────────────────────
-function AnimatedKPICard({ label, value, sub, icon, bg, valueColor, trend, trendValue, delay=0 }: {
-  label: string; value: string|number; sub: string; icon: React.ReactNode; bg: string;
-  valueColor?: string; trend?: 'up'|'down'; trendValue?: string; delay?: number
+// ─── KPI Card ────────────────────────────────────────────────────────
+function KPICard({ label, value, sub, icon, accentClass, trend, trendValue, delay=0 }: {
+  label: string; value: string|number; sub: string; icon: React.ReactNode; accentClass: string;
+  trend?: 'up'|'down'; trendValue?: string; delay?: number
 }) {
-  const numVal = typeof value === 'number' ? value : parseInt(value.replace(/[^0-9]/g,'')) || 0
-  const animated = useAnimatedCount(numVal, 1500)
-  const displayVal = typeof value === 'number' ? animated : value
+  const numVal = typeof value === 'number' ? value : parseInt(String(value).replace(/[^0-9]/g,'')) || 0
+  const animated = useAnimatedCount(numVal, 1400)
+  const displayVal = typeof value === 'number' ? animated.toLocaleString() : value
 
   return (
-    <motion.div {...fadeInUp} transition={{duration:0.4,delay}}>
-      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow group relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-24 h-24 opacity-5 group-hover:opacity-10 transition-opacity">
-          <div className={`h-full w-full ${bg.replace('50','500')} rounded-full -translate-y-8 translate-x-8`}/>
-        </div>
-        <CardContent className="p-4 sm:p-6 relative">
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{label}</p>
-              <p className={`text-2xl sm:text-3xl font-bold ${valueColor||'text-gray-900'}`}>{displayVal}</p>
-              <div className="flex items-center gap-2">
-                {trend && trendValue && (
-                  <span className={`flex items-center gap-0.5 text-xs font-semibold ${trend==='up'?'text-emerald-600':'text-red-500'}`}>
-                    {trend==='up'?<ArrowUpRight className="h-3 w-3"/>:<ArrowDownRight className="h-3 w-3"/>}{trendValue}
-                  </span>
-                )}
-                <p className="text-xs text-muted-foreground">{sub}</p>
-              </div>
+    <motion.div initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{duration:0.4,delay}}>
+      <div className="card-premium p-5 rounded-xl relative overflow-hidden group hover:border-zinc-600 transition-all duration-300 stat-shine">
+        <div className={`absolute top-0 right-0 w-28 h-28 rounded-full -translate-y-10 translate-x-10 opacity-[0.07] group-hover:opacity-[0.12] transition-opacity ${accentClass}`}/>
+        <div className="flex items-start justify-between relative">
+          <div className="space-y-1.5">
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">{label}</p>
+            <p className="text-3xl font-bold text-foreground leading-none">{displayVal}</p>
+            <div className="flex items-center gap-2">
+              {trend && trendValue && (
+                <span className={`flex items-center gap-0.5 text-xs font-semibold ${trend==='up'?'text-emerald-400':'text-red-400'}`}>
+                  {trend==='up'?<ArrowUpRight className="h-3 w-3"/>:<ArrowDownRight className="h-3 w-3"/>}{trendValue}
+                </span>
+              )}
+              <p className="text-xs text-muted-foreground">{sub}</p>
             </div>
-            <motion.div className={`h-12 w-12 rounded-xl ${bg} flex items-center justify-center`} whileHover={{scale:1.1,rotate:5}} transition={{type:'spring',stiffness:300}}>
-              {icon}
-            </motion.div>
           </div>
-        </CardContent>
-      </Card>
+          <div className={`h-11 w-11 rounded-xl flex items-center justify-center shrink-0 ${accentClass}`}>
+            {icon}
+          </div>
+        </div>
+      </div>
     </motion.div>
   )
 }
 
-// ─── Mini Sparkline ──────────────────────────────────────────────────
-function MiniSparkline({ data, color='#059669', width=80, height=32 }: { data: number[]; color?: string; width?: number; height?: number }) {
-  if(data.length<2) return null
-  const min = Math.min(...data); const max = Math.max(...data)
-  const range = max - min || 1
-  const pts = data.map((v,i) => `${(i/(data.length-1))*width},${height-((v-min)/range)*height}`).join(' ')
+// ─── Section Header ───────────────────────────────────────────────────
+function SectionHeader({ title, subtitle, action }: { title: string; subtitle?: string; action?: React.ReactNode }) {
   return (
-    <svg width={width} height={height} className="inline-block">
-      <defs><linearGradient id={`grad-${color.replace('#','')}`} x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor={color} stopOpacity="0.3"/><stop offset="100%" stopColor={color} stopOpacity="0"/>
-      </linearGradient></defs>
-      <polygon points={`0,${height} ${pts} ${width},${height}`} fill={`url(#grad-${color.replace('#','')})`}/>
-      <polyline points={pts} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
+    <div className="flex items-start justify-between mb-5">
+      <div>
+        <h2 className="text-lg font-bold text-foreground">{title}</h2>
+        {subtitle && <p className="text-sm text-muted-foreground mt-0.5">{subtitle}</p>}
+      </div>
+      {action}
+    </div>
   )
 }
 
 // ─── Dashboard View ──────────────────────────────────────────────────
-function DashboardView({ stats, leads, openLeadDetail }: { stats: DashboardStats; leads: Lead[]; openLeadDetail: (l: Lead) => void }) {
-  const [selectedSector, setSelectedSector] = useState<string|null>(null)
-
+function DashboardView({ stats, leads, openLeadDetail, navigateTo }: {
+  stats: DashboardStats; leads: Lead[]; openLeadDetail: (l: Lead) => void; navigateTo: (p: PageId) => void
+}) {
   const topHotLeads = useMemo(() =>
-    leads.filter(l=>l.hotLead&&l.stage!=='won'&&l.stage!=='lost').sort((a,b)=>b.rating-a.rating).slice(0,5),
+    leads.filter(l=>l.hotLead&&l.stage!=='won'&&l.stage!=='lost').sort((a,b)=>b.rating-a.rating).slice(0,6),
   [leads])
 
   const revenueForecast = useMemo(() => {
     const active = leads.filter(l=>l.stage!=='won'&&l.stage!=='lost'&&l.status==='active')
     const weighted = active.reduce((s,l) => {
-      const prob = {new:0.05,contacted:0.15,demo_sent:0.25,meeting_booked:0.4,proposal_sent:0.6,negotiation:0.75}[l.stage]||0.1
+      const prob = ({new:0.05,contacted:0.15,demo_sent:0.25,meeting_booked:0.4,proposal_sent:0.6,negotiation:0.75} as Record<string,number>)[l.stage]||0.1
       return s + (l.estimatedValue||0) * prob
     },0)
     const mrr = weighted * 0.08
@@ -399,225 +381,345 @@ function DashboardView({ stats, leads, openLeadDetail }: { stats: DashboardStats
     }),
   [stats,leads])
 
-  const sparkData = useMemo(() => {
-    return stats.byStage.map(s => s.count)
-  }, [stats])
+  const weeklyTargets = [
+    { label: 'Leads Researched', target: 50, current: Math.min(leads.length, 50) },
+    { label: 'Businesses Contacted', target: 40, current: Math.min(leads.filter(l=>l.stage!=='new').length, 40) },
+    { label: 'Prototype Links Sent', target: 10, current: Math.min(leads.filter(l=>l.stage==='demo_sent').length, 10) },
+    { label: 'Meetings Booked', target: 5, current: Math.min(leads.filter(l=>l.stage==='meeting_booked').length, 5) },
+  ]
 
   return (
     <motion.div className="space-y-6" variants={staggerContainer} initial="initial" animate="animate">
-      {/* Welcome Banner */}
+
+      {/* Hero Banner */}
       <motion.div {...fadeInUp}>
-        <Card className="border-0 shadow-sm bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 text-white overflow-hidden relative">
-          <CardContent className="p-5 sm:p-6 relative z-10">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="relative rounded-2xl overflow-hidden border border-emerald-900/40"
+          style={{background:'linear-gradient(135deg, oklch(0.18 0.04 162) 0%, oklch(0.13 0.02 200) 50%, oklch(0.12 0.01 240) 100%)'}}>
+          {/* Grid overlay */}
+          <div className="absolute inset-0 opacity-5" style={{backgroundImage:'linear-gradient(oklch(1 0 0 / 0.3) 1px, transparent 1px), linear-gradient(90deg, oklch(1 0 0 / 0.3) 1px, transparent 1px)',backgroundSize:'40px 40px'}}/>
+          <div className="relative p-6 sm:p-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
               <div>
-                <h2 className="text-lg sm:text-xl font-bold">Welcome back, Kabelo</h2>
-                <p className="text-emerald-100 mt-1 text-sm">Here&apos;s what&apos;s happening with your pipeline today.</p>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-emerald-400 bg-emerald-950/60 border border-emerald-800/50 px-2.5 py-1 rounded-full">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"/>Live Dashboard
+                  </span>
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-white leading-tight">
+                  Welcome back, <span className="text-emerald-400">Kabelo</span> &amp; <span className="text-amber-400">Sihle</span>
+                </h1>
+                <p className="text-sm text-emerald-200/60 mt-1.5 max-w-lg">
+                  &ldquo;Most agencies sell promises. We sell proof.&rdquo; — Carter Digitals, Pretoria.
+                </p>
               </div>
-              <div className="flex items-center gap-2">
-                <Button variant="secondary" size="sm" className="bg-white/20 hover:bg-white/30 text-white border-0" onClick={()=>toast.info('Report exported!')}>
-                  <Download className="h-4 w-4 mr-1.5"/>Export
+              <div className="flex items-center gap-2 shrink-0">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="bg-white/5 border-white/10 text-white hover:bg-white/10 text-xs"
+                  onClick={()=>toast.info('Report exported!')}
+                >
+                  <Download className="h-3.5 w-3.5 mr-1.5"/>Export
                 </Button>
-                <Button size="sm" className="bg-white text-emerald-700 hover:bg-emerald-50">
-                  <Sparkles className="h-4 w-4 mr-1.5"/>Quick Generate
+                <Button
+                  size="sm"
+                  className="bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-semibold text-xs"
+                  onClick={()=>navigateTo('email')}
+                >
+                  <Sparkles className="h-3.5 w-3.5 mr-1.5"/>Generate Email
                 </Button>
               </div>
             </div>
-          </CardContent>
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-32 translate-x-32"/>
-          <div className="absolute bottom-0 left-1/3 w-32 h-32 bg-white/5 rounded-full translate-y-16"/>
-        </Card>
+
+            {/* Inline revenue callout */}
+            <div className="mt-5 grid grid-cols-3 gap-3">
+              {[
+                { label: 'Conservative Target', value: 'R35,000/mo', sub: '2 sites + 5 retainers' },
+                { label: 'Strong Target', value: 'R86,000/mo', sub: '3 sites + 1 system' },
+                { label: 'Aggressive Target', value: 'R180,000/mo', sub: '3+2 systems + retainers' },
+              ].map((t, i) => (
+                <div key={i} className="bg-black/20 border border-white/5 rounded-xl p-3">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-white/40">{t.label}</p>
+                  <p className={`text-base font-bold mt-0.5 ${i===0?'text-emerald-400':i===1?'text-amber-400':'text-violet-400'}`}>{t.value}</p>
+                  <p className="text-[10px] text-white/40 mt-0.5">{t.sub}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </motion.div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <AnimatedKPICard label="Total Leads" value={stats.totalLeads} sub={`${stats.activePipeline} active pipeline`} icon={<Users className="h-6 w-6 text-emerald-600"/>} bg="bg-emerald-50" trend="up" trendValue="+12%" delay={0}/>
-        <AnimatedKPICard label="Hot Leads" value={stats.hotLeads} sub="Priority contacts" icon={<Flame className="h-6 w-6 text-amber-500"/>} bg="bg-amber-50" valueColor="text-amber-600" trend="up" trendValue="+3" delay={0.1}/>
-        <AnimatedKPICard label="Pipeline Value" value={stats.pipelineValue} sub={`${stats.wonLeads} won | ${stats.lostLeads} lost`} icon={<DollarSign className="h-6 w-6 text-emerald-600"/>} bg="bg-emerald-50" trend="up" trendValue="+R45K" delay={0.2}/>
-        <AnimatedKPICard label="Conversion" value={`${stats.conversionRate}%`} sub={`of ${stats.totalLeads} total leads`} icon={<TrendingUp className="h-6 w-6 text-violet-600"/>} bg="bg-violet-50" valueColor="text-violet-600" delay={0.3}/>
+      {/* KPI Row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <KPICard label="Total Leads" value={stats.totalLeads} sub={`${stats.activePipeline} active`} icon={<Users className="h-5 w-5 text-emerald-400"/>} accentClass="bg-emerald-500/10" trend="up" trendValue="+12%" delay={0}/>
+        <KPICard label="Hot Leads" value={stats.hotLeads} sub="Priority contacts" icon={<Flame className="h-5 w-5 text-amber-400"/>} accentClass="bg-amber-500/10" trend="up" trendValue="+3" delay={0.08}/>
+        <KPICard label="Pipeline Value" value={formatCurrency(stats.pipelineValue)} sub={`${stats.wonLeads} won · ${stats.lostLeads} lost`} icon={<DollarSign className="h-5 w-5 text-emerald-400"/>} accentClass="bg-emerald-500/10" trend="up" trendValue="+R45K" delay={0.16}/>
+        <KPICard label="Conversion Rate" value={`${stats.conversionRate}%`} sub={`of ${stats.totalLeads} total leads`} icon={<TrendingUp className="h-5 w-5 text-violet-400"/>} accentClass="bg-violet-500/10" delay={0.24}/>
       </div>
 
-      {/* Revenue Forecast + Top Leads Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <motion.div {...fadeInUp} transition={{delay:0.35}} className="lg:col-span-1">
-          <Card className="border-0 shadow-sm h-full">
-            <CardHeader className="pb-3"><CardTitle className="text-sm font-semibold flex items-center gap-2"><Activity className="h-4 w-4 text-emerald-600"/>Revenue Forecast</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-4 border border-emerald-100">
-                <p className="text-xs text-emerald-600 font-medium">Weighted Pipeline</p>
-                <p className="text-2xl font-bold text-emerald-700">{formatCurrency(revenueForecast.weightedPipeline)}</p>
-                <p className="text-xs text-emerald-500 mt-1">probability-adjusted value</p>
+      {/* Revenue Forecast + Hot Leads */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <motion.div {...fadeInUp} transition={{delay:0.3}}>
+          <div className="card-premium rounded-xl h-full p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <Activity className="h-4 w-4 text-emerald-400"/>
+              <h3 className="text-sm font-semibold text-foreground">Revenue Forecast</h3>
+            </div>
+            <div className="rounded-xl p-4 mb-4" style={{background:'oklch(0.18 0.04 162 / 0.3)',border:'1px solid oklch(0.25 0.05 162 / 0.4)'}}>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">Weighted Pipeline</p>
+              <p className="text-2xl font-bold text-emerald-400 mt-1">{formatCurrency(revenueForecast.weightedPipeline)}</p>
+              <p className="text-[10px] text-emerald-600 mt-0.5">probability-adjusted value</p>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="bg-zinc-800/60 rounded-lg p-3">
+                <p className="text-[10px] text-muted-foreground font-medium">Monthly (est.)</p>
+                <p className="text-base font-bold text-foreground mt-0.5">{formatCurrency(revenueForecast.mrr)}</p>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-gray-50 rounded-lg p-3"><p className="text-xs text-muted-foreground">Monthly (est.)</p><p className="text-lg font-bold">{formatCurrency(revenueForecast.mrr)}</p></div>
-                <div className="bg-gray-50 rounded-lg p-3"><p className="text-xs text-muted-foreground">Annual (est.)</p><p className="text-lg font-bold">{formatCurrency(revenueForecast.arr)}</p></div>
+              <div className="bg-zinc-800/60 rounded-lg p-3">
+                <p className="text-[10px] text-muted-foreground font-medium">Annual (est.)</p>
+                <p className="text-base font-bold text-foreground mt-0.5">{formatCurrency(revenueForecast.arr)}</p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </motion.div>
 
-        <motion.div {...fadeInUp} transition={{delay:0.4}} className="lg:col-span-2">
-          <Card className="border-0 shadow-sm h-full">
-            <CardHeader className="pb-3"><CardTitle className="text-sm font-semibold flex items-center gap-2"><Flame className="h-4 w-4 text-amber-500"/>Top Hot Leads</CardTitle><CardDescription>Highest-priority leads to contact first</CardDescription></CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {topHotLeads.length===0?<p className="text-sm text-muted-foreground text-center py-6">No hot leads right now</p>:topHotLeads.map((lead,i)=>(
-                  <motion.div key={lead.id} initial={{opacity:0,x:-10}} animate={{opacity:1,x:0}} transition={{delay:i*0.05}}
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-amber-50/50 transition-colors cursor-pointer group" onClick={()=>openLeadDetail(lead)}>
-                    <div className="h-8 w-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 font-bold text-xs shrink-0">#{i+1}</div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2"><p className="font-medium text-sm truncate">{lead.name}</p><Flame className="h-3.5 w-3.5 text-amber-500"/></div>
-                      <div className="flex items-center gap-2 mt-0.5"><span className="text-xs text-muted-foreground">{lead.sector}</span><span className="text-xs text-muted-foreground">·</span><span className="text-xs text-muted-foreground">{lead.area||lead.location}</span></div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <StarRating rating={lead.rating}/>
-                      {lead.estimatedValue>0&&<span className="text-xs font-semibold text-emerald-600">{formatCurrency(lead.estimatedValue)}</span>}
-                      <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-emerald-600 transition-colors"/>
-                    </div>
-                  </motion.div>
-                ))}
+        <motion.div {...fadeInUp} transition={{delay:0.35}} className="lg:col-span-2">
+          <div className="card-premium rounded-xl h-full p-5">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Flame className="h-4 w-4 text-amber-400"/>
+                <h3 className="text-sm font-semibold text-foreground">Hot Leads</h3>
+                <span className="text-[10px] font-bold bg-amber-950 text-amber-400 border border-amber-800 px-2 py-0.5 rounded-full">{topHotLeads.length}</span>
               </div>
-            </CardContent>
-          </Card>
+              <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground h-7" onClick={()=>navigateTo('leads')}>
+                View all <ArrowRight className="h-3 w-3 ml-1"/>
+              </Button>
+            </div>
+            <div className="space-y-2">
+              {topHotLeads.length===0
+                ? <p className="text-sm text-muted-foreground text-center py-8">No hot leads right now</p>
+                : topHotLeads.map((lead,i)=>(
+                <motion.div key={lead.id}
+                  initial={{opacity:0,x:-8}} animate={{opacity:1,x:0}} transition={{delay:i*0.05}}
+                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-zinc-800/60 transition-all cursor-pointer group border border-transparent hover:border-zinc-700"
+                  onClick={()=>openLeadDetail(lead)}
+                >
+                  <div className="h-8 w-8 rounded-full bg-amber-950 border border-amber-800 flex items-center justify-center text-amber-400 font-bold text-xs shrink-0">
+                    {i+1}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <p className="font-medium text-sm text-foreground truncate">{lead.name}</p>
+                      <Flame className="h-3 w-3 text-amber-400 shrink-0"/>
+                    </div>
+                    <p className="text-xs text-muted-foreground">{lead.sector} · {lead.area||lead.location}</p>
+                  </div>
+                  <div className="flex items-center gap-2.5 shrink-0">
+                    <StarRating rating={lead.rating}/>
+                    {lead.estimatedValue>0 && (
+                      <span className="text-xs font-semibold text-emerald-400">{formatCurrency(lead.estimatedValue)}</span>
+                    )}
+                    <ArrowRight className="h-3.5 w-3.5 text-zinc-700 group-hover:text-emerald-400 transition-colors"/>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
         </motion.div>
       </div>
 
       {/* Pipeline Funnel */}
-      <motion.div {...fadeInUp} transition={{delay:0.45}}>
-        <Card className="border-0 shadow-sm">
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Pipeline Funnel</CardTitle><CardDescription>Lead distribution with conversion flow</CardDescription></CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {stats.byStage.map((stage,i)=>{
-                const maxCount=Math.max(...stats.byStage.map(s=>s.count),1)
-                const pct=(stage.count/maxCount)*100
-                const convPct = i>0&&stats.byStage[0].count>0?Math.round((stage.count/stats.byStage[0].count)*100):100
-                return (
-                  <motion.div key={stage.stage} className="flex items-center gap-3" initial={{opacity:0,x:-20}} animate={{opacity:1,x:0}} transition={{delay:i*0.05}}>
-                    <span className="text-xs font-medium w-24 shrink-0 truncate text-right">{stage.label}</span>
-                    <div className="flex-1 h-9 bg-gray-100 rounded-lg relative overflow-hidden">
-                      <motion.div className={`h-full rounded-lg ${stage.stage==='won'?'bg-emerald-500':stage.stage==='lost'?'bg-red-400':'bg-gradient-to-r from-emerald-400 to-teal-400'}`}
-                        initial={{width:0}} animate={{width:`${Math.max(pct,2)}%`}} transition={{duration:0.6,delay:i*0.05,ease:'easeOut'}}/>
-                      <div className="absolute inset-0 flex items-center justify-between px-3">
-                        <span className="text-xs font-bold text-gray-700 drop-shadow-sm">{stage.count}</span>
-                        <span className="text-xs text-gray-500">{convPct}%</span>
-                      </div>
-                    </div>
-                    {i>0&&stats.byStage[i-1].count>0&&(
-                      <span className={`text-xs font-semibold w-16 text-right ${stage.count>0?'text-emerald-600':'text-red-500'}`}>
-                        {stats.byStage[i-1].count>0?Math.round((stage.count/stats.byStage[i-1].count)*100):0}%
-                      </span>
-                    )}
-                  </motion.div>
-                )
-              })}
+      <motion.div {...fadeInUp} transition={{delay:0.4}}>
+        <div className="card-premium rounded-xl p-5">
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <h3 className="text-sm font-semibold text-foreground">Pipeline Funnel</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">Lead distribution with stage-by-stage conversion</p>
             </div>
-          </CardContent>
-        </Card>
+            <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground h-7" onClick={()=>navigateTo('pipeline')}>
+              Full Pipeline <ArrowRight className="h-3 w-3 ml-1"/>
+            </Button>
+          </div>
+          <div className="space-y-2.5">
+            {stats.byStage.map((stage,i)=>{
+              const maxCount=Math.max(...stats.byStage.map(s=>s.count),1)
+              const pct=(stage.count/maxCount)*100
+              const convPct = i>0&&stats.byStage[0].count>0?Math.round((stage.count/stats.byStage[0].count)*100):100
+              return (
+                <motion.div key={stage.stage} className="flex items-center gap-3"
+                  initial={{opacity:0,x:-16}} animate={{opacity:1,x:0}} transition={{delay:i*0.04}}>
+                  <span className="text-[11px] font-medium w-28 shrink-0 text-right text-muted-foreground">{stage.label}</span>
+                  <div className="flex-1 h-8 bg-zinc-800/80 rounded-lg relative overflow-hidden">
+                    <motion.div
+                      className="h-full rounded-lg"
+                      style={{backgroundColor: stage.stage==='won'?'#10b981': stage.stage==='lost'?'#ef4444': STAGE_BG_COLORS[stage.stage]+'40', borderRight:`2px solid ${STAGE_BG_COLORS[stage.stage]}`}}
+                      initial={{width:0}} animate={{width:`${Math.max(pct,2)}%`}}
+                      transition={{duration:0.7,delay:i*0.05,ease:'easeOut'}}
+                    />
+                    <div className="absolute inset-0 flex items-center justify-between px-3">
+                      <span className="text-xs font-bold text-foreground">{stage.count}</span>
+                      <span className="text-[10px] text-muted-foreground">{convPct}%</span>
+                    </div>
+                  </div>
+                  <span className="text-[10px] w-12 text-right font-semibold text-muted-foreground">
+                    {stage.count > 0 ? `${stage.count}` : '—'}
+                  </span>
+                </motion.div>
+              )
+            })}
+          </div>
+        </div>
       </motion.div>
 
-      {/* Sector Performance Table + Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div {...fadeInUp} transition={{delay:0.5}}>
-          <Card className="border-0 shadow-sm">
-            <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Sector Performance</CardTitle></CardHeader>
-            <CardContent>
-              <Table><TableHeader><TableRow className="bg-gray-50/50">
-                <TableHead className="text-xs font-semibold cursor-pointer hover:text-emerald-600" onClick={()=>setSelectedSector(selectedSector?null:null)}>Sector</TableHead>
-                <TableHead className="text-xs font-semibold text-right">Leads</TableHead>
-                <TableHead className="text-xs font-semibold text-right hidden sm:table-cell">Value</TableHead>
-                <TableHead className="text-xs font-semibold text-right hidden md:table-cell">Conv.</TableHead>
-                <TableHead className="text-xs font-semibold text-right hidden lg:table-cell">Rating</TableHead>
-              </TableRow></TableHeader>
+      {/* Sector + Chart row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <motion.div {...fadeInUp} transition={{delay:0.45}}>
+          <div className="card-premium rounded-xl p-5 h-full">
+            <h3 className="text-sm font-semibold text-foreground mb-4">Sector Performance</h3>
+            <Table>
+              <TableHeader>
+                <TableRow className="border-zinc-800 hover:bg-transparent">
+                  <TableHead className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Sector</TableHead>
+                  <TableHead className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider text-right">Leads</TableHead>
+                  <TableHead className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider text-right hidden sm:table-cell">Value</TableHead>
+                  <TableHead className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider text-right hidden md:table-cell">Conv.</TableHead>
+                  <TableHead className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider text-right hidden lg:table-cell">Rating</TableHead>
+                </TableRow>
+              </TableHeader>
               <TableBody>
                 {sectorPerfTable.map(s=>(
-                  <TableRow key={s.sector} className="cursor-pointer hover:bg-emerald-50/30" onClick={()=>{setSelectedSector(s.sector);toast.info(`Filtered: ${s.sector}`)}}>
-                    <TableCell><div className="flex items-center gap-2">{SECTOR_ICONS[s.sector]||<Building2 className="h-3.5 w-3.5"/>}<span className="text-sm font-medium">{s.sector}</span></div></TableCell>
-                    <TableCell className="text-right font-semibold">{s.leads}</TableCell>
-                    <TableCell className="text-right text-sm hidden sm:table-cell font-medium">{s.value>0?formatCurrency(s.value):'—'}</TableCell>
-                    <TableCell className="text-right hidden md:table-cell"><span className={`text-xs font-semibold ${s.conversion>0?'text-emerald-600':'text-muted-foreground'}`}>{s.conversion}%</span></TableCell>
-                    <TableCell className="text-right hidden lg:table-cell"><span className="text-xs">{s.avgRating}★</span></TableCell>
+                  <TableRow key={s.sector} className="border-zinc-800/50 hover:bg-zinc-800/40 transition-colors">
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <div className="h-6 w-6 rounded-md flex items-center justify-center" style={{backgroundColor:SECTOR_COLORS[s.sector]+'20',color:SECTOR_COLORS[s.sector]}}>
+                          {SECTOR_ICONS[s.sector]||<Building2 className="h-3.5 w-3.5"/>}
+                        </div>
+                        <span className="text-sm font-medium text-foreground">{s.sector}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right font-semibold text-sm text-foreground">{s.leads}</TableCell>
+                    <TableCell className="text-right text-sm hidden sm:table-cell text-muted-foreground">{s.value>0?formatCurrency(s.value):'—'}</TableCell>
+                    <TableCell className="text-right hidden md:table-cell">
+                      <span className={`text-xs font-semibold ${s.conversion>0?'text-emerald-400':'text-muted-foreground'}`}>{s.conversion}%</span>
+                    </TableCell>
+                    <TableCell className="text-right hidden lg:table-cell">
+                      <span className="text-xs text-amber-400">{s.avgRating}★</span>
+                    </TableCell>
                   </TableRow>
                 ))}
-              </TableBody></Table>
-            </CardContent>
-          </Card>
+              </TableBody>
+            </Table>
+          </div>
         </motion.div>
 
+        <motion.div {...fadeInUp} transition={{delay:0.5}}>
+          <div className="card-premium rounded-xl p-5 h-full">
+            <h3 className="text-sm font-semibold text-foreground mb-2">Leads by Sector</h3>
+            <ChartContainer config={sectorChartConfig} className="h-[280px] w-full">
+              <PieChart>
+                <Pie data={stats.bySector} cx="50%" cy="50%" innerRadius={65} outerRadius={105} dataKey="count" nameKey="sector" paddingAngle={3} animationBegin={200} animationDuration={900}>
+                  {stats.bySector.map((entry)=><Cell key={entry.sector} fill={SECTOR_COLORS[entry.sector]||'#52525b'}/>)}
+                </Pie>
+                <ChartTooltip content={<ChartTooltipContent/>}/>
+                <ChartLegend content={<ChartLegendContent nameKey="sector"/>}/>
+              </PieChart>
+            </ChartContainer>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Weekly Targets + Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <motion.div {...fadeInUp} transition={{delay:0.55}}>
-          <Card className="border-0 shadow-sm">
-            <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Leads by Sector</CardTitle></CardHeader>
-            <CardContent>
-              <ChartContainer config={sectorChartConfig} className="h-[300px] w-full">
-                <PieChart><Pie data={stats.bySector} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="count" nameKey="sector" paddingAngle={2} animationBegin={200} animationDuration={800}>
-                  {stats.bySector.map((entry)=><Cell key={entry.sector} fill={SECTOR_COLORS[entry.sector]||'#6b7280'}/>)}
-                </Pie><ChartTooltip content={<ChartTooltipContent/>}/><ChartLegend content={<ChartLegendContent nameKey="sector"/>}/></PieChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-        </motion.div>
-      </div>
-
-      {/* Tier Distribution + Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div {...fadeInUp} transition={{delay:0.6}}>
-          <Card className="border-0 shadow-sm">
-            <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Lead Quality Distribution</CardTitle></CardHeader>
-            <CardContent>
-              <ChartContainer config={tierChartConfig} className="h-[280px] w-full">
-                <BarChart data={stats.byTier} layout="vertical" margin={{top:5,right:20,left:50,bottom:5}}>
-                  <CartesianGrid strokeDasharray="3 3" horizontal={false}/><XAxis type="number" tick={{fontSize:11}}/>
-                  <YAxis type="category" dataKey="tier" tick={{fontSize:12}} width={50}/>
-                  <ChartTooltip content={<ChartTooltipContent/>}/>
-                  <Bar dataKey="count" radius={[0,6,6,0]} animationDuration={800}>
-                    {stats.byTier.map((entry,index)=><Cell key={entry.tier} fill={['#059669','#d97706','#6b7280'][index]}/>)}
-                  </Bar>
-                </BarChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        <motion.div {...fadeInUp} transition={{delay:0.65}}>
-          <Card className="border-0 shadow-sm">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-semibold">Recent Activity</CardTitle>
-                <Button variant="ghost" size="sm" className="text-xs text-emerald-600 hover:text-emerald-700">View all</Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-1 max-h-[320px] overflow-y-auto pr-1">
-                {stats.recentActivities.length===0?<p className="text-sm text-muted-foreground text-center py-8">No recent activities</p>:stats.recentActivities.map((a,i)=>(
-                  <motion.div key={a.id} initial={{opacity:0,x:-10}} animate={{opacity:1,x:0}} transition={{delay:i*0.03}}
-                    className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer" onClick={()=>{const l=leads.find(x=>x.id===a.leadId);if(l)openLeadDetail(l)}}>
-                    <div className="mt-0.5 h-7 w-7 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0 text-xs">{ACTIVITY_ICONS[a.type]||<AlertCircle className="h-3.5 w-3.5"/>}</div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5"><span className="font-medium text-sm truncate">{a.lead?.name}</span><Badge variant="outline" className="text-[9px] px-1 py-0 shrink-0">{a.type}</Badge></div>
-                      <p className="text-xs text-muted-foreground mt-0.5 truncate">{a.summary}</p>
-                    </div>
-                    <span className="text-[10px] text-muted-foreground whitespace-nowrap">{formatRelativeDate(a.date)}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-      </div>
-
-      {/* Quick Actions */}
-      <motion.div {...fadeInUp} transition={{delay:0.7}}>
-        <Card className="border-0 shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Quick Actions:</span>
-              <Button variant="outline" size="sm" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 text-xs"><Sparkles className="h-3.5 w-3.5 mr-1.5"/>Generate Email</Button>
-              <Button variant="outline" size="sm" className="border-amber-200 text-amber-700 hover:bg-amber-50 text-xs"><Flame className="h-3.5 w-3.5 mr-1.5"/>View Hot Leads</Button>
-              <Button variant="outline" size="sm" className="border-violet-200 text-violet-700 hover:bg-violet-50 text-xs"><ClipboardList className="h-3.5 w-3.5 mr-1.5"/>Campaigns</Button>
-              <Button variant="outline" size="sm" className="border-blue-200 text-blue-700 hover:bg-blue-50 text-xs"><BarChart3 className="h-3.5 w-3.5 mr-1.5"/>Run Analysis</Button>
+          <div className="card-premium rounded-xl p-5 h-full">
+            <div className="flex items-center gap-2 mb-4">
+              <Target className="h-4 w-4 text-emerald-400"/>
+              <h3 className="text-sm font-semibold text-foreground">Weekly Activity Targets</h3>
             </div>
-          </CardContent>
-        </Card>
+            <div className="space-y-4">
+              {weeklyTargets.map((t,i) => (
+                <div key={i} className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-foreground">{t.label}</span>
+                    <span className="text-xs font-bold text-emerald-400">{t.current}<span className="text-muted-foreground font-normal">/{t.target}</span></span>
+                  </div>
+                  <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full bg-emerald-500 rounded-full"
+                      initial={{width:0}} animate={{width:`${Math.min((t.current/t.target)*100,100)}%`}}
+                      transition={{duration:0.8, delay:i*0.1}}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-5 p-3 rounded-xl bg-emerald-950/40 border border-emerald-900/40">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-500 mb-1">90-Day Machine</p>
+              <p className="text-xs text-emerald-300/70">Lead list → Prototype → Outreach → Follow-up → Meeting → Proposal → Deposit → Build → Retainer. Repeat.</p>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div {...fadeInUp} transition={{delay:0.6}}>
+          <div className="card-premium rounded-xl p-5 h-full">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Activity className="h-4 w-4 text-violet-400"/>
+                <h3 className="text-sm font-semibold text-foreground">Recent Activity</h3>
+              </div>
+              <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground h-7">
+                View all
+              </Button>
+            </div>
+            <div className="space-y-1 max-h-[320px] overflow-y-auto pr-1">
+              {stats.recentActivities.length===0
+                ? <p className="text-sm text-muted-foreground text-center py-8">No recent activities</p>
+                : stats.recentActivities.map((a,i)=>(
+                <motion.div key={a.id}
+                  initial={{opacity:0,x:-8}} animate={{opacity:1,x:0}} transition={{delay:i*0.03}}
+                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-800/50 transition-colors cursor-pointer border border-transparent hover:border-zinc-700/50"
+                  onClick={()=>{const l=leads.find(x=>x.id===a.leadId);if(l)openLeadDetail(l)}}
+                >
+                  <div className="mt-0.5 h-7 w-7 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-emerald-400 shrink-0 text-xs">
+                    {ACTIVITY_ICONS[a.type]||<AlertCircle className="h-3.5 w-3.5"/>}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-medium text-sm text-foreground truncate">{a.lead?.name}</span>
+                      <Badge variant="outline" className="text-[9px] px-1 py-0 bg-zinc-800 border-zinc-700 text-zinc-400 shrink-0">{a.type}</Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5 truncate">{a.summary}</p>
+                  </div>
+                  <span className="text-[10px] text-muted-foreground whitespace-nowrap">{formatRelativeDate(a.date)}</span>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Quick Actions Bar */}
+      <motion.div {...fadeInUp} transition={{delay:0.65}}>
+        <div className="card-premium rounded-xl p-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mr-1">Quick Actions</span>
+            <Button variant="ghost" size="sm" className="h-8 text-xs border border-zinc-700 hover:bg-zinc-800 text-foreground" onClick={()=>navigateTo('email')}>
+              <Sparkles className="h-3.5 w-3.5 mr-1.5 text-emerald-400"/>Generate Email
+            </Button>
+            <Button variant="ghost" size="sm" className="h-8 text-xs border border-zinc-700 hover:bg-zinc-800 text-foreground" onClick={()=>navigateTo('leads')}>
+              <Flame className="h-3.5 w-3.5 mr-1.5 text-amber-400"/>View Hot Leads
+            </Button>
+            <Button variant="ghost" size="sm" className="h-8 text-xs border border-zinc-700 hover:bg-zinc-800 text-foreground" onClick={()=>navigateTo('campaigns')}>
+              <ClipboardList className="h-3.5 w-3.5 mr-1.5 text-violet-400"/>Campaigns
+            </Button>
+            <Button variant="ghost" size="sm" className="h-8 text-xs border border-zinc-700 hover:bg-zinc-800 text-foreground" onClick={()=>navigateTo('analytics')}>
+              <BarChart3 className="h-3.5 w-3.5 mr-1.5 text-sky-400"/>Analytics
+            </Button>
+            <Button variant="ghost" size="sm" className="h-8 text-xs border border-zinc-700 hover:bg-zinc-800 text-foreground" onClick={()=>navigateTo('pipeline')}>
+              <GitBranch className="h-3.5 w-3.5 mr-1.5 text-rose-400"/>Pipeline Board
+            </Button>
+          </div>
+        </div>
       </motion.div>
     </motion.div>
   )
@@ -631,15 +733,12 @@ function LeadsView({ leads, searchQuery, setSearchQuery, filterSector, setFilter
   navigateToEmail:(leadId?:string)=>void;
 }) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
-  const [bulkStage, setBulkStage] = useState('')
 
   const allSelected = leads.length > 0 && leads.every(l => selectedIds.has(l.id))
-
   const toggleSelectAll = () => {
-    if (allSelected) { setSelectedIds(new Set()) }
-    else { setSelectedIds(new Set(leads.map(l => l.id))) }
+    if (allSelected) setSelectedIds(new Set())
+    else setSelectedIds(new Set(leads.map(l => l.id)))
   }
-
   const toggleSelect = (id: string) => {
     const next = new Set(selectedIds)
     if (next.has(id)) next.delete(id); else next.add(id)
@@ -653,113 +752,166 @@ function LeadsView({ leads, searchQuery, setSearchQuery, filterSector, setFilter
     if (!lastContact) return '—'
     const d = Math.floor((Date.now() - new Date(lastContact).getTime()) / (1000*60*60*24))
     if (d === 0) return 'Today'
-    if (d === 1) return '1d'
     if (d < 30) return `${d}d`
     return `${Math.floor(d/30)}mo`
   }
 
   return (
     <motion.div className="space-y-4" {...fadeInUp}>
-      {/* Stats Summary Row */}
+      {/* Stats bar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card className="border-0 shadow-sm"><CardContent className="p-3 flex items-center gap-3">
-          <div className="h-9 w-9 rounded-lg bg-emerald-50 flex items-center justify-center"><Users className="h-4 w-4 text-emerald-600"/></div>
-          <div><p className="text-xs text-muted-foreground">Total Leads</p><p className="text-lg font-bold">{stats?.totalLeads||0}</p></div>
-        </CardContent></Card>
-        <Card className="border-0 shadow-sm"><CardContent className="p-3 flex items-center gap-3">
-          <div className="h-9 w-9 rounded-lg bg-amber-50 flex items-center justify-center"><Flame className="h-4 w-4 text-amber-500"/></div>
-          <div><p className="text-xs text-muted-foreground">Hot Leads</p><p className="text-lg font-bold text-amber-600">{stats?.hotLeads||0}</p></div>
-        </CardContent></Card>
-        <Card className="border-0 shadow-sm"><CardContent className="p-3 flex items-center gap-3">
-          <div className="h-9 w-9 rounded-lg bg-sky-50 flex items-center justify-center"><Star className="h-4 w-4 text-sky-600"/></div>
-          <div><p className="text-xs text-muted-foreground">Avg Rating</p><p className="text-lg font-bold">{avgRating}★</p></div>
-        </CardContent></Card>
-        <Card className="border-0 shadow-sm"><CardContent className="p-3 flex items-center gap-3">
-          <div className="h-9 w-9 rounded-lg bg-violet-50 flex items-center justify-center"><DollarSign className="h-4 w-4 text-violet-600"/></div>
-          <div><p className="text-xs text-muted-foreground">Total Value</p><p className="text-lg font-bold">{formatCurrency(totalValue)}</p></div>
-        </CardContent></Card>
+        {[
+          { label:'Total Leads', value:stats?.totalLeads||0, icon:<Users className="h-4 w-4 text-emerald-400"/>, accent:'bg-emerald-500/10' },
+          { label:'Hot Leads', value:stats?.hotLeads||0, icon:<Flame className="h-4 w-4 text-amber-400"/>, accent:'bg-amber-500/10', bold:true },
+          { label:'Avg Rating', value:`${avgRating}★`, icon:<Star className="h-4 w-4 text-amber-400"/>, accent:'bg-amber-500/10' },
+          { label:'Total Value', value:formatCurrency(totalValue), icon:<DollarSign className="h-4 w-4 text-violet-400"/>, accent:'bg-violet-500/10' },
+        ].map((s,i) => (
+          <div key={i} className="card-premium rounded-xl p-3.5 flex items-center gap-3">
+            <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${s.accent}`}>{s.icon}</div>
+            <div>
+              <p className="text-[10px] text-muted-foreground font-medium">{s.label}</p>
+              <p className={`text-base font-bold ${s.bold?'text-amber-400':'text-foreground'}`}>{s.value}</p>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Filters */}
-      <Card className="border-0 shadow-sm"><CardContent className="p-4">
+      <div className="card-premium rounded-xl p-4">
         <div className="flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/><Input placeholder="Search by name, sector, or location..." value={searchQuery} onChange={(e)=>setSearchQuery(e.target.value)} className="pl-9"/></div>
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
+            <Input placeholder="Search by name, sector, or location..." value={searchQuery} onChange={(e)=>setSearchQuery(e.target.value)} className="pl-9 bg-zinc-800/60 border-zinc-700 text-foreground placeholder:text-zinc-600 focus:border-primary"/>
+          </div>
           <div className="flex flex-wrap gap-2">
-            <Select value={filterSector} onValueChange={setFilterSector}><SelectTrigger className="w-[130px]"><Filter className="h-4 w-4 mr-1.5"/><SelectValue placeholder="Sector"/></SelectTrigger><SelectContent><SelectItem value="all">All Sectors</SelectItem>{['Dental','Legal','Funeral','Hospitality','Logistics','Construction','Education','Medical'].map(s=><SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent></Select>
-            <Select value={filterTier} onValueChange={setFilterTier}><SelectTrigger className="w-[110px]"><SelectValue placeholder="Tier"/></SelectTrigger><SelectContent><SelectItem value="all">All Tiers</SelectItem><SelectItem value="1">Tier 1</SelectItem><SelectItem value="2">Tier 2</SelectItem><SelectItem value="3">Tier 3</SelectItem></SelectContent></Select>
-            <Select value={filterStage} onValueChange={setFilterStage}><SelectTrigger className="w-[130px]"><SelectValue placeholder="Stage"/></SelectTrigger><SelectContent><SelectItem value="all">All Stages</SelectItem>{STAGES.map(s=><SelectItem key={s} value={s}>{STAGE_LABELS[s]}</SelectItem>)}</SelectContent></Select>
-            <Select value={filterHot} onValueChange={setFilterHot}><SelectTrigger className="w-[100px]"><Flame className="h-4 w-4 mr-1.5"/><SelectValue placeholder="Hot"/></SelectTrigger><SelectContent><SelectItem value="all">All</SelectItem><SelectItem value="true">Hot Only</SelectItem><SelectItem value="false">Not Hot</SelectItem></SelectContent></Select>
+            <Select value={filterSector} onValueChange={setFilterSector}>
+              <SelectTrigger className="w-[130px] bg-zinc-800/60 border-zinc-700 text-foreground"><Filter className="h-3.5 w-3.5 mr-1.5 text-muted-foreground"/><SelectValue placeholder="Sector"/></SelectTrigger>
+              <SelectContent className="bg-zinc-900 border-zinc-800">
+                <SelectItem value="all">All Sectors</SelectItem>
+                {['Dental','Legal','Funeral','Hospitality','Logistics','Construction','Education','Medical'].map(s=><SelectItem key={s} value={s}>{s}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={filterTier} onValueChange={setFilterTier}>
+              <SelectTrigger className="w-[100px] bg-zinc-800/60 border-zinc-700 text-foreground"><SelectValue placeholder="Tier"/></SelectTrigger>
+              <SelectContent className="bg-zinc-900 border-zinc-800">
+                <SelectItem value="all">All Tiers</SelectItem>
+                <SelectItem value="1">Tier 1</SelectItem><SelectItem value="2">Tier 2</SelectItem><SelectItem value="3">Tier 3</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={filterStage} onValueChange={setFilterStage}>
+              <SelectTrigger className="w-[130px] bg-zinc-800/60 border-zinc-700 text-foreground"><SelectValue placeholder="Stage"/></SelectTrigger>
+              <SelectContent className="bg-zinc-900 border-zinc-800">
+                <SelectItem value="all">All Stages</SelectItem>
+                {STAGES.map(s=><SelectItem key={s} value={s}>{STAGE_LABELS[s]}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={filterHot} onValueChange={setFilterHot}>
+              <SelectTrigger className="w-[100px] bg-zinc-800/60 border-zinc-700 text-foreground"><Flame className="h-3.5 w-3.5 mr-1.5 text-amber-400"/><SelectValue placeholder="Hot"/></SelectTrigger>
+              <SelectContent className="bg-zinc-900 border-zinc-800">
+                <SelectItem value="all">All</SelectItem><SelectItem value="true">Hot Only</SelectItem><SelectItem value="false">Not Hot</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
-      </CardContent></Card>
+      </div>
 
       {/* Table */}
-      <Card className="border-0 shadow-sm"><CardContent className="p-0">
-        <div className="overflow-x-auto"><Table><TableHeader><TableRow className="bg-gray-50/50">
-          <TableHead className="text-xs font-semibold w-10"><Checkbox checked={allSelected} onCheckedChange={toggleSelectAll}/></TableHead>
-          <TableHead className="text-xs font-semibold">Name</TableHead><TableHead className="text-xs font-semibold">Sector</TableHead>
-          <TableHead className="text-xs font-semibold hidden sm:table-cell">Tier</TableHead><TableHead className="text-xs font-semibold hidden md:table-cell">Rating</TableHead>
-          <TableHead className="text-xs font-semibold">Stage</TableHead>
-          <TableHead className="text-xs font-semibold hidden lg:table-cell">Last Action</TableHead>
-          <TableHead className="text-xs font-semibold hidden sm:table-cell">Days</TableHead>
-          <TableHead className="text-xs font-semibold hidden sm:table-cell">Value</TableHead>
-          <TableHead className="text-xs font-semibold text-center">Hot</TableHead>
-          <TableHead className="text-xs font-semibold text-right">Actions</TableHead>
-        </TableRow></TableHeader><TableBody>
-          {leads.length===0?<TableRow><TableCell colSpan={11} className="text-center py-12 text-muted-foreground">No leads found</TableCell></TableRow>:
-            leads.map(lead=>(
-              <TableRow key={lead.id} className={`cursor-pointer hover:bg-emerald-50/30 ${selectedIds.has(lead.id)?'bg-emerald-50/50':''}`} onClick={()=>openLeadDetail(lead)}>
-                <TableCell onClick={(e)=>e.stopPropagation()}><Checkbox checked={selectedIds.has(lead.id)} onCheckedChange={()=>toggleSelect(lead.id)}/></TableCell>
-                <TableCell><div className="flex items-center gap-2">{lead.hotLead&&<Flame className="h-3.5 w-3.5 text-amber-500 shrink-0"/>}<span className="font-medium text-sm truncate max-w-[160px]">{lead.name}</span></div></TableCell>
-                <TableCell><div className="flex items-center gap-1.5">{SECTOR_ICONS[lead.sector]||<Building2 className="h-3.5 w-3.5"/>}<span className="text-sm">{lead.sector}</span></div></TableCell>
-                <TableCell className="hidden sm:table-cell"><TierBadge tier={lead.tier}/></TableCell>
-                <TableCell className="hidden md:table-cell"><StarRating rating={lead.rating}/></TableCell>
-                <TableCell><Badge variant="outline" className={`text-[11px] ${STAGE_COLORS[lead.stage]}`}>{STAGE_LABELS[lead.stage]}</Badge></TableCell>
-                <TableCell className="hidden lg:table-cell text-xs text-muted-foreground max-w-[120px] truncate">{lead.nextAction||'—'}</TableCell>
-                <TableCell className="hidden sm:table-cell text-xs text-muted-foreground">{daysSinceContact(lead.lastContact)}</TableCell>
-                <TableCell className="hidden sm:table-cell text-sm font-medium">{lead.estimatedValue>0?formatCurrency(lead.estimatedValue):'—'}</TableCell>
-                <TableCell className="text-center">{lead.hotLead?<Flame className="h-4 w-4 text-amber-500 mx-auto"/>:<span className="text-muted-foreground">—</span>}</TableCell>
-                <TableCell className="text-right" onClick={(e)=>e.stopPropagation()}>
-                  <div className="flex items-center justify-end gap-0.5">
-                    <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-sky-600 hover:text-sky-700 hover:bg-sky-50" onClick={()=>toast.info(`Call ${lead.phone}`)}><Phone className="h-3.5 w-3.5"/></Button></TooltipTrigger><TooltipContent>Call</TooltipContent></Tooltip>
-                    <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50" onClick={()=>toast.info('Opening WhatsApp...')}><MessageSquare className="h-3.5 w-3.5"/></Button></TooltipTrigger><TooltipContent>WhatsApp</TooltipContent></Tooltip>
-                    <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-violet-600 hover:text-violet-700 hover:bg-violet-50" onClick={()=>navigateToEmail(lead.id)}><Mail className="h-3.5 w-3.5"/></Button></TooltipTrigger><TooltipContent>Email</TooltipContent></Tooltip>
-                    <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="sm" onClick={()=>openLeadDetail(lead)} className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 h-7 w-7 p-0"><Eye className="h-3.5 w-3.5"/></Button></TooltipTrigger><TooltipContent>View Details</TooltipContent></Tooltip>
-                  </div>
-                </TableCell>
+      <div className="card-premium rounded-xl overflow-hidden">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-zinc-800 bg-zinc-800/40 hover:bg-zinc-800/40">
+                <TableHead className="w-10"><Checkbox checked={allSelected} onCheckedChange={toggleSelectAll} className="border-zinc-600"/></TableHead>
+                <TableHead className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Name</TableHead>
+                <TableHead className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Sector</TableHead>
+                <TableHead className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider hidden sm:table-cell">Tier</TableHead>
+                <TableHead className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider hidden md:table-cell">Rating</TableHead>
+                <TableHead className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Stage</TableHead>
+                <TableHead className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider hidden sm:table-cell">Days</TableHead>
+                <TableHead className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider hidden sm:table-cell">Value</TableHead>
+                <TableHead className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider text-center">Hot</TableHead>
+                <TableHead className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider text-right">Actions</TableHead>
               </TableRow>
-            ))}
-        </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {leads.length===0
+                ? <TableRow><TableCell colSpan={10} className="text-center py-12 text-muted-foreground border-zinc-800">No leads found</TableCell></TableRow>
+                : leads.map(lead=>(
+                <TableRow key={lead.id}
+                  className={`border-zinc-800/50 hover:bg-zinc-800/40 cursor-pointer transition-colors ${selectedIds.has(lead.id)?'bg-zinc-800/60':''}`}
+                  onClick={()=>openLeadDetail(lead)}
+                >
+                  <TableCell onClick={e=>e.stopPropagation()}><Checkbox checked={selectedIds.has(lead.id)} onCheckedChange={()=>toggleSelect(lead.id)} className="border-zinc-600"/></TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      {lead.hotLead&&<Flame className="h-3.5 w-3.5 text-amber-400 shrink-0"/>}
+                      <span className="font-medium text-sm text-foreground truncate max-w-[140px]">{lead.name}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1.5" style={{color:SECTOR_COLORS[lead.sector]||'#71717a'}}>
+                      {SECTOR_ICONS[lead.sector]||<Building2 className="h-3.5 w-3.5"/>}
+                      <span className="text-sm">{lead.sector}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell"><TierBadge tier={lead.tier}/></TableCell>
+                  <TableCell className="hidden md:table-cell"><StarRating rating={lead.rating}/></TableCell>
+                  <TableCell><Badge variant="outline" className={`text-[10px] ${STAGE_COLORS[lead.stage]}`}>{STAGE_LABELS[lead.stage]}</Badge></TableCell>
+                  <TableCell className="hidden sm:table-cell text-xs text-muted-foreground">{daysSinceContact(lead.lastContact)}</TableCell>
+                  <TableCell className="hidden sm:table-cell text-sm font-medium text-emerald-400">{lead.estimatedValue>0?formatCurrency(lead.estimatedValue):'—'}</TableCell>
+                  <TableCell className="text-center">{lead.hotLead?<Flame className="h-4 w-4 text-amber-400 mx-auto"/>:<span className="text-zinc-700">—</span>}</TableCell>
+                  <TableCell className="text-right" onClick={e=>e.stopPropagation()}>
+                    <div className="flex items-center justify-end gap-0.5">
+                      <Tooltip><TooltipTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-sky-400 hover:text-sky-300 hover:bg-sky-950" onClick={()=>toast.info(`Call ${lead.phone}`)}>
+                          <Phone className="h-3.5 w-3.5"/>
+                        </Button></TooltipTrigger><TooltipContent>Call</TooltipContent></Tooltip>
+                      <Tooltip><TooltipTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950" onClick={()=>toast.info('Opening WhatsApp...')}>
+                          <MessageSquare className="h-3.5 w-3.5"/>
+                        </Button></TooltipTrigger><TooltipContent>WhatsApp</TooltipContent></Tooltip>
+                      <Tooltip><TooltipTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-violet-400 hover:text-violet-300 hover:bg-violet-950" onClick={()=>navigateToEmail(lead.id)}>
+                          <Mail className="h-3.5 w-3.5"/>
+                        </Button></TooltipTrigger><TooltipContent>Email</TooltipContent></Tooltip>
+                      <Tooltip><TooltipTrigger asChild>
+                        <Button variant="ghost" size="sm" onClick={()=>openLeadDetail(lead)} className="text-zinc-400 hover:text-foreground hover:bg-zinc-800 h-7 w-7 p-0">
+                          <Eye className="h-3.5 w-3.5"/>
+                        </Button></TooltipTrigger><TooltipContent>View</TooltipContent></Tooltip>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
-      </CardContent>
-    </Card>
-    <p className="text-xs text-muted-foreground text-center">Showing {leads.length} lead{leads.length !== 1 ? 's' : ''}</p>
+      </div>
+      <p className="text-xs text-muted-foreground text-center">Showing {leads.length} lead{leads.length !== 1 ? 's' : ''}</p>
 
-    {/* Bulk Action Bar */}
-    <AnimatePresence>
-      {selectedIds.size > 0 && (
-        <motion.div initial={{y:80,opacity:0}} animate={{y:0,opacity:1}} exit={{y:80,opacity:0}} transition={{type:'spring',stiffness:300,damping:30}}>
-          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-gray-900 text-white rounded-2xl shadow-2xl px-5 py-3 flex items-center gap-4">
-            <span className="text-sm font-medium">{selectedIds.size} selected</span>
-            <Separator orientation="vertical" className="h-6 bg-gray-600"/>
-            <Select value={bulkStage} onValueChange={(v)=>{if(v!=='_'){toast.success(`Moving ${selectedIds.size} leads to ${STAGE_LABELS[v]}`);setSelectedIds(new Set());setBulkStage('')}}}>
-              <SelectTrigger className="w-[150px] h-8 text-xs bg-gray-800 border-gray-700 text-white"><SelectValue placeholder="Move to Stage"/></SelectTrigger>
-              <SelectContent>{STAGES.filter(s=>s!=='won'&&s!=='lost').map(s=><SelectItem key={s} value={s}>{STAGE_LABELS[s]}</SelectItem>)}</SelectContent>
-            </Select>
-            <Button size="sm" variant="ghost" className="h-8 text-xs text-amber-400 hover:text-amber-300 hover:bg-gray-800" onClick={()=>{toast.success(`Marked ${selectedIds.size} leads as hot`);setSelectedIds(new Set())}}>
-              <Flame className="h-3.5 w-3.5 mr-1"/>Mark Hot
-            </Button>
-            <Button size="sm" variant="ghost" className="h-8 text-xs text-emerald-400 hover:text-emerald-300 hover:bg-gray-800" onClick={()=>toast.info('Exporting selected leads...')}>
-              <Download className="h-3.5 w-3.5 mr-1"/>Export
-            </Button>
-            <Button size="sm" variant="ghost" className="h-8 text-xs text-gray-400 hover:text-white hover:bg-gray-800" onClick={()=>setSelectedIds(new Set())}>
-              <X className="h-3.5 w-3.5"/>
-            </Button>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+      {/* Bulk Action Bar */}
+      <AnimatePresence>
+        {selectedIds.size > 0 && (
+          <motion.div initial={{y:80,opacity:0}} animate={{y:0,opacity:1}} exit={{y:80,opacity:0}} transition={{type:'spring',stiffness:300,damping:30}}>
+            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-zinc-900 border border-zinc-700 text-white rounded-2xl shadow-2xl px-5 py-3 flex items-center gap-4">
+              <span className="text-sm font-medium">{selectedIds.size} selected</span>
+              <Separator orientation="vertical" className="h-6 bg-zinc-700"/>
+              <Select onValueChange={(v)=>{if(v){toast.success(`Moving ${selectedIds.size} leads to ${STAGE_LABELS[v]}`);setSelectedIds(new Set())}}}>
+                <SelectTrigger className="w-[150px] h-8 text-xs bg-zinc-800 border-zinc-700 text-white"><SelectValue placeholder="Move to Stage"/></SelectTrigger>
+                <SelectContent className="bg-zinc-900 border-zinc-800">{STAGES.filter(s=>s!=='won'&&s!=='lost').map(s=><SelectItem key={s} value={s}>{STAGE_LABELS[s]}</SelectItem>)}</SelectContent>
+              </Select>
+              <Button size="sm" variant="ghost" className="h-8 text-xs text-amber-400 hover:text-amber-300 hover:bg-zinc-800" onClick={()=>{toast.success(`Marked ${selectedIds.size} leads as hot`);setSelectedIds(new Set())}}>
+                <Flame className="h-3.5 w-3.5 mr-1"/>Mark Hot
+              </Button>
+              <Button size="sm" variant="ghost" className="h-8 text-xs text-emerald-400 hover:text-emerald-300 hover:bg-zinc-800" onClick={()=>toast.info('Exporting...')}>
+                <Download className="h-3.5 w-3.5 mr-1"/>Export
+              </Button>
+              <Button size="sm" variant="ghost" className="h-8 text-xs text-zinc-400 hover:text-white hover:bg-zinc-800" onClick={()=>setSelectedIds(new Set())}>
+                <X className="h-3.5 w-3.5"/>
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 }
@@ -792,116 +944,130 @@ function PipelineView({ leads, stats, pipelineStages, updateLeadStage, openLeadD
 
   return (
     <motion.div className="space-y-4" {...fadeInUp}>
-      {/* Pipeline Metrics Bar */}
+      {/* Metrics */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <Card className="border-0 shadow-sm"><CardContent className="p-3 flex items-center gap-3">
-          <div className="h-9 w-9 rounded-lg bg-emerald-50 flex items-center justify-center"><DollarSign className="h-4 w-4 text-emerald-600"/></div>
-          <div><p className="text-xs text-muted-foreground">Pipeline Value</p><p className="text-lg font-bold">{formatCurrency(stats?.pipelineValue||0)}</p></div>
-        </CardContent></Card>
-        <Card className="border-0 shadow-sm"><CardContent className="p-3 flex items-center gap-3">
-          <div className="h-9 w-9 rounded-lg bg-amber-50 flex items-center justify-center"><TrendingUp className="h-4 w-4 text-amber-600"/></div>
-          <div><p className="text-xs text-muted-foreground">Avg Deal Size</p><p className="text-lg font-bold">{formatCurrency(avgDealSize)}</p></div>
-        </CardContent></Card>
-        <Card className="border-0 shadow-sm"><CardContent className="p-3 flex items-center gap-3">
-          <div className="h-9 w-9 rounded-lg bg-sky-50 flex items-center justify-center"><Activity className="h-4 w-4 text-sky-600"/></div>
-          <div><p className="text-xs text-muted-foreground">Velocity (week)</p><p className="text-lg font-bold">3 <span className="text-xs font-normal text-muted-foreground">moved</span></p></div>
-        </CardContent></Card>
-        <Card className="border-0 shadow-sm"><CardContent className="p-3 flex items-center gap-3">
-          <div className="h-9 w-9 rounded-lg bg-violet-50 flex items-center justify-center"><CheckCircle2 className="h-4 w-4 text-violet-600"/></div>
-          <div><p className="text-xs text-muted-foreground">Win Rate</p><p className="text-lg font-bold">{stats?.conversionRate||0}%</p></div>
-        </CardContent></Card>
+        {[
+          { label:'Pipeline Value', value:formatCurrency(stats?.pipelineValue||0), icon:<DollarSign className="h-4 w-4 text-emerald-400"/>, accent:'bg-emerald-500/10' },
+          { label:'Avg Deal Size', value:formatCurrency(avgDealSize), icon:<TrendingUp className="h-4 w-4 text-amber-400"/>, accent:'bg-amber-500/10' },
+          { label:'Active Leads', value:stats?.activePipeline||0, icon:<Activity className="h-4 w-4 text-sky-400"/>, accent:'bg-sky-500/10' },
+          { label:'Win Rate', value:`${stats?.conversionRate||0}%`, icon:<CheckCircle2 className="h-4 w-4 text-violet-400"/>, accent:'bg-violet-500/10' },
+        ].map((m,i) => (
+          <div key={i} className="card-premium rounded-xl p-3.5 flex items-center gap-3">
+            <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${m.accent}`}>{m.icon}</div>
+            <div><p className="text-[10px] text-muted-foreground font-medium">{m.label}</p><p className="text-base font-bold text-foreground">{m.value}</p></div>
+          </div>
+        ))}
       </div>
 
-      {/* Search + Header */}
+      {/* Search */}
       <div className="flex items-center gap-3 flex-col sm:flex-row">
-        <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/><Input placeholder="Search leads across all stages..." value={pipelineSearch} onChange={(e)=>setPipelineSearch(e.target.value)} className="pl-9"/></div>
-        <Badge variant="outline" className="border-emerald-200 bg-emerald-50 text-emerald-700">{stats?.activePipeline||0} active leads</Badge>
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
+          <Input placeholder="Search leads across all stages..." value={pipelineSearch} onChange={(e)=>setPipelineSearch(e.target.value)} className="pl-9 bg-zinc-800/60 border-zinc-700 text-foreground"/>
+        </div>
+        <Badge variant="outline" className="border-emerald-800 bg-emerald-950/40 text-emerald-400 whitespace-nowrap">{stats?.activePipeline||0} active leads</Badge>
       </div>
 
       {/* Kanban Board */}
-      <div className="flex gap-4 overflow-x-auto pb-4">
+      <div className="flex gap-3 overflow-x-auto pb-4">
         {pipelineStages.map(stage=>{
           const stageLeads=filteredLeads.filter(l=>l.stage===stage)
-          const stageCount=stats?.byStage.find(s=>s.stage===stage)?.count||0
           const stageValue=stageSummaries.find(s=>s.stage===stage)?.value||0
           return (
-            <div key={stage} className="flex-shrink-0 w-[280px] sm:w-[300px]">
-              <div className="flex items-center gap-2 mb-3 px-1">
-                <div className="h-2.5 w-2.5 rounded-full" style={{backgroundColor:STAGE_BG_COLORS[stage]}}/>
-                <h3 className="text-sm font-semibold">{STAGE_LABELS[stage]}</h3>
-                <Badge variant="secondary" className="ml-auto text-xs">{stageCount}</Badge>
+            <div key={stage} className="flex-shrink-0 w-[260px]">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-2 w-2 rounded-full shrink-0" style={{backgroundColor:STAGE_BG_COLORS[stage]}}/>
+                <h3 className="text-xs font-bold text-foreground uppercase tracking-wider flex-1">{STAGE_LABELS[stage]}</h3>
+                <span className="text-[10px] font-bold bg-zinc-800 border border-zinc-700 text-zinc-400 px-2 py-0.5 rounded-full">{stageLeads.length}</span>
               </div>
-              <div className="space-y-2 max-h-[calc(100vh-360px)] overflow-y-auto pr-1">
-                {stageLeads.length===0?<div className="border border-dashed border-gray-200 rounded-xl p-6 text-center"><p className="text-xs text-muted-foreground">No leads</p></div>:stageLeads.map(lead=>{
-                  const daysInStage = lead.updatedAt ? Math.floor((Date.now()-new Date(lead.updatedAt).getTime())/(1000*60*60*24)) : 0
-                  return (
-                  <motion.div key={lead.id} className={`bg-white rounded-xl border p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer ${lead.hotLead?'border-l-4 border-l-amber-400 border-r border-t border-b border-gray-200':'border border-gray-200'}`} whileHover={{y:-2}} onClick={()=>openLeadDetail(lead)}>
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0">
-                        <p className="font-medium text-sm truncate">{lead.name}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">{lead.sector}</p>
-                      </div>
-                      {lead.hotLead&&<Flame className="h-4 w-4 text-amber-500 shrink-0"/>}
-                    </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <div className="flex items-center gap-1.5">
-                        <TierBadge tier={lead.tier}/>
-                        <span className="text-xs text-muted-foreground">{lead.rating.toFixed(1)}★</span>
-                      </div>
-                      {lead.estimatedValue>0&&<span className="text-xs font-semibold text-emerald-600">{formatCurrency(lead.estimatedValue)}</span>}
-                    </div>
-                    {/* Quick Actions */}
-                    <div className="flex items-center gap-1 mt-2 pt-2 border-t border-gray-100" onClick={(e)=>e.stopPropagation()}>
-                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-sky-600 hover:text-sky-700 hover:bg-sky-50" onClick={()=>toast.info(`Call ${lead.phone}`)}><Phone className="h-3 w-3"/></Button>
-                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50" onClick={()=>toast.info('Opening WhatsApp...')}><MessageSquare className="h-3 w-3"/></Button>
-                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-violet-600 hover:text-violet-700 hover:bg-violet-50" onClick={()=>navigateToEmail(lead.id)}><Mail className="h-3 w-3"/></Button>
-                      <span className="ml-auto text-[10px] text-muted-foreground">{daysInStage}d</span>
-                    </div>
-                    <div className="mt-2">
-                      <Select value={lead.stage} onValueChange={(val)=>updateLeadStage(lead.id,val)} onOpenChange={(open)=>{if(!open)return}}>
-                        <SelectTrigger className="h-7 text-xs border-gray-200 w-full" onClick={(e)=>e.stopPropagation()}><SelectValue/></SelectTrigger>
-                        <SelectContent onClick={(e)=>e.stopPropagation()}>{STAGES.map(s=><SelectItem key={s} value={s} className="text-xs">{STAGE_LABELS[s]}</SelectItem>)}</SelectContent>
-                      </Select>
-                    </div>
-                  </motion.div>
-                )})}
+              <div className="space-y-2 max-h-[calc(100vh-380px)] overflow-y-auto pr-1">
+                {stageLeads.length===0
+                  ? <div className="border border-dashed border-zinc-800 rounded-xl p-5 text-center"><p className="text-xs text-zinc-600">No leads</p></div>
+                  : stageLeads.map(lead=>{
+                    const daysInStage = lead.updatedAt ? Math.floor((Date.now()-new Date(lead.updatedAt).getTime())/(1000*60*60*24)) : 0
+                    return (
+                      <motion.div key={lead.id}
+                        className={`card-premium rounded-xl p-3 hover:border-zinc-600 transition-all cursor-pointer ${lead.hotLead?'border-l-2':'border-l-0'}`}
+                        style={lead.hotLead?{borderLeftColor:'#f59e0b'}:{}}
+                        whileHover={{y:-2}}
+                        onClick={()=>openLeadDetail(lead)}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="font-semibold text-sm text-foreground truncate">{lead.name}</p>
+                            <p className="text-xs text-muted-foreground mt-0.5" style={{color:SECTOR_COLORS[lead.sector]||undefined}}>{lead.sector}</p>
+                          </div>
+                          {lead.hotLead&&<Flame className="h-3.5 w-3.5 text-amber-400 shrink-0 mt-0.5"/>}
+                        </div>
+                        <div className="flex items-center justify-between mt-2">
+                          <div className="flex items-center gap-1.5"><TierBadge tier={lead.tier}/><span className="text-xs text-amber-400">{lead.rating.toFixed(1)}★</span></div>
+                          {lead.estimatedValue>0&&<span className="text-xs font-semibold text-emerald-400">{formatCurrency(lead.estimatedValue)}</span>}
+                        </div>
+                        <div className="flex items-center gap-1 mt-2 pt-2 border-t border-zinc-800" onClick={e=>e.stopPropagation()}>
+                          <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-sky-400 hover:bg-sky-950" onClick={()=>toast.info(`Call ${lead.phone}`)}><Phone className="h-3 w-3"/></Button>
+                          <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-emerald-400 hover:bg-emerald-950" onClick={()=>toast.info('WhatsApp...')}><MessageSquare className="h-3 w-3"/></Button>
+                          <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-violet-400 hover:bg-violet-950" onClick={()=>navigateToEmail(lead.id)}><Mail className="h-3 w-3"/></Button>
+                          <span className="ml-auto text-[10px] text-muted-foreground">{daysInStage}d</span>
+                        </div>
+                        <div className="mt-2">
+                          <Select value={lead.stage} onValueChange={(val)=>updateLeadStage(lead.id,val)}>
+                            <SelectTrigger className="h-7 text-[11px] bg-zinc-800/60 border-zinc-700 text-foreground w-full" onClick={e=>e.stopPropagation()}><SelectValue/></SelectTrigger>
+                            <SelectContent className="bg-zinc-900 border-zinc-800" onClick={e=>e.stopPropagation()}>
+                              {STAGES.map(s=><SelectItem key={s} value={s} className="text-xs">{STAGE_LABELS[s]}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </motion.div>
+                    )
+                  })
+                }
               </div>
-              <div className="mt-2 px-1 text-xs text-muted-foreground">{formatCurrency(stageValue)} total</div>
+              <div className="mt-2 text-[10px] text-muted-foreground font-medium">{formatCurrency(stageValue)}</div>
             </div>
           )
         })}
       </div>
 
-      {/* Stage Summary Bar */}
-      <Card className="border-0 shadow-sm"><CardContent className="p-4">
-        <h3 className="text-sm font-semibold mb-3">Stage Summary</h3>
+      {/* Stage Summary */}
+      <div className="card-premium rounded-xl p-5">
+        <h3 className="text-sm font-semibold text-foreground mb-4">Stage Summary</h3>
         <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
           {stageSummaries.map((s, i) => {
-            const convRate = i > 0 && stageSummaries[0].count > 0
-              ? Math.round((s.count / stageSummaries[0].count) * 100) : 100
+            const convRate = i > 0 && stageSummaries[0].count > 0 ? Math.round((s.count / stageSummaries[0].count) * 100) : 100
             return (
-              <div key={s.stage} className="text-center">
-                <div className="h-2 w-2 rounded-full mx-auto mb-1.5" style={{backgroundColor:STAGE_BG_COLORS[s.stage]}}/>
-                <p className="text-xs text-muted-foreground">{STAGE_LABELS[s.stage]}</p>
-                <p className="text-sm font-bold">{s.count}</p>
-                <p className="text-[10px] text-muted-foreground">{formatCurrency(s.value)}</p>
-                <p className="text-[10px] font-medium text-emerald-600">{convRate}% conv</p>
+              <div key={s.stage} className="text-center p-3 rounded-xl bg-zinc-800/40 border border-zinc-800">
+                <div className="h-2 w-2 rounded-full mx-auto mb-2" style={{backgroundColor:STAGE_BG_COLORS[s.stage]}}/>
+                <p className="text-[10px] text-muted-foreground font-medium">{STAGE_LABELS[s.stage]}</p>
+                <p className="text-lg font-bold text-foreground mt-0.5">{s.count}</p>
+                <p className="text-[10px] text-emerald-400 font-semibold">{convRate}%</p>
               </div>
             )
           })}
         </div>
-      </CardContent></Card>
+      </div>
 
       {/* Won/Lost */}
-      <div className="grid grid-cols-2 gap-4">
-        <Card className="border-0 shadow-sm border-l-4 border-l-emerald-500"><CardContent className="p-4"><div className="flex items-center gap-2"><CheckCircle2 className="h-5 w-5 text-emerald-600"/><span className="font-semibold">Won</span><span className="ml-auto text-2xl font-bold text-emerald-600">{stats?.wonLeads||0}</span></div></CardContent></Card>
-        <Card className="border-0 shadow-sm border-l-4 border-l-red-400"><CardContent className="p-4"><div className="flex items-center gap-2"><XCircle className="h-5 w-5 text-red-500"/><span className="font-semibold">Lost</span><span className="ml-auto text-2xl font-bold text-red-500">{stats?.lostLeads||0}</span></div></CardContent></Card>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="card-premium rounded-xl p-4 border-l-4" style={{borderLeftColor:'#10b981'}}>
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="h-5 w-5 text-emerald-400"/>
+            <span className="font-semibold text-foreground">Won</span>
+            <span className="ml-auto text-2xl font-bold text-emerald-400">{stats?.wonLeads||0}</span>
+          </div>
+        </div>
+        <div className="card-premium rounded-xl p-4 border-l-4" style={{borderLeftColor:'#ef4444'}}>
+          <div className="flex items-center gap-2">
+            <XCircle className="h-5 w-5 text-red-400"/>
+            <span className="font-semibold text-foreground">Lost</span>
+            <span className="ml-auto text-2xl font-bold text-red-400">{stats?.lostLeads||0}</span>
+          </div>
+        </div>
       </div>
     </motion.div>
   )
 }
 
-// ─── Email Generator View (Template Library) ───────────────────────────
+// ─── Email Generator View ─────────────────────────────────────────────
 const TEMPLATE_CATEGORIES = [
   { id:'all', label:'All Templates', count: 35 },
   { id:'cold', label:'Cold Outreach', count: 6 },
@@ -947,7 +1113,7 @@ function EmailGeneratorView({ leads, emailLeadId, setEmailLeadId, selectedTempla
   const copyToClipboard = () => {
     let text = displayedBody
     if (renderedTemplate?.subject) text = `Subject: ${renderedTemplate.subject}\n\n${text}`
-    navigator.clipboard.writeText(text).then(()=>toast.success('Copied to clipboard!')).catch(()=>toast.error('Failed to copy'))
+    navigator.clipboard.writeText(text).then(()=>toast.success('Copied!')).catch(()=>toast.error('Failed to copy'))
   }
 
   const saveAsActivity = async () => {
@@ -955,153 +1121,192 @@ function EmailGeneratorView({ leads, emailLeadId, setEmailLeadId, selectedTempla
     try {
       await fetch(`/api/leads/${emailLeadId}/activities`, {
         method:'POST',headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({
-          type: renderedTemplate?.channel === 'whatsapp' ? 'whatsapp' : renderedTemplate?.channel === 'phone' ? 'call' : 'email',
-          summary: `Template: ${renderedTemplate?.name || selectedTemplateId}`,
-          outcome: displayedBody.substring(0, 200)
-        })
+        body: JSON.stringify({ type: renderedTemplate?.channel === 'whatsapp' ? 'whatsapp' : 'email', summary: `Template: ${renderedTemplate?.name || selectedTemplateId}`, outcome: displayedBody.substring(0,200) })
       })
       toast.success('Saved as activity!')
-    } catch { toast.error('Failed to save activity') }
+    } catch { toast.error('Failed to save') }
   }
 
   const wordCount = displayedBody.split(/\s+/).filter(Boolean).length
-  const charCount = displayedBody.length
 
   return (
-    <motion.div className="space-y-6" {...fadeInUp}>
-      <div><h2 className="text-lg font-semibold">Template Library</h2><p className="text-sm text-muted-foreground">Browse, preview, and send outreach templates from the library</p></div>
+    <motion.div className="space-y-5" {...fadeInUp}>
+      <div>
+        <h2 className="text-lg font-bold text-foreground">Template Library</h2>
+        <p className="text-sm text-muted-foreground mt-0.5">Browse, preview, and send outreach templates</p>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left: Lead Selector */}
-        <Card className="border-0 shadow-sm lg:col-span-1">
-          <CardHeader className="pb-3"><CardTitle className="text-sm font-semibold">Select a Lead</CardTitle></CardHeader>
-          <CardContent><div className="space-y-1.5 max-h-[calc(100vh-320px)] overflow-y-auto">
-            {sortedLeads.length===0?<p className="text-sm text-muted-foreground text-center py-8">No leads available</p>:
-              sortedLeads.map(lead=>(
-                <button key={lead.id} onClick={()=>{setEmailLeadId(lead.id);setSelectedTemplateId(null);setEmailEditing(false);setShowFullSequence(false)}}
-                  className={`w-full text-left p-3 rounded-lg transition-all ${emailLeadId===lead.id?'bg-emerald-50 border border-emerald-200 shadow-sm':'hover:bg-gray-50 border border-transparent'}`}>
-                  <div className="flex items-center gap-2">{lead.hotLead&&<Flame className="h-3.5 w-3.5 text-amber-500 shrink-0"/>}<span className="font-medium text-sm truncate">{lead.name}</span>
-                    <Eye className="h-3.5 w-3.5 text-muted-foreground ml-auto shrink-0 cursor-pointer hover:text-emerald-600" onClick={(e)=>{e.stopPropagation();openLeadDetail(lead)}}/></div>
-                  <div className="flex items-center gap-2 mt-1"><span className="text-xs text-muted-foreground">{lead.sector}</span><TierBadge tier={lead.tier}/><span className="text-xs text-muted-foreground ml-auto">{lead.rating.toFixed(1)}★</span></div>
-                </button>
-              ))}
-          </div></CardContent>
-        </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        {/* Lead Selector */}
+        <div className="card-premium rounded-xl p-5 lg:col-span-1">
+          <h3 className="text-sm font-semibold text-foreground mb-3">Select a Lead</h3>
+          <div className="space-y-1.5 max-h-[calc(100vh-320px)] overflow-y-auto">
+            {sortedLeads.length===0
+              ? <p className="text-sm text-muted-foreground text-center py-8">No leads available</p>
+              : sortedLeads.map(lead=>(
+              <button key={lead.id}
+                onClick={()=>{setEmailLeadId(lead.id);setSelectedTemplateId(null);setEmailEditing(false);setShowFullSequence(false)}}
+                className={`w-full text-left p-3 rounded-xl transition-all border ${emailLeadId===lead.id?'bg-emerald-950/40 border-emerald-800/60':'hover:bg-zinc-800/40 border-transparent'}`}
+              >
+                <div className="flex items-center gap-2">
+                  {lead.hotLead&&<Flame className="h-3.5 w-3.5 text-amber-400 shrink-0"/>}
+                  <span className="font-medium text-sm text-foreground truncate">{lead.name}</span>
+                  <Eye className="h-3.5 w-3.5 text-muted-foreground ml-auto shrink-0 hover:text-emerald-400" onClick={e=>{e.stopPropagation();openLeadDetail(lead)}}/>
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-xs text-muted-foreground">{lead.sector}</span>
+                  <TierBadge tier={lead.tier}/>
+                  <span className="text-xs text-amber-400 ml-auto">{lead.rating.toFixed(1)}★</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
 
         <div className="lg:col-span-2 space-y-4">
           {selectedLead ? (<>
-            {/* Lead Info */}
-            <motion.div {...scaleIn}><Card className="border-0 shadow-sm"><CardContent className="p-4">
-              <div className="flex items-start justify-between"><div><h3 className="font-semibold">{selectedLead.name}</h3><p className="text-sm text-muted-foreground">{selectedLead.sector} · {selectedLead.area||selectedLead.location}</p></div>
-                <div className="flex items-center gap-2">{selectedLead.hotLead&&<Badge className="bg-amber-100 text-amber-700 border-amber-200 border"><Flame className="h-3 w-3 mr-1"/>Hot</Badge>}<TierBadge tier={selectedLead.tier}/></div></div>
-              {selectedLead.recommendedPackage&&(<div className="mt-2 flex items-center gap-2"><span className="text-xs text-muted-foreground">Recommended:</span><Badge className="bg-emerald-100 text-emerald-700 border-emerald-200 border">{selectedLead.recommendedPackage}</Badge>{selectedLead.estimatedValue>0&&<span className="text-xs font-semibold text-emerald-600">{formatCurrency(selectedLead.estimatedValue)}</span>}</div>)}
-            </CardContent>
-          </Card></motion.div>
-
-            {/* Category Tabs + Template Library */}
-            <motion.div {...scaleIn} transition={{delay:0.05}}>
-              <Card className="border-0 shadow-sm">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm font-semibold flex items-center gap-2"><BookOpen className="h-4 w-4 text-emerald-600"/>Template Library</CardTitle>
-                    <Button variant="outline" size="sm" className="text-xs border-emerald-200 text-emerald-700 hover:bg-emerald-50" onClick={()=>{setShowFullSequence(!showFullSequence);setSelectedTemplateId(null);setEmailEditing(false)}}>
-                      {showFullSequence?<><X className="h-3 w-3 mr-1"/>Close Sequence</>:<><Play className="h-3 w-3 mr-1"/>Full Sequence (7 Touches)</>}
-                    </Button>
+            {/* Lead Info Banner */}
+            <motion.div {...scaleIn}>
+              <div className="card-elevated rounded-xl p-4">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-semibold text-foreground">{selectedLead.name}</h3>
+                    <p className="text-sm text-muted-foreground">{selectedLead.sector} · {selectedLead.area||selectedLead.location}</p>
                   </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Category Tabs */}
-                  <div className="flex gap-1.5 overflow-x-auto pb-1">
-                    {TEMPLATE_CATEGORIES.map(cat=>(
-                      <button key={cat.id} onClick={()=>{setEmailCategoryFilter(cat.id);setSelectedTemplateId(null)}}
-                        className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${emailCategoryFilter===cat.id?'bg-emerald-600 text-white shadow-sm':'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-                        {cat.label} <span className="ml-1 opacity-70">({cat.count})</span>
+                  <div className="flex items-center gap-2">
+                    {selectedLead.hotLead&&<Badge className="bg-amber-950 text-amber-400 border-amber-800 border text-[10px]"><Flame className="h-2.5 w-2.5 mr-1"/>Hot</Badge>}
+                    <TierBadge tier={selectedLead.tier}/>
+                  </div>
+                </div>
+                {selectedLead.recommendedPackage&&(
+                  <div className="mt-2 flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground">Recommended:</span>
+                    <Badge className="bg-emerald-950 text-emerald-400 border-emerald-800 border text-[10px]">{selectedLead.recommendedPackage}</Badge>
+                    {selectedLead.estimatedValue>0&&<span className="text-xs font-semibold text-emerald-400">{formatCurrency(selectedLead.estimatedValue)}</span>}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+
+            {/* Template Library */}
+            <motion.div {...scaleIn} transition={{delay:0.05}}>
+              <div className="card-premium rounded-xl p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-emerald-400"/>
+                    <h3 className="text-sm font-semibold text-foreground">Templates</h3>
+                  </div>
+                  <Button variant="outline" size="sm" className="text-xs border-zinc-700 bg-zinc-800/60 text-foreground hover:bg-zinc-700"
+                    onClick={()=>{setShowFullSequence(!showFullSequence);setSelectedTemplateId(null);setEmailEditing(false)}}>
+                    {showFullSequence?<><X className="h-3 w-3 mr-1"/>Close Sequence</>:<><Play className="h-3 w-3 mr-1"/>Full 7-Touch Sequence</>}
+                  </Button>
+                </div>
+
+                {/* Category pills */}
+                <div className="flex gap-1.5 overflow-x-auto pb-2 mb-3">
+                  {TEMPLATE_CATEGORIES.map(cat=>(
+                    <button key={cat.id}
+                      onClick={()=>{setEmailCategoryFilter(cat.id);setSelectedTemplateId(null)}}
+                      className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${emailCategoryFilter===cat.id?'bg-primary text-primary-foreground shadow-sm':'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-foreground'}`}
+                    >
+                      {cat.label} <span className="ml-1 opacity-60">({cat.count})</span>
+                    </button>
+                  ))}
+                </div>
+
+                {showFullSequence ? (
+                  <div className="space-y-2.5 max-h-[480px] overflow-y-auto">
+                    {fullSequence.length === 0
+                      ? <p className="text-sm text-muted-foreground text-center py-8">Select a lead first</p>
+                      : fullSequence.map((step, i) => (
+                      <motion.div key={i} initial={{opacity:0,x:-8}} animate={{opacity:1,x:0}} transition={{delay:i*0.04}}>
+                        <div className={`rounded-xl border p-3.5 ${i===0?'border-emerald-800/60 bg-emerald-950/20':'border-zinc-800 bg-zinc-800/20'}`}>
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <span className="h-6 w-6 rounded-full bg-zinc-700 border border-zinc-600 flex items-center justify-center text-[10px] font-bold text-foreground">{step.touch}</span>
+                              <span className="text-xs font-semibold text-foreground">Day {step.day}</span>
+                              <ChannelBadge channel={step.channel}/>
+                            </div>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-zinc-400 hover:text-foreground hover:bg-zinc-700"
+                              onClick={()=>{const txt=step.subject?`Subject: ${step.subject}\n\n${step.body}`:step.body;navigator.clipboard.writeText(txt).then(()=>toast.success(`Touch ${step.touch} copied!`))}}>
+                              <Copy className="h-3 w-3"/>
+                            </Button>
+                          </div>
+                          {step.subject&&<p className="text-xs font-semibold text-foreground mb-1">Sub: {step.subject}</p>}
+                          <p className="text-xs text-muted-foreground whitespace-pre-wrap line-clamp-3">{step.body}</p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-1.5 max-h-[300px] overflow-y-auto">
+                    {filteredTemplates.map(t=>(
+                      <button key={t.id}
+                        onClick={()=>{setSelectedTemplateId(t.id);setEmailEditing(false)}}
+                        className={`w-full text-left p-3 rounded-xl border transition-all ${selectedTemplateId===t.id?'border-primary bg-primary/5':'border-zinc-800 hover:bg-zinc-800/60'}`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <ChannelBadge channel={t.channel||'email'}/>
+                          <span className="text-sm font-semibold text-foreground">{t.name}</span>
+                          {t.touchNumber&&<span className="text-[10px] text-muted-foreground ml-auto">Touch {t.touchNumber}</span>}
+                        </div>
+                        {t.description&&<p className="text-xs text-muted-foreground mt-1">{t.description}</p>}
                       </button>
                     ))}
                   </div>
-
-                  {/* Full Sequence View */}
-                  {showFullSequence ? (
-                    <div className="space-y-3 max-h-[500px] overflow-y-auto">
-                      {fullSequence.length === 0 ? <p className="text-sm text-muted-foreground text-center py-8">Select a lead to generate sequence</p> :
-                        fullSequence.map((step, i) => (
-                          <motion.div key={i} initial={{opacity:0,x:-10}} animate={{opacity:1,x:0}} transition={{delay:i*0.04}}>
-                            <div className={`rounded-lg border p-3 ${i===0?'border-emerald-200 bg-emerald-50/30':'border-gray-200'}`}>
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-2">
-                                  <span className="h-6 w-6 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-bold">{step.touch}</span>
-                                  <span className="text-xs font-medium">Day {step.day}</span>
-                                  <ChannelBadge channel={step.channel}/>
-                                </div>
-                                <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={()=>{const txt=step.subject?`Subject: ${step.subject}\n\n${step.body}`:step.body;navigator.clipboard.writeText(txt).then(()=>toast.success(`Touch ${step.touch} copied!`))}}><Copy className="h-3 w-3"/></Button>
-                              </div>
-                              {step.subject && <p className="text-xs font-semibold text-sky-700 mb-1">Subject: {step.subject}</p>}
-                              <p className="text-xs text-muted-foreground whitespace-pre-wrap line-clamp-4">{step.body}</p>
-                              <p className="text-[10px] text-muted-foreground mt-1.5 italic">{step.context}</p>
-                            </div>
-                          </motion.div>
-                        ))
-                      }
-                    </div>
-                  ) : (
-                  /* Template List */
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[400px] overflow-y-auto">
-                    {filteredTemplates.length===0?<p className="text-sm text-muted-foreground text-center py-8 col-span-2">No templates in this category</p>:
-                      filteredTemplates.map(tmpl=>(
-                        <button key={tmpl.id} onClick={()=>{setSelectedTemplateId(tmpl.id);setEmailEditing(false);setShowFullSequence(false)}}
-                          className={`p-3 rounded-lg border text-left transition-all hover:shadow-sm ${selectedTemplateId===tmpl.id?'border-emerald-200 bg-emerald-50 shadow-sm':'border-gray-200 hover:border-gray-300'}`}>
-                          <div className="flex items-center justify-between gap-2">
-                            <p className="text-xs font-semibold truncate">{tmpl.name}</p>
-                            <ChannelBadge channel={tmpl.channel}/>
-                          </div>
-                          <p className="text-[10px] text-muted-foreground mt-1 line-clamp-2">{tmpl.context}</p>
-                        </button>
-                      ))
-                    }
-                  </div>
-                  )}
-                </CardContent>
-              </Card>
+                )}
+              </div>
             </motion.div>
 
-            {/* Template Preview Panel */}
+            {/* Preview Area */}
             {renderedTemplate && !showFullSequence && (
               <motion.div {...scaleIn} transition={{delay:0.1}}>
-                <Card className="border-0 shadow-sm">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between flex-wrap gap-2">
-                      <div className="flex items-center gap-2">
-                        <CardTitle className="text-sm font-semibold">{renderedTemplate.name}</CardTitle>
-                        <ChannelBadge channel={renderedTemplate.channel}/>
-                        <Badge variant="secondary" className="text-[10px]">{renderedTemplate.category}</Badge>
+                <div className="card-premium rounded-xl p-5">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <Send className="h-4 w-4 text-primary"/>
+                      <h3 className="text-sm font-semibold text-foreground">{renderedTemplate.name}</h3>
+                      <ChannelBadge channel={renderedTemplate.channel||'email'}/>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground hover:text-foreground hover:bg-zinc-800"
+                        onClick={()=>{setEmailEditing(!emailEditing);if(!emailEditing)setEmailEditedBody(displayedBody)}}>
+                        {emailEditing?<><X className="h-3 w-3 mr-1"/>Cancel</>:<><Pencil className="h-3 w-3 mr-1"/>Edit</>}
+                      </Button>
+                      <Button variant="ghost" size="sm" className="h-7 text-xs text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950" onClick={copyToClipboard}>
+                        <Copy className="h-3 w-3 mr-1"/>Copy
+                      </Button>
+                      <Button variant="ghost" size="sm" className="h-7 text-xs text-amber-400 hover:text-amber-300 hover:bg-amber-950" onClick={saveAsActivity}>
+                        <Save className="h-3 w-3 mr-1"/>Save
+                      </Button>
+                    </div>
+                  </div>
+                  {renderedTemplate.subject&&(
+                    <div className="mb-3 p-2.5 rounded-lg bg-zinc-800/60 border border-zinc-700">
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Subject: </span>
+                      <span className="text-sm font-semibold text-foreground">{renderedTemplate.subject}</span>
+                    </div>
+                  )}
+                  {emailEditing
+                    ? <Textarea value={emailEditedBody} onChange={e=>setEmailEditedBody(e.target.value)} className="min-h-[200px] text-sm font-mono bg-zinc-800/60 border-zinc-700 text-foreground"/>
+                    : <div className="bg-zinc-800/40 rounded-xl p-4 border border-zinc-800">
+                        <pre className="text-sm whitespace-pre-wrap text-foreground font-sans leading-relaxed">{displayedBody}</pre>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <Button variant="ghost" size="sm" onClick={copyToClipboard} className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"><Copy className="h-4 w-4 mr-1"/>Copy</Button>
-                        <Button variant="ghost" size="sm" onClick={()=>{setEmailEditing(!emailEditing);if(!emailEditing)setEmailEditedBody(renderedTemplate.body)}} className="text-gray-600 hover:bg-gray-100"><Pencil className="h-4 w-4 mr-1"/>{emailEditing?'Preview':'Edit'}</Button>
-                        <Button variant="ghost" size="sm" onClick={saveAsActivity} className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"><Save className="h-4 w-4 mr-1"/>Save</Button>
-                        <Button variant="ghost" size="sm" onClick={()=>{setShowFullSequence(true);setSelectedTemplateId(null)}} className="text-gray-600 hover:bg-gray-100"><Play className="h-4 w-4 mr-1"/>Sequence</Button>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {renderedTemplate.subject&&(<div><p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Subject Line</p><div className="bg-gray-50 rounded-lg p-3"><p className="font-medium text-sm">{renderedTemplate.subject}</p></div></div>)}
-                    <div><p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">{renderedTemplate.channel==='whatsapp'?'Message':renderedTemplate.channel==='phone'?'Script':renderedTemplate.channel==='linkedin'?'DM':'Body'}</p>
-                      {emailEditing?(<Textarea value={emailEditedBody} onChange={(e)=>setEmailEditedBody(e.target.value)} className="min-h-[200px] text-sm"/>):(<div className="bg-gray-50 rounded-lg p-4 whitespace-pre-wrap text-sm leading-relaxed">{displayedBody}</div>)}
-                    </div>
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                      <span>{renderedTemplate.wordCount} words</span>
-                      <span>{charCount} characters</span>
-                    </div>
-                  </CardContent>
-                </Card>
+                  }
+                  <div className="flex items-center gap-3 mt-3 pt-3 border-t border-zinc-800">
+                    <span className="text-[10px] text-muted-foreground">{wordCount} words</span>
+                    <span className="text-[10px] text-muted-foreground">{displayedBody.length} chars</span>
+                    {renderedTemplate.wordCount&&<span className="text-[10px] text-emerald-400">{renderedTemplate.wordCount>0&&renderedTemplate.wordCount<=100?'Concise':'Standard length'}</span>}
+                  </div>
+                </div>
               </motion.div>
             )}
-          </>):(
-            <Card className="border-0 shadow-sm"><CardContent className="flex flex-col items-center justify-center py-20 text-center">
-              <BookOpen className="h-12 w-12 text-gray-300 mb-4"/><h3 className="font-semibold text-gray-600">Select a Lead</h3>
-              <p className="text-sm text-muted-foreground mt-1 max-w-sm">Choose a lead to browse and preview personalized outreach templates.</p>
-            </CardContent></Card>
+          </>) : (
+            <div className="card-premium rounded-xl p-12 text-center">
+              <Mail className="h-10 w-10 text-zinc-700 mx-auto mb-3"/>
+              <p className="text-sm font-medium text-foreground">Select a lead to get started</p>
+              <p className="text-xs text-muted-foreground mt-1">Choose from the left panel to generate personalized outreach</p>
+            </div>
           )}
         </div>
       </div>
@@ -1109,179 +1314,371 @@ function EmailGeneratorView({ leads, emailLeadId, setEmailLeadId, selectedTempla
   )
 }
 
-// ─── Strategies View ─────────────────────────────────────────────────
+// ─── Strategies View ──────────────────────────────────────────────────
 function StrategiesView() {
+  const [activeCategory, setActiveCategory] = useState(STRATEGIES_DATA[0].id)
+  const activeData = STRATEGIES_DATA.find(d=>d.id===activeCategory)
+
   return (
-    <motion.div className="space-y-6" {...fadeInUp}>
-      <div><h2 className="text-lg font-semibold">Marketing Strategy Hub</h2><p className="text-sm text-muted-foreground">Battle-tested frameworks and playbooks for converting SA SME leads</p></div>
-      <Accordion type="multiple" defaultValue={['lead-generation','outreach']} className="space-y-3">
+    <motion.div className="space-y-5" {...fadeInUp}>
+      <div>
+        <h2 className="text-lg font-bold text-foreground">Growth Strategies</h2>
+        <p className="text-sm text-muted-foreground mt-0.5">Proven frameworks for Sihle&apos;s outreach and Kabelo&apos;s delivery</p>
+      </div>
+
+      {/* Category tabs */}
+      <div className="flex gap-2 overflow-x-auto pb-1">
         {STRATEGIES_DATA.map(cat=>(
-          <AccordionItem key={cat.id} value={cat.id} className="bg-white rounded-xl border-0 shadow-sm px-0">
-            <AccordionTrigger className="px-6 py-4 hover:no-underline"><div className="flex items-center gap-3"><div className="h-10 w-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">{cat.icon}</div><span className="font-semibold">{cat.category}</span><Badge variant="secondary" className="ml-2">{cat.strategies.length}</Badge></div></AccordionTrigger>
-            <AccordionContent className="px-6 pb-4"><div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {cat.strategies.map(strat=>(
-                <Card key={strat.id} className="border shadow-sm hover:shadow-md transition-shadow">
-                  <CardHeader className="pb-2"><div className="flex items-center justify-between"><CardTitle className="text-sm font-semibold">{strat.title}</CardTitle><DifficultyBadge difficulty={strat.difficulty}/></div></CardHeader>
-                  <CardContent className="space-y-3">
-                    <p className="text-sm text-muted-foreground leading-relaxed">{strat.description}</p>
-                    <div className="bg-emerald-50 rounded-lg p-3 border border-emerald-100"><p className="text-xs font-semibold text-emerald-700 flex items-center gap-1.5"><Lightbulb className="h-3 w-3"/>Key Insight</p><p className="text-sm text-emerald-800 mt-1 font-medium">{strat.keyInsight}</p></div>
-                    <div className="space-y-1.5"><p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Steps</p>{strat.steps.map((step,i)=>(<div key={i} className="flex items-start gap-2 text-sm"><span className="h-5 w-5 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">{i+1}</span><span>{step}</span></div>))}</div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div></AccordionContent>
-          </AccordionItem>
+          <button key={cat.id}
+            onClick={()=>setActiveCategory(cat.id)}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border ${activeCategory===cat.id?'bg-emerald-950/50 border-emerald-800/60 text-emerald-400':'bg-zinc-800/40 border-zinc-800 text-muted-foreground hover:bg-zinc-800 hover:text-foreground'}`}
+          >
+            {cat.icon}{cat.category}
+          </button>
         ))}
-      </Accordion>
+      </div>
+
+      {/* Strategy Cards */}
+      {activeData && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {activeData.strategies.map((strat, i) => (
+            <motion.div key={strat.id} initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} transition={{delay:i*0.07}}>
+              <div className="card-premium rounded-xl p-5 h-full hover:border-zinc-600 transition-all">
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <h3 className="font-bold text-foreground text-sm">{strat.title}</h3>
+                  <DifficultyBadge difficulty={strat.difficulty}/>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed mb-3">{strat.description}</p>
+                <div className="bg-amber-950/30 border border-amber-900/40 rounded-xl p-3 mb-4">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Lightbulb className="h-3 w-3 text-amber-400"/>
+                    <span className="text-[10px] font-bold text-amber-500 uppercase tracking-wider">Key Insight</span>
+                  </div>
+                  <p className="text-xs text-amber-300/80 font-medium">{strat.keyInsight}</p>
+                </div>
+                <Accordion type="single" collapsible>
+                  <AccordionItem value="steps" className="border-zinc-800">
+                    <AccordionTrigger className="text-xs font-semibold text-muted-foreground hover:text-foreground py-2 hover:no-underline">
+                      View Action Steps ({strat.steps.length})
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-2 pt-1">
+                        {strat.steps.map((step, j) => (
+                          <div key={j} className="flex items-start gap-2.5">
+                            <span className="h-5 w-5 rounded-full bg-zinc-800 border border-zinc-700 text-[10px] font-bold text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">{j+1}</span>
+                            <p className="text-xs text-muted-foreground leading-relaxed">{step}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
     </motion.div>
   )
 }
 
-// ─── Pricing Calculator View ──────────────────────────────────────────
+// ─── Pricing View ─────────────────────────────────────────────────────
 function PricingView({ pricingCategory, setPricingCategory, roiNewPatients, setRoiNewPatients, roiAvgValue, setRoiAvgValue, roiPackage, setRoiPackage, selectedAddOns, setSelectedAddOns, currentPackages, selectedPkg, monthlyRevenue, annualRevenue, paybackDays, netGainY1, roiPercent, addOnTotalOnce, addOnTotalMonthly }: any) {
-  const toggleAddOn = (id: string) => setSelectedAddOns(prev=>prev.includes(id)?prev.filter(x=>x!==id):[...prev,id])
-  const totalOnceOff = selectedPkg.price+addOnTotalOnce
   const totalMonthly = addOnTotalMonthly
-  const year1Cost = totalOnceOff+(totalMonthly*12)
+  const year1Cost = selectedPkg.price + addOnTotalOnce + (totalMonthly * 12)
 
   return (
-    <motion.div className="space-y-6" {...fadeInUp}>
-      <div><h2 className="text-lg font-semibold">Pricing Calculator</h2><p className="text-sm text-muted-foreground">Compare packages, calculate ROI, and build custom quotes</p></div>
-      <Card className="border-0 shadow-sm"><CardContent className="p-4">
-        <RadioGroup value={pricingCategory} onValueChange={(v:any)=>setPricingCategory(v)} className="flex flex-wrap gap-2">
-          {(['dental','general','school'] as const).map(cat=>(<Label key={cat} htmlFor={cat} className={`flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer transition-colors ${pricingCategory===cat?'bg-emerald-50 border border-emerald-200':'bg-gray-50 border border-transparent hover:bg-gray-100'}`}>
-            <RadioGroupItem value={cat} id={cat}/><span className="text-sm font-medium capitalize">{cat}</span></Label>))}
+    <motion.div className="space-y-5" {...fadeInUp}>
+      <div>
+        <h2 className="text-lg font-bold text-foreground">Pricing Calculator</h2>
+        <p className="text-sm text-muted-foreground mt-0.5">Build proposals with live ROI projections</p>
+      </div>
+
+      {/* Category selector */}
+      <div className="card-premium rounded-xl p-5">
+        <h3 className="text-sm font-semibold text-foreground mb-3">Sector</h3>
+        <RadioGroup value={pricingCategory} onValueChange={setPricingCategory} className="flex gap-3 flex-wrap">
+          {(['dental','general','school'] as const).map(c=>(
+            <div key={c} className="flex items-center gap-2">
+              <RadioGroupItem value={c} id={c} className="border-zinc-600 text-primary"/>
+              <Label htmlFor={c} className="capitalize font-medium text-foreground cursor-pointer">{c}</Label>
+            </div>
+          ))}
         </RadioGroup>
-      </CardContent></Card>
+      </div>
+
+      {/* Packages */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {currentPackages.map((pkg:any)=>(
+        {currentPackages.map((pkg: any) => (
           <motion.div key={pkg.name} whileHover={{y:-4}} transition={{type:'spring',stiffness:300}}>
-            <Card className={`border-0 shadow-sm ${pkg.popular?'ring-2 ring-emerald-500':'hover:shadow-md'} transition-shadow`}>
-              {pkg.popular&&<div className="bg-emerald-500 text-white text-xs font-semibold text-center py-1 rounded-t-xl">Most Popular</div>}
-              <CardContent className="p-5">
-                <div className="flex items-center gap-2"><Crown className={`h-5 w-5 ${pkg.popular?'text-emerald-600':'text-gray-400'}`}/><h3 className="font-bold text-lg">{pkg.name}</h3></div>
-                <p className="text-sm text-muted-foreground mt-1">{pkg.tagline}</p>
-                <p className="text-3xl font-bold text-emerald-600 mt-3">{formatCurrency(pkg.price)}</p>
-                <p className="text-xs text-muted-foreground">once-off</p>
-                {pkg.roi&&<Badge className="mt-3 bg-emerald-100 text-emerald-700 border-emerald-200 border">{pkg.roi}% ROI</Badge>}
-                <Button onClick={()=>setRoiPackage(pkg.name)} variant={roiPackage===pkg.name?'default':'outline'} className={`mt-4 w-full ${roiPackage===pkg.name?'bg-emerald-600 hover:bg-emerald-700':''}`}>{roiPackage===pkg.name?'Selected':'Select Package'}</Button>
-              </CardContent>
-            </Card>
+            <div
+              className={`card-premium rounded-xl p-5 cursor-pointer transition-all relative overflow-hidden ${roiPackage===pkg.name?'border-primary glow-brand':''} ${pkg.popular?'border-amber-800/60':''}`}
+              onClick={()=>setRoiPackage(pkg.name)}
+            >
+              {pkg.popular&&(
+                <div className="absolute top-0 right-0">
+                  <div className="text-[10px] font-bold bg-amber-500 text-amber-950 px-3 py-1 rounded-bl-xl">POPULAR</div>
+                </div>
+              )}
+              <div className="flex items-start justify-between mb-3">
+                <div>
+                  <h3 className="font-bold text-foreground">{pkg.name}</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">{pkg.tagline}</p>
+                </div>
+                {roiPackage===pkg.name&&<CheckCircle2 className="h-5 w-5 text-primary shrink-0"/>}
+              </div>
+              <p className="text-2xl font-bold text-foreground">{formatCurrency(pkg.price)}</p>
+              {pkg.roi&&(
+                <div className="mt-3 p-2.5 rounded-lg bg-emerald-950/40 border border-emerald-900/40">
+                  <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Year 1 ROI</p>
+                  <p className="text-lg font-bold text-emerald-400">{pkg.roi}%</p>
+                  {pkg.paybackDays&&<p className="text-[10px] text-emerald-600">Payback in ~{pkg.paybackDays} days</p>}
+                </div>
+              )}
+            </div>
           </motion.div>
         ))}
       </div>
-      <Card className="border-0 shadow-sm"><CardHeader><CardTitle className="text-base font-semibold">Interactive ROI Calculator</CardTitle></CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div><Label className="text-sm font-medium">New Patients/Clients per Month: <strong className="text-emerald-600">{roiNewPatients[0]}</strong></Label><Slider value={roiNewPatients} onValueChange={setRoiNewPatients} min={1} max={30} step={1} className="mt-2"/></div>
-              <div><Label className="text-sm font-medium">Average Visit/Job Value: <strong className="text-emerald-600">{formatCurrency(roiAvgValue[0])}</strong></Label><Slider value={roiAvgValue} onValueChange={setRoiAvgValue} min={500} max={5000} step={50} className="mt-2"/></div>
+
+      {/* ROI Sliders */}
+      {pricingCategory === 'dental' && (
+        <div className="card-premium rounded-xl p-5">
+          <h3 className="text-sm font-semibold text-foreground mb-5">ROI Projection</h3>
+          <div className="space-y-5">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-medium text-foreground">New patients/month</Label>
+                <span className="text-sm font-bold text-emerald-400">{roiNewPatients[0]}</span>
+              </div>
+              <Slider min={1} max={30} step={1} value={roiNewPatients} onValueChange={setRoiNewPatients} className="[&_[role=slider]]:bg-primary"/>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-gray-50 rounded-lg p-3"><p className="text-xs text-muted-foreground">Monthly Revenue</p><p className="text-lg font-bold">{formatCurrency(monthlyRevenue)}</p></div>
-              <div className="bg-gray-50 rounded-lg p-3"><p className="text-xs text-muted-foreground">Annual Revenue</p><p className="text-lg font-bold">{formatCurrency(annualRevenue)}</p></div>
-              <div className="bg-gray-50 rounded-lg p-3"><p className="text-xs text-muted-foreground">Payback Period</p><p className="text-lg font-bold">{paybackDays>365?'N/A':`~${paybackDays} days`}</p></div>
-              <div className="bg-gray-50 rounded-lg p-3"><p className="text-xs text-muted-foreground">Net Gain Year 1</p><p className="text-lg font-bold text-emerald-600">{formatCurrency(netGainY1)}</p></div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-medium text-foreground">Avg visit value (R)</Label>
+                <span className="text-sm font-bold text-emerald-400">R{roiAvgValue[0]}</span>
+              </div>
+              <Slider min={200} max={3000} step={50} value={roiAvgValue} onValueChange={setRoiAvgValue} className="[&_[role=slider]]:bg-primary"/>
             </div>
           </div>
-          <motion.div className="bg-emerald-50 rounded-xl p-6 border border-emerald-200 text-center" initial={{scale:0.95}} animate={{scale:1}}>
-            <p className="text-sm text-emerald-700 font-medium">Return on Investment</p>
-            <p className="text-5xl font-bold text-emerald-600 mt-1">{roiPercent}%</p>
-            <Progress value={Math.min(roiPercent,1000)} className="mt-4 h-3"/>
-            <p className="text-xs text-emerald-600 mt-2">Investment: {formatCurrency(selectedPkg.price)} → Annual return: {formatCurrency(annualRevenue)}</p>
-          </motion.div>
-        </CardContent></Card>
-      <Card className="border-0 shadow-sm"><CardHeader><CardTitle className="text-base font-semibold">Package Builder — Add-Ons</CardTitle><CardDescription>Customize your package with optional add-ons</CardDescription></CardHeader>
-        <CardContent className="space-y-3">
-          {ADD_ONS.map(addOn=>(<div key={addOn.id} onClick={()=>toggleAddOn(addOn.id)} className={`flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-colors border ${selectedAddOns.includes(addOn.id)?'bg-emerald-50 border-emerald-200':'hover:bg-gray-50 border-transparent'}`}>
-            <Checkbox checked={selectedAddOns.includes(addOn.id)} className="mt-0.5"/><div className="flex-1"><p className="text-sm font-medium">{addOn.name}</p><p className="text-xs text-muted-foreground">{addOn.desc}</p></div>
-            <div className="text-right shrink-0"><p className="text-sm font-semibold text-emerald-600">{addOn.onceOff>0?formatCurrency(addOn.onceOff):''}</p><p className="text-xs text-muted-foreground">{addOn.monthly>0?`+ ${formatCurrency(addOn.monthly)}/mo`:addOn.onceOff===0?`${formatCurrency(addOn.monthly)}/mo`:'once-off'}</p></div>
-          </div>))}
-          <Separator/>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="bg-gray-50 rounded-lg p-3 text-center"><p className="text-xs text-muted-foreground">Base Package</p><p className="font-bold">{formatCurrency(selectedPkg.price)}</p></div>
-            <div className="bg-gray-50 rounded-lg p-3 text-center"><p className="text-xs text-muted-foreground">Add-Ons (Once-off)</p><p className="font-bold">{formatCurrency(addOnTotalOnce)}</p></div>
-            <div className="bg-gray-50 rounded-lg p-3 text-center"><p className="text-xs text-muted-foreground">Monthly Total</p><p className="font-bold">{formatCurrency(totalMonthly)}/mo</p></div>
+          <div className="mt-5 grid grid-cols-3 gap-3">
+            {[
+              { label:'Monthly Revenue', value:formatCurrency(monthlyRevenue), color:'text-emerald-400' },
+              { label:'Annual Revenue', value:formatCurrency(annualRevenue), color:'text-emerald-400' },
+              { label:'ROI Year 1', value:`${roiPercent}%`, color:roiPercent>500?'text-emerald-400':'text-amber-400' },
+            ].map((r,i) => (
+              <div key={i} className="bg-zinc-800/40 border border-zinc-800 rounded-xl p-3 text-center">
+                <p className="text-[10px] text-muted-foreground font-medium">{r.label}</p>
+                <p className={`text-base font-bold mt-0.5 ${r.color}`}>{r.value}</p>
+              </div>
+            ))}
           </div>
-          <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200 flex items-center justify-between">
-            <div><p className="text-sm font-medium text-emerald-700">Total Investment (Year 1)</p><p className="text-xs text-emerald-600">Once-off + 12 months add-ons</p></div>
-            <p className="text-2xl font-bold text-emerald-600">{formatCurrency(year1Cost)}</p>
+          <div className="mt-3 bg-amber-950/30 border border-amber-900/40 rounded-xl p-3">
+            <p className="text-sm font-bold text-amber-400">Payback period: <span className="text-foreground">{paybackDays} days</span></p>
+            <p className="text-xs text-amber-600 mt-0.5">Net gain Year 1: {formatCurrency(netGainY1)}</p>
           </div>
-        </CardContent></Card>
+        </div>
+      )}
+
+      {/* Add-ons */}
+      <div className="card-premium rounded-xl p-5">
+        <h3 className="text-sm font-semibold text-foreground mb-4">Add-Ons</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+          {ADD_ONS.map(addon=>(
+            <div key={addon.id}
+              className={`flex items-start gap-3 p-3.5 rounded-xl cursor-pointer transition-all border ${selectedAddOns.includes(addon.id)?'border-primary bg-primary/5':'border-zinc-800 hover:bg-zinc-800/60'}`}
+              onClick={()=>{
+                setSelectedAddOns((prev: string[]) =>
+                  prev.includes(addon.id) ? prev.filter((id: string) => id !== addon.id) : [...prev, addon.id]
+                )
+              }}
+            >
+              <Checkbox checked={selectedAddOns.includes(addon.id)} className="mt-0.5 border-zinc-600" readOnly/>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground">{addon.name}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{addon.desc}</p>
+                <div className="flex items-center gap-3 mt-1.5">
+                  {addon.onceOff>0&&<span className="text-xs font-bold text-emerald-400">{formatCurrency(addon.onceOff)} once-off</span>}
+                  {addon.monthly>0&&<span className="text-xs font-bold text-amber-400">{formatCurrency(addon.monthly)}/mo</span>}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Summary */}
+      <div className="card-premium rounded-xl p-5 border-emerald-900/40" style={{background:'oklch(0.16 0.03 162 / 0.3)',borderColor:'oklch(0.25 0.06 162 / 0.4)'}}>
+        <h3 className="text-sm font-semibold text-foreground mb-4">Investment Summary</h3>
+        <div className="grid grid-cols-3 gap-3 mb-4">
+          {[
+            { label:'Base Package', value:formatCurrency(selectedPkg.price) },
+            { label:'Add-Ons (once-off)', value:formatCurrency(addOnTotalOnce) },
+            { label:'Monthly Total', value:`${formatCurrency(totalMonthly)}/mo` },
+          ].map((s,i) => (
+            <div key={i} className="bg-zinc-800/40 border border-zinc-800 rounded-xl p-3 text-center">
+              <p className="text-[10px] text-muted-foreground font-medium">{s.label}</p>
+              <p className="text-sm font-bold text-foreground mt-0.5">{s.value}</p>
+            </div>
+          ))}
+        </div>
+        <div className="flex items-center justify-between p-4 rounded-xl bg-emerald-950/40 border border-emerald-900/40">
+          <div>
+            <p className="text-sm font-bold text-emerald-400">Total Investment (Year 1)</p>
+            <p className="text-xs text-emerald-600">Once-off + 12 months add-ons</p>
+          </div>
+          <p className="text-2xl font-bold text-emerald-400">{formatCurrency(year1Cost)}</p>
+        </div>
+      </div>
     </motion.div>
   )
 }
 
 // ─── Analytics View ───────────────────────────────────────────────────
-function AnalyticsView({ stats, leads, analyticsData, openLeadDetail }: {
-  stats:DashboardStats;leads:Lead[];analyticsData:any;openLeadDetail:(l:Lead)=>void;
-}) {
+function AnalyticsView({ stats, leads, analyticsData }: { stats:DashboardStats; leads:Lead[]; analyticsData:any }) {
   const d = analyticsData
   return (
-    <motion.div className="space-y-6" {...fadeInUp}>
-      <div className="flex items-center justify-between"><div><h2 className="text-lg font-semibold">Analytics</h2><p className="text-sm text-muted-foreground">Deeper insights into your sales pipeline performance</p></div>
-        <Badge variant="outline" className="border-emerald-200 text-emerald-700">All Time</Badge></div>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <AnimatedKPICard label="Lead Velocity" value={d?.leadVelocity||0} sub="total leads" icon={<MousePointerClick className="h-6 w-6 text-blue-600"/>} bg="bg-blue-50" delay={0}/>
-        <AnimatedKPICard label="Avg Deal Size" value={d?.avgDealSize>0?formatCurrency(d.avgDealSize):'N/A'} sub="won deals" icon={<DollarSign className="h-6 w-6 text-emerald-600"/>} bg="bg-emerald-50" delay={0.1}/>
-        <AnimatedKPICard label="Hot Conversion" value={`${d?.hotLeads>0?Math.round((d.hotConverted/d.hotLeads)*100):0}%`} sub={`${d?.hotConverted||0}/${d?.hotLeads||0} converted`} icon={<Flame className="h-6 w-6 text-amber-500"/>} bg="bg-amber-50" valueColor="text-amber-600" delay={0.2}/>
-        <AnimatedKPICard label="Conversion Rate" value={`${stats.conversionRate}%`} sub={`${stats.wonLeads}/${stats.totalLeads} won`} icon={<TrendingUp className="h-6 w-6 text-violet-600"/>} bg="bg-violet-50" valueColor="text-violet-600" delay={0.3}/>
+    <motion.div className="space-y-5" {...fadeInUp}>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-bold text-foreground">Analytics</h2>
+          <p className="text-sm text-muted-foreground mt-0.5">Deep insights into pipeline performance</p>
+        </div>
+        <Badge variant="outline" className="border-zinc-700 bg-zinc-800/60 text-muted-foreground">All Time</Badge>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div {...fadeInUp} transition={{delay:0.35}}><Card className="border-0 shadow-sm"><CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Leads by Area</CardTitle></CardHeader><CardContent>
-          <ChartContainer config={tierChartConfig} className="h-[300px] w-full"><BarChart data={d?.byArea} layout="vertical" margin={{top:5,right:20,left:80,bottom:5}}>
-            <CartesianGrid strokeDasharray="3 3" horizontal={false}/><XAxis type="number" tick={{fontSize:11}}/><YAxis type="category" dataKey="area" tick={{fontSize:11}} width={80}/>
-            <ChartTooltip content={<ChartTooltipContent/>}/><Bar dataKey="count" fill="#059669" radius={[0,6,6,0]}/>
-          </BarChart></ChartContainer>
-          </CardContent>
-          </Card>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <KPICard label="Lead Velocity" value={d?.leadVelocity||0} sub="total leads" icon={<MousePointerClick className="h-5 w-5 text-sky-400"/>} accentClass="bg-sky-500/10" delay={0}/>
+        <KPICard label="Avg Deal Size" value={d?.avgDealSize>0?formatCurrency(d.avgDealSize):'N/A'} sub="won deals" icon={<DollarSign className="h-5 w-5 text-emerald-400"/>} accentClass="bg-emerald-500/10" delay={0.08}/>
+        <KPICard label="Hot Conversion" value={`${d?.hotLeads>0?Math.round((d.hotConverted/d.hotLeads)*100):0}%`} sub={`${d?.hotConverted||0}/${d?.hotLeads||0} converted`} icon={<Flame className="h-5 w-5 text-amber-400"/>} accentClass="bg-amber-500/10" delay={0.16}/>
+        <KPICard label="Conversion Rate" value={`${stats.conversionRate}%`} sub={`${stats.wonLeads}/${stats.totalLeads} won`} icon={<TrendingUp className="h-5 w-5 text-violet-400"/>} accentClass="bg-violet-500/10" delay={0.24}/>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <motion.div {...fadeInUp} transition={{delay:0.3}}>
+          <div className="card-premium rounded-xl p-5 h-full">
+            <h3 className="text-sm font-semibold text-foreground mb-3">Leads by Area</h3>
+            <ChartContainer config={tierChartConfig} className="h-[280px] w-full">
+              <BarChart data={d?.byArea} layout="vertical" margin={{top:5,right:20,left:80,bottom:5}}>
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#27272a"/>
+                <XAxis type="number" tick={{fontSize:11,fill:'#71717a'}}/>
+                <YAxis type="category" dataKey="area" tick={{fontSize:11,fill:'#71717a'}} width={80}/>
+                <ChartTooltip content={<ChartTooltipContent/>}/>
+                <Bar dataKey="count" fill="#10b981" radius={[0,6,6,0]}/>
+              </BarChart>
+            </ChartContainer>
+          </div>
         </motion.div>
-        <motion.div {...fadeInUp} transition={{delay:0.4}}><Card className="border-0 shadow-sm"><CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Estimated Value by Sector</CardTitle></CardHeader><CardContent>
-          <ChartContainer config={sectorChartConfig} className="h-[300px] w-full"><BarChart data={d?.bySectorValue} margin={{top:5,right:20,left:0,bottom:5}}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false}/><XAxis dataKey="sector" tick={{fontSize:10}}/><YAxis tick={{fontSize:11}}/>
-            <ChartTooltip content={<ChartTooltipContent/>}/><Bar dataKey="value" radius={[6,6,0,0]}>{d?.bySectorValue.map((e:any)=><Cell key={e.sector} fill={SECTOR_COLORS[e.sector]||'#6b7280'}/>)}</Bar>
-          </BarChart></ChartContainer>
-          </CardContent>
-          </Card>
+
+        <motion.div {...fadeInUp} transition={{delay:0.35}}>
+          <div className="card-premium rounded-xl p-5 h-full">
+            <h3 className="text-sm font-semibold text-foreground mb-3">Value by Sector</h3>
+            <ChartContainer config={sectorChartConfig} className="h-[280px] w-full">
+              <BarChart data={d?.bySectorValue} margin={{top:5,right:20,left:0,bottom:5}}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#27272a"/>
+                <XAxis dataKey="sector" tick={{fontSize:10,fill:'#71717a'}}/>
+                <YAxis tick={{fontSize:11,fill:'#71717a'}}/>
+                <ChartTooltip content={<ChartTooltipContent/>}/>
+                <Bar dataKey="value" radius={[6,6,0,0]}>
+                  {d?.bySectorValue.map((e:any)=><Cell key={e.sector} fill={SECTOR_COLORS[e.sector]||'#52525b'}/>)}
+                </Bar>
+              </BarChart>
+            </ChartContainer>
+          </div>
         </motion.div>
-        <motion.div {...fadeInUp} transition={{delay:0.45}}><Card className="border-0 shadow-sm"><CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Conversion Rate by Sector</CardTitle></CardHeader><CardContent>
-          <ChartContainer config={sectorChartConfig} className="h-[300px] w-full"><BarChart data={d?.conversionBySector} layout="vertical" margin={{top:5,right:20,left:80,bottom:5}}>
-            <CartesianGrid strokeDasharray="3 3" horizontal={false}/><XAxis type="number" tick={{fontSize:11}} unit="%"/><YAxis type="category" dataKey="sector" tick={{fontSize:11}} width={80}/>
-            <ChartTooltip content={<ChartTooltipContent/>}/><Bar dataKey="conversion" fill="#d97706" radius={[0,6,6,0]}/>
-          </BarChart></ChartContainer>
-          </CardContent>
-          </Card>
+
+        <motion.div {...fadeInUp} transition={{delay:0.4}}>
+          <div className="card-premium rounded-xl p-5 h-full">
+            <h3 className="text-sm font-semibold text-foreground mb-3">Conversion by Sector</h3>
+            <ChartContainer config={sectorChartConfig} className="h-[280px] w-full">
+              <BarChart data={d?.conversionBySector} layout="vertical" margin={{top:5,right:20,left:80,bottom:5}}>
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#27272a"/>
+                <XAxis type="number" tick={{fontSize:11,fill:'#71717a'}} unit="%"/>
+                <YAxis type="category" dataKey="sector" tick={{fontSize:11,fill:'#71717a'}} width={80}/>
+                <ChartTooltip content={<ChartTooltipContent/>}/>
+                <Bar dataKey="conversion" fill="#f59e0b" radius={[0,6,6,0]}/>
+              </BarChart>
+            </ChartContainer>
+          </div>
         </motion.div>
-        <motion.div {...fadeInUp} transition={{delay:0.5}}><Card className="border-0 shadow-sm"><CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Conversion Rate by Tier</CardTitle></CardHeader><CardContent>
-          <ChartContainer config={tierChartConfig} className="h-[300px] w-full"><BarChart data={d?.conversionByTier} margin={{top:5,right:20,left:0,bottom:5}}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false}/><XAxis dataKey="tier" tick={{fontSize:11}}/><YAxis tick={{fontSize:11}} unit="%"/>
-            <ChartTooltip content={<ChartTooltipContent/>}/><Bar dataKey="conversion" radius={[6,6,0,0]}>{d?.conversionByTier.map((_:any,i:number)=><Cell key={i} fill={['#059669','#d97706','#6b7280'][i]}/>)}</Bar>
-          </BarChart></ChartContainer>
-          </CardContent>
-          </Card>
+
+        <motion.div {...fadeInUp} transition={{delay:0.45}}>
+          <div className="card-premium rounded-xl p-5 h-full">
+            <h3 className="text-sm font-semibold text-foreground mb-3">Conversion by Tier</h3>
+            <ChartContainer config={tierChartConfig} className="h-[280px] w-full">
+              <BarChart data={d?.conversionByTier} margin={{top:5,right:20,left:0,bottom:5}}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#27272a"/>
+                <XAxis dataKey="tier" tick={{fontSize:11,fill:'#71717a'}}/>
+                <YAxis tick={{fontSize:11,fill:'#71717a'}} unit="%"/>
+                <ChartTooltip content={<ChartTooltipContent/>}/>
+                <Bar dataKey="conversion" radius={[6,6,0,0]}>
+                  {d?.conversionByTier.map((_:any,i:number)=><Cell key={i} fill={['#10b981','#f59e0b','#71717a'][i]}/>)}
+                </Bar>
+              </BarChart>
+            </ChartContainer>
+          </div>
         </motion.div>
       </div>
-      <motion.div {...fadeInUp} transition={{delay:0.55}}><Card className="border-0 shadow-sm"><CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Geographic Distribution</CardTitle></CardHeader><CardContent>
-        <Table><TableHeader><TableRow className="bg-gray-50/50"><TableHead className="text-xs font-semibold">Area</TableHead><TableHead className="text-xs font-semibold text-right">Leads</TableHead><TableHead className="text-xs font-semibold text-right">Percentage</TableHead><TableHead className="text-xs font-semibold">Distribution</TableHead></TableRow></TableHeader>
-          <TableBody>{d?.byArea.map((a:any)=>(<TableRow key={a.area}><TableCell className="text-sm">{a.area}</TableCell><TableCell className="text-right font-semibold">{a.count}</TableCell>
-            <TableCell className="text-right text-sm">{leads.length>0?((a.count/leads.length)*100).toFixed(1):0}%</TableCell>
-            <TableCell><div className="w-32 h-2 bg-gray-100 rounded-full"><motion.div className="h-2 bg-emerald-500 rounded-full" initial={{width:0}} animate={{width:`${leads.length>0?(a.count/leads.length)*100:0}%`}} transition={{duration:0.8}}/></div></TableCell>
-          </TableRow>))}</TableBody></Table>
-      </CardContent>
-          </Card>
-        </motion.div>
-      <motion.div {...fadeInUp} transition={{delay:0.6}}><Card className="border-0 shadow-sm"><CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Stage Conversion Funnel</CardTitle><CardDescription>Drop-off at each stage</CardDescription></CardHeader><CardContent>
-        <div className="space-y-2">{stats.byStage.map((stage,i)=>{
-          const maxCount=Math.max(...stats.byStage.map(s=>s.count),1);const pct=(stage.count/maxCount)*100
-          return (<motion.div key={stage.stage} className="flex items-center gap-3" initial={{opacity:0,x:-20}} animate={{opacity:1,x:0}} transition={{delay:i*0.05}}>
-            <span className="text-xs font-medium w-24 truncate">{stage.label}</span>
-            <div className="flex-1 h-8 bg-gray-100 rounded relative overflow-hidden"><motion.div className={`h-full rounded ${stage.stage==='won'?'bg-emerald-500':stage.stage==='lost'?'bg-red-400':'bg-emerald-400'}`} initial={{width:0}} animate={{width:`${pct}%`}} transition={{duration:0.6,delay:i*0.05}}/><span className="absolute inset-0 flex items-center justify-center text-xs font-semibold">{stage.count}</span></div>
-            {i>0&&stats.byStage[i-1].count>0&&(<span className="text-xs text-muted-foreground w-16 text-right">{stage.count>0?Math.round((stage.count/stats.byStage[0].count)*100):0}%</span>)}
-          </motion.div>)
-        })}</div>
-      </CardContent>
-          </Card>
-        </motion.div>
+
+      {/* Geographic table */}
+      <motion.div {...fadeInUp} transition={{delay:0.5}}>
+        <div className="card-premium rounded-xl p-5">
+          <h3 className="text-sm font-semibold text-foreground mb-4">Geographic Distribution</h3>
+          <Table>
+            <TableHeader>
+              <TableRow className="border-zinc-800 hover:bg-transparent">
+                <TableHead className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Area</TableHead>
+                <TableHead className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider text-right">Leads</TableHead>
+                <TableHead className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider text-right">%</TableHead>
+                <TableHead className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Distribution</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {d?.byArea.map((a:any)=>(
+                <TableRow key={a.area} className="border-zinc-800/50 hover:bg-zinc-800/40">
+                  <TableCell className="text-sm text-foreground">{a.area}</TableCell>
+                  <TableCell className="text-right font-bold text-foreground">{a.count}</TableCell>
+                  <TableCell className="text-right text-sm text-muted-foreground">{leads.length>0?((a.count/leads.length)*100).toFixed(1):0}%</TableCell>
+                  <TableCell>
+                    <div className="w-32 h-1.5 bg-zinc-800 rounded-full">
+                      <motion.div className="h-1.5 bg-emerald-500 rounded-full" initial={{width:0}} animate={{width:`${leads.length>0?(a.count/leads.length)*100:0}%`}} transition={{duration:0.8}}/>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </motion.div>
+
+      {/* Funnel */}
+      <motion.div {...fadeInUp} transition={{delay:0.55}}>
+        <div className="card-premium rounded-xl p-5">
+          <h3 className="text-sm font-semibold text-foreground mb-2">Stage Conversion Funnel</h3>
+          <p className="text-xs text-muted-foreground mb-4">Drop-off at each stage</p>
+          <div className="space-y-2.5">
+            {stats.byStage.map((stage,i)=>{
+              const maxCount=Math.max(...stats.byStage.map(s=>s.count),1)
+              const pct=(stage.count/maxCount)*100
+              return (
+                <motion.div key={stage.stage} className="flex items-center gap-3" initial={{opacity:0,x:-16}} animate={{opacity:1,x:0}} transition={{delay:i*0.04}}>
+                  <span className="text-[11px] font-medium w-28 truncate text-muted-foreground">{stage.label}</span>
+                  <div className="flex-1 h-8 bg-zinc-800/80 rounded-lg relative overflow-hidden">
+                    <motion.div
+                      className="h-full rounded-lg"
+                      style={{backgroundColor: stage.stage==='won'?'#10b981': stage.stage==='lost'?'#ef444440': STAGE_BG_COLORS[stage.stage]+'40', borderRight:`2px solid ${STAGE_BG_COLORS[stage.stage]}`}}
+                      initial={{width:0}} animate={{width:`${pct}%`}} transition={{duration:0.7,delay:i*0.05}}
+                    />
+                    <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-foreground">{stage.count}</span>
+                  </div>
+                  {i>0&&stats.byStage[i-1].count>0&&(
+                    <span className="text-[10px] text-muted-foreground w-12 text-right">{stage.count>0?Math.round((stage.count/stats.byStage[0].count)*100):0}%</span>
+                  )}
+                </motion.div>
+              )
+            })}
+          </div>
+        </div>
+      </motion.div>
     </motion.div>
   )
 }
@@ -1295,53 +1692,102 @@ function CampaignsView({ leads, stats, navigateToEmail, openLeadDetail }: {
     const tier2Leads=leads.filter(l=>l.tier===2&&l.stage!=='won'&&l.stage!=='lost')
     const funeralSchools=leads.filter(l=>(l.sector==='Funeral'||l.sector==='Education')&&l.stage!=='won'&&l.stage!=='lost')
     return [
-      {id:'protolead',name:'ProtoLead Campaign',desc:'Build demos for Tier 1 dental leads',icon:<Rocket className="h-5 w-5"/>,color:'text-emerald-600 bg-emerald-50',leads:tier1Dental},
-      {id:'cold-email',name:'Cold Email Blast',desc:'Send personalized emails to Tier 2 leads',icon:<Mail className="h-5 w-5"/>,color:'text-amber-600 bg-amber-50',leads:tier2Leads},
-      {id:'whatsapp-outreach',name:'WhatsApp Outreach',desc:'Message funeral homes and schools',icon:<MessageSquare className="h-5 w-5"/>,color:'text-violet-600 bg-violet-50',leads:funeralSchools},
+      {id:'protolead',name:'ProtoLead Campaign',desc:'Build demos for Tier 1 dental leads',icon:<Rocket className="h-5 w-5"/>,accentClass:'text-emerald-400 bg-emerald-950/40 border-emerald-800/40',leads:tier1Dental},
+      {id:'cold-email',name:'Cold Email Blast',desc:'Send personalized emails to Tier 2 leads',icon:<Mail className="h-5 w-5"/>,accentClass:'text-amber-400 bg-amber-950/40 border-amber-800/40',leads:tier2Leads},
+      {id:'whatsapp-outreach',name:'WhatsApp Outreach',desc:'Message funeral homes and schools',icon:<MessageSquare className="h-5 w-5"/>,accentClass:'text-violet-400 bg-violet-950/40 border-violet-800/40',leads:funeralSchools},
     ]
   },[leads])
+
   const outreachQueue = useMemo(()=>leads.filter(l=>l.hotLead&&l.stage!=='won'&&l.stage!=='lost'&&l.status==='active').slice(0,10),[leads])
 
   return (
-    <motion.div className="space-y-6" {...fadeInUp}>
-      <div><h2 className="text-lg font-semibold">Campaigns</h2><p className="text-sm text-muted-foreground">Track outreach campaigns and daily priorities</p></div>
+    <motion.div className="space-y-5" {...fadeInUp}>
+      <div>
+        <h2 className="text-lg font-bold text-foreground">Campaigns</h2>
+        <p className="text-sm text-muted-foreground mt-0.5">Track outreach campaigns and daily priorities</p>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {campaigns.map((campaign,i)=>(
-          <motion.div key={campaign.id} {...fadeInUp} transition={{delay:i*0.1}}>
-            <Card className="border-0 shadow-sm h-full"><CardHeader className="pb-3"><div className="flex items-center gap-3"><div className={`h-10 w-10 rounded-xl flex items-center justify-center ${campaign.color}`}>{campaign.icon}</div>
-              <div className="min-w-0"><CardTitle className="text-sm font-semibold truncate">{campaign.name}</CardTitle><CardDescription className="text-xs">{campaign.desc}</CardDescription></div></div></CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Target Leads</span><Badge variant="secondary">{campaign.leads.length}</Badge></div>
-                <Progress value={campaign.leads.length>0?Math.random()*30:0} className="h-2"/>
-                <ScrollArea className="max-h-[200px]"><div className="space-y-1.5">
-                  {campaign.leads.length===0?<p className="text-xs text-muted-foreground text-center py-4">No leads</p>:campaign.leads.slice(0,5).map(lead=>(
-                    <div key={lead.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 text-sm">
-                      {lead.hotLead&&<Flame className="h-3.5 w-3.5 text-amber-500 shrink-0"/>}<span className="truncate flex-1">{lead.name}</span>
-                      <Badge variant="outline" className={`text-[10px] ${STAGE_COLORS[lead.stage]}`}>{STAGE_LABELS[lead.stage]}</Badge>
-                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-emerald-600" onClick={()=>navigateToEmail(lead.id)}><Sparkles className="h-3 w-3"/></Button>
-                    </div>))}
-                  {campaign.leads.length>5&&<p className="text-xs text-muted-foreground text-center">+{campaign.leads.length-5} more leads</p>}
-                </div></ScrollArea>
-              </CardContent></Card>
+        {campaigns.map((campaign, i) => (
+          <motion.div key={campaign.id} {...fadeInUp} transition={{delay:i*0.08}}>
+            <div className="card-premium rounded-xl p-5 h-full hover:border-zinc-600 transition-all">
+              <div className="flex items-center gap-3 mb-4">
+                <div className={`h-11 w-11 rounded-xl flex items-center justify-center border ${campaign.accentClass}`}>{campaign.icon}</div>
+                <div className="min-w-0">
+                  <h3 className="text-sm font-bold text-foreground truncate">{campaign.name}</h3>
+                  <p className="text-xs text-muted-foreground">{campaign.desc}</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between text-sm mb-3">
+                <span className="text-muted-foreground">Target Leads</span>
+                <Badge variant="outline" className="border-zinc-700 bg-zinc-800/60 text-foreground">{campaign.leads.length}</Badge>
+              </div>
+              <div className="h-1.5 bg-zinc-800 rounded-full mb-4 overflow-hidden">
+                <motion.div className="h-full bg-emerald-500 rounded-full" initial={{width:0}} animate={{width:`${Math.min(campaign.leads.length*5, 100)}%`}} transition={{duration:0.8}}/>
+              </div>
+              <div className="space-y-1.5">
+                {campaign.leads.length===0
+                  ? <p className="text-xs text-muted-foreground text-center py-4">No leads</p>
+                  : campaign.leads.slice(0,5).map(lead=>(
+                  <div key={lead.id} className="flex items-center gap-2 p-2.5 rounded-xl hover:bg-zinc-800/50 transition-colors border border-transparent hover:border-zinc-700/50">
+                    {lead.hotLead&&<Flame className="h-3 w-3 text-amber-400 shrink-0"/>}
+                    <span className="truncate flex-1 text-sm text-foreground">{lead.name}</span>
+                    <Badge variant="outline" className={`text-[9px] ${STAGE_COLORS[lead.stage]}`}>{STAGE_LABELS[lead.stage]}</Badge>
+                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-emerald-400 hover:bg-emerald-950 shrink-0" onClick={()=>navigateToEmail(lead.id)}>
+                      <Sparkles className="h-3 w-3"/>
+                    </Button>
+                  </div>
+                ))}
+                {campaign.leads.length>5&&<p className="text-xs text-muted-foreground text-center pt-1">+{campaign.leads.length-5} more</p>}
+              </div>
+            </div>
           </motion.div>
         ))}
       </div>
-      <motion.div {...fadeInUp} transition={{delay:0.3}}><Card className="border-0 shadow-sm"><CardHeader className="pb-3">
-        <div className="flex items-center gap-2"><Flame className="h-5 w-5 text-amber-500"/><CardTitle className="text-base font-semibold">Outreach Queue</CardTitle><Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">{outreachQueue.length} hot leads</Badge></div>
-        <CardDescription>Priority leads that need contact today</CardDescription></CardHeader><CardContent>
-        {outreachQueue.length===0?<p className="text-sm text-muted-foreground text-center py-8">No hot leads in queue</p>:(
-          <div className="space-y-2">{outreachQueue.map(lead=>(
-            <motion.div key={lead.id} className="flex items-center gap-3 p-3 rounded-lg bg-amber-50/50 border border-amber-100 hover:bg-amber-50 transition-colors" whileHover={{x:4}}>
-              <Flame className="h-4 w-4 text-amber-500 shrink-0"/><div className="flex-1 min-w-0"><p className="font-medium text-sm truncate">{lead.name}</p><p className="text-xs text-muted-foreground">{lead.sector} · {lead.area||lead.location}</p></div>
-              <div className="flex items-center gap-1.5 shrink-0">
-                {lead.phone&&<Button variant="ghost" size="sm" className="h-8 text-emerald-600 hover:bg-emerald-100" onClick={()=>window.open(`tel:${lead.phone}`,'_self')}><Phone className="h-3.5 w-3.5 mr-1"/>Call</Button>}
-                <Button variant="ghost" size="sm" className="h-8 text-emerald-600 hover:bg-emerald-100" onClick={()=>navigateToEmail(lead.id)}><Mail className="h-3.5 w-3.5 mr-1"/>Email</Button>
-                <Button variant="ghost" size="sm" className="h-8 text-emerald-600 hover:bg-emerald-100" onClick={()=>lead.phone&&window.open(`https://wa.me/${lead.phone.replace(/[^0-9]/g,'')}`,'_self')}><MessageSquare className="h-3.5 w-3.5 mr-1"/>WhatsApp</Button>
-              </div>
-            </motion.div>))}</div>)}
-      </CardContent>
-          </Card>
-        </motion.div>
+
+      {/* Outreach Queue */}
+      <motion.div {...fadeInUp} transition={{delay:0.28}}>
+        <div className="card-premium rounded-xl p-5">
+          <div className="flex items-center gap-3 mb-4">
+            <Flame className="h-5 w-5 text-amber-400"/>
+            <h3 className="text-base font-bold text-foreground">Outreach Queue</h3>
+            <Badge variant="outline" className="border-amber-800 bg-amber-950/40 text-amber-400">{outreachQueue.length} hot leads</Badge>
+          </div>
+          <p className="text-xs text-muted-foreground mb-4">Priority leads that need contact today</p>
+          {outreachQueue.length===0
+            ? <p className="text-sm text-muted-foreground text-center py-8">No hot leads in queue</p>
+            : (
+            <div className="space-y-2">
+              {outreachQueue.map(lead=>(
+                <motion.div key={lead.id}
+                  className="flex items-center gap-3 p-3.5 rounded-xl border border-amber-900/30 bg-amber-950/10 hover:bg-amber-950/20 hover:border-amber-800/50 transition-all"
+                  whileHover={{x:4}}
+                >
+                  <Flame className="h-4 w-4 text-amber-400 shrink-0"/>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm text-foreground truncate">{lead.name}</p>
+                    <p className="text-xs text-muted-foreground">{lead.sector} · {lead.area||lead.location}</p>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {lead.phone&&(
+                      <Button variant="ghost" size="sm" className="h-8 text-xs text-sky-400 hover:text-sky-300 hover:bg-sky-950 border border-sky-900/40" onClick={()=>window.open(`tel:${lead.phone}`)}>
+                        <Phone className="h-3 w-3 mr-1"/>Call
+                      </Button>
+                    )}
+                    <Button variant="ghost" size="sm" className="h-8 text-xs text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950 border border-emerald-900/40" onClick={()=>navigateToEmail(lead.id)}>
+                      <Mail className="h-3 w-3 mr-1"/>Email
+                    </Button>
+                    <Button variant="ghost" size="sm" className="h-8 text-xs text-violet-400 hover:text-violet-300 hover:bg-violet-950 border border-violet-900/40"
+                      onClick={()=>lead.phone&&window.open(`https://wa.me/${lead.phone.replace(/[^0-9]/g,'')}`)}>
+                      <MessageSquare className="h-3 w-3 mr-1"/>WhatsApp
+                    </Button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+      </motion.div>
     </motion.div>
   )
 }
@@ -1353,47 +1799,110 @@ function LeadDetailDialog({ lead, updateLeadStage, addActivity, activityType, se
   activityOutcome:string;setActivityOutcome:(v:string)=>void;navigateToEmail:(id?:string)=>void;
 }) {
   return (<>
-    <DialogHeader><div className="flex items-center gap-3"><div><DialogTitle className="text-xl">{lead.name}</DialogTitle><DialogDescription className="mt-1">{lead.sector} · {lead.location}</DialogDescription></div>
-      <div className="ml-auto flex items-center gap-2">{lead.hotLead&&<Badge className="bg-amber-100 text-amber-700 border-amber-200 border"><Flame className="h-3 w-3 mr-1"/>Hot Lead</Badge>}<TierBadge tier={lead.tier}/></div></div></DialogHeader>
-    <div className="space-y-6 mt-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-2"><h4 className="text-sm font-semibold text-muted-foreground">Contact Details</h4><div className="space-y-1.5">
-          {lead.phone&&<div className="flex items-center gap-2 text-sm"><Phone className="h-3.5 w-3.5 text-muted-foreground"/><a href={`tel:${lead.phone}`} className="text-emerald-600 hover:underline">{lead.phone}</a></div>}
-          {lead.address&&<div className="flex items-start gap-2 text-sm"><MapPin className="h-3.5 w-3.5 text-muted-foreground mt-0.5"/><span>{lead.address}</span></div>}
-          {lead.hours&&<div className="flex items-center gap-2 text-sm"><Clock className="h-3.5 w-3.5 text-muted-foreground"/><span>{lead.hours}</span></div>}
-          {lead.area&&<div className="flex items-center gap-2 text-sm"><Building2 className="h-3.5 w-3.5 text-muted-foreground"/><span>{lead.area}</span></div>}
-        </div></div>
-        <div className="space-y-2"><h4 className="text-sm font-semibold text-muted-foreground">Lead Profile</h4><div className="space-y-1.5">
-          <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Rating</span><StarRating rating={lead.rating}/></div>
-          <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Stage</span><Badge variant="outline" className={STAGE_COLORS[lead.stage]}>{STAGE_LABELS[lead.stage]}</Badge></div>
-          <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Status</span><Badge variant="outline" className={lead.status==='active'?'bg-emerald-50 text-emerald-700 border-emerald-200':'bg-gray-50 text-gray-700 border-gray-200'}>{lead.status}</Badge></div>
-          <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Est. Value</span><span className="font-semibold">{lead.estimatedValue>0?formatCurrency(lead.estimatedValue):'N/A'}</span></div>
-          <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Website</span>{lead.hasWebsite?<Globe className="h-3.5 w-3.5 text-emerald-600"/>:<span className="text-red-500 text-xs">None</span>}</div>
-        </div></div>
-      </div>
-      {(lead.services||lead.recommendedPackage)&&(<div className="space-y-2"><h4 className="text-sm font-semibold text-muted-foreground">Services & Package</h4>
-        {lead.services&&<p className="text-sm bg-gray-50 rounded-lg p-3">{lead.services}</p>}
-        {lead.recommendedPackage&&<div className="flex items-center gap-2"><span className="text-sm text-muted-foreground">Recommended:</span><Badge className="bg-emerald-100 text-emerald-700 border-emerald-200 border">{lead.recommendedPackage}</Badge></div>}</div>)}
-      {lead.notes&&<div className="space-y-2"><h4 className="text-sm font-semibold text-muted-foreground">Notes</h4><p className="text-sm bg-gray-50 rounded-lg p-3 whitespace-pre-wrap">{lead.notes}</p></div>}
-      {lead.nextAction&&(<div className="space-y-2"><h4 className="text-sm font-semibold text-muted-foreground">Next Action</h4>
-        <div className="flex items-center gap-2 bg-amber-50 rounded-lg p-3 border border-amber-200"><ArrowRight className="h-4 w-4 text-amber-600 shrink-0"/><div><p className="text-sm font-medium text-amber-800">{lead.nextAction}</p>{lead.nextActionDate&&<p className="text-xs text-amber-600 mt-0.5">Due: {formatDate(lead.nextActionDate)}</p>}</div></div></div>)}
-      <div className="space-y-2"><h4 className="text-sm font-semibold text-muted-foreground">Update Stage</h4>
-        <Select value={lead.stage} onValueChange={(val)=>updateLeadStage(lead.id,val)}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{STAGES.map(s=><SelectItem key={s} value={s}>{STAGE_LABELS[s]}</SelectItem>)}</SelectContent></Select></div>
-      <Button onClick={()=>navigateToEmail(lead.id)} variant="outline" className="w-full border-emerald-200 text-emerald-700 hover:bg-emerald-50"><Sparkles className="h-4 w-4 mr-2"/>Generate Email for {lead.name}</Button>
-      <div className="space-y-3"><h4 className="text-sm font-semibold text-muted-foreground">Activity History ({lead.activities?.length||0})</h4>
-        <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-          <Select value={activityType} onValueChange={setActivityType}><SelectTrigger className="w-[130px]"><SelectValue/></SelectTrigger><SelectContent>
-            <SelectItem value="call">Call</SelectItem><SelectItem value="email">Email</SelectItem><SelectItem value="whatsapp">WhatsApp</SelectItem>
-            <SelectItem value="meeting">Meeting</SelectItem><SelectItem value="proposal">Proposal</SelectItem><SelectItem value="demo">Demo</SelectItem><SelectItem value="note">Note</SelectItem>
-          </SelectContent></Select>
-          <Textarea placeholder="What happened?" value={activitySummary} onChange={(e)=>setActivitySummary(e.target.value)} className="min-h-[60px]"/>
-          <Input placeholder="Outcome (optional)" value={activityOutcome} onChange={(e)=>setActivityOutcome(e.target.value)}/>
-          <Button onClick={()=>addActivity(lead.id)} className="bg-emerald-600 hover:bg-emerald-700 text-white" size="sm"><Plus className="h-4 w-4 mr-1"/>Add Activity</Button>
+    <DialogHeader>
+      <div className="flex items-center gap-3">
+        <div>
+          <DialogTitle className="text-xl text-foreground">{lead.name}</DialogTitle>
+          <DialogDescription className="mt-0.5" style={{color:SECTOR_COLORS[lead.sector]||undefined}}>{lead.sector} · {lead.location}</DialogDescription>
         </div>
-        <div className="space-y-2 max-h-[300px] overflow-y-auto">
-          {!lead.activities?.length?<p className="text-sm text-muted-foreground text-center py-6">No activities recorded</p>:lead.activities.map(act=>(
-            <div key={act.id} className="flex items-start gap-3 p-3 rounded-lg border border-gray-100"><div className="mt-0.5 h-7 w-7 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">{ACTIVITY_ICONS[act.type]||<AlertCircle className="h-3.5 w-3.5"/>}</div>
-              <div className="flex-1 min-w-0"><div className="flex items-center gap-2"><Badge variant="outline" className="text-[10px] px-1.5 py-0">{act.type}</Badge><span className="text-xs text-muted-foreground">{formatDate(act.date)}</span></div><p className="text-sm mt-1">{act.summary}</p>{act.outcome&&<p className="text-xs text-emerald-600 mt-1">→ {act.outcome}</p>}</div></div>
+        <div className="ml-auto flex items-center gap-2">
+          {lead.hotLead&&<Badge className="bg-amber-950 text-amber-400 border-amber-800 border text-[10px]"><Flame className="h-2.5 w-2.5 mr-1"/>Hot</Badge>}
+          <TierBadge tier={lead.tier}/>
+        </div>
+      </div>
+    </DialogHeader>
+    <div className="space-y-5 mt-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Contact Details</h4>
+          <div className="space-y-2 bg-zinc-800/40 rounded-xl p-3 border border-zinc-800">
+            {lead.phone&&<div className="flex items-center gap-2 text-sm"><Phone className="h-3.5 w-3.5 text-muted-foreground"/><a href={`tel:${lead.phone}`} className="text-emerald-400 hover:underline">{lead.phone}</a></div>}
+            {lead.address&&<div className="flex items-start gap-2 text-sm"><MapPin className="h-3.5 w-3.5 text-muted-foreground mt-0.5"/><span className="text-foreground">{lead.address}</span></div>}
+            {lead.hours&&<div className="flex items-center gap-2 text-sm"><Clock className="h-3.5 w-3.5 text-muted-foreground"/><span className="text-foreground">{lead.hours}</span></div>}
+            {lead.area&&<div className="flex items-center gap-2 text-sm"><Building2 className="h-3.5 w-3.5 text-muted-foreground"/><span className="text-foreground">{lead.area}</span></div>}
+          </div>
+        </div>
+        <div className="space-y-2">
+          <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Lead Profile</h4>
+          <div className="space-y-2 bg-zinc-800/40 rounded-xl p-3 border border-zinc-800">
+            <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Rating</span><StarRating rating={lead.rating}/></div>
+            <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Stage</span><Badge variant="outline" className={STAGE_COLORS[lead.stage]}>{STAGE_LABELS[lead.stage]}</Badge></div>
+            <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Status</span><Badge variant="outline" className={lead.status==='active'?'bg-emerald-950 text-emerald-400 border-emerald-800':'bg-zinc-800 text-zinc-400 border-zinc-700'}>{lead.status}</Badge></div>
+            <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Est. Value</span><span className="font-bold text-emerald-400">{lead.estimatedValue>0?formatCurrency(lead.estimatedValue):'N/A'}</span></div>
+            <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Website</span>{lead.hasWebsite?<Globe className="h-3.5 w-3.5 text-emerald-400"/>:<span className="text-red-400 text-xs">None</span>}</div>
+          </div>
+        </div>
+      </div>
+      {(lead.services||lead.recommendedPackage)&&(
+        <div className="space-y-2">
+          <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Services & Package</h4>
+          {lead.services&&<p className="text-sm bg-zinc-800/40 border border-zinc-800 rounded-xl p-3 text-foreground">{lead.services}</p>}
+          {lead.recommendedPackage&&(
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Recommended:</span>
+              <Badge className="bg-emerald-950 text-emerald-400 border-emerald-800 border text-[10px]">{lead.recommendedPackage}</Badge>
+            </div>
+          )}
+        </div>
+      )}
+      {lead.notes&&(
+        <div className="space-y-2">
+          <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Notes</h4>
+          <p className="text-sm bg-zinc-800/40 border border-zinc-800 rounded-xl p-3 whitespace-pre-wrap text-foreground">{lead.notes}</p>
+        </div>
+      )}
+      {lead.nextAction&&(
+        <div className="space-y-2">
+          <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Next Action</h4>
+          <div className="flex items-center gap-2 bg-amber-950/30 border border-amber-900/40 rounded-xl p-3">
+            <ArrowRight className="h-4 w-4 text-amber-400 shrink-0"/>
+            <div>
+              <p className="text-sm font-medium text-amber-300">{lead.nextAction}</p>
+              {lead.nextActionDate&&<p className="text-xs text-amber-600 mt-0.5">Due: {formatDate(lead.nextActionDate)}</p>}
+            </div>
+          </div>
+        </div>
+      )}
+      <div className="space-y-2">
+        <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Update Stage</h4>
+        <Select value={lead.stage} onValueChange={(val)=>updateLeadStage(lead.id,val)}>
+          <SelectTrigger className="bg-zinc-800/60 border-zinc-700 text-foreground"><SelectValue/></SelectTrigger>
+          <SelectContent className="bg-zinc-900 border-zinc-800">{STAGES.map(s=><SelectItem key={s} value={s}>{STAGE_LABELS[s]}</SelectItem>)}</SelectContent>
+        </Select>
+      </div>
+      <Button onClick={()=>navigateToEmail(lead.id)} variant="outline" className="w-full border-zinc-700 bg-zinc-800/60 text-foreground hover:bg-zinc-700">
+        <Sparkles className="h-4 w-4 mr-2 text-emerald-400"/>Generate Email for {lead.name}
+      </Button>
+      <div className="space-y-3">
+        <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Activity History ({lead.activities?.length||0})</h4>
+        <div className="bg-zinc-800/40 border border-zinc-800 rounded-xl p-4 space-y-3">
+          <Select value={activityType} onValueChange={setActivityType}>
+            <SelectTrigger className="w-[130px] bg-zinc-800/60 border-zinc-700 text-foreground"><SelectValue/></SelectTrigger>
+            <SelectContent className="bg-zinc-900 border-zinc-800">
+              {['call','email','whatsapp','meeting','proposal','demo','note'].map(t=><SelectItem key={t} value={t} className="capitalize">{t}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Textarea placeholder="What happened?" value={activitySummary} onChange={e=>setActivitySummary(e.target.value)} className="min-h-[60px] bg-zinc-800/60 border-zinc-700 text-foreground"/>
+          <Input placeholder="Outcome (optional)" value={activityOutcome} onChange={e=>setActivityOutcome(e.target.value)} className="bg-zinc-800/60 border-zinc-700 text-foreground"/>
+          <Button onClick={()=>addActivity(lead.id)} className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold" size="sm">
+            <Plus className="h-4 w-4 mr-1"/>Add Activity
+          </Button>
+        </div>
+        <div className="space-y-2 max-h-[280px] overflow-y-auto">
+          {!lead.activities?.length
+            ? <p className="text-sm text-muted-foreground text-center py-6">No activities recorded</p>
+            : lead.activities.map(act=>(
+            <div key={act.id} className="flex items-start gap-3 p-3 rounded-xl border border-zinc-800 bg-zinc-800/20">
+              <div className="mt-0.5 h-7 w-7 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-emerald-400 shrink-0">{ACTIVITY_ICONS[act.type]||<AlertCircle className="h-3.5 w-3.5"/>}</div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-[9px] px-1.5 py-0 bg-zinc-800 border-zinc-700 text-zinc-400">{act.type}</Badge>
+                  <span className="text-xs text-muted-foreground">{formatDate(act.date)}</span>
+                </div>
+                <p className="text-sm mt-1 text-foreground">{act.summary}</p>
+                {act.outcome&&<p className="text-xs text-emerald-400 mt-1">→ {act.outcome}</p>}
+              </div>
+            </div>
           ))}
         </div>
       </div>
@@ -1440,57 +1949,91 @@ export default function DashboardPage() {
       const res=await fetch(`/api/leads?${p.toString()}`);setLeads(await res.json())
     }catch(e){console.error(e)}},[searchQuery,filterSector,filterTier,filterStage,filterHot])
 
-  useEffect(()=>{(async()=>{setLoading(true);await Promise.all([fetchStats(),fetchLeads()]);setLoading(false)})()},[fetchStats,fetchLeads])
-  useEffect(()=>{const t=setTimeout(fetchLeads,300);return()=>clearTimeout(t)},[searchQuery,fetchLeads])
+  useEffect(()=>{(async()=>{setLoading(true);await Promise.all([fetchStats(),fetchLeads()]);setLoading(false)})()},[])
+  useEffect(()=>{const t=setTimeout(fetchLeads,300);return()=>clearTimeout(t)},[searchQuery,filterSector,filterTier,filterStage,filterHot])
 
   const openLeadDetail=(lead:Lead)=>{setSelectedLead(lead);setLeadDialogOpen(true)}
-  const updateLeadStage=async(leadId:string,newStage:string)=>{try{const res=await fetch(`/api/leads/${leadId}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({stage:newStage})});setSelectedLead(await res.json());fetchStats();fetchLeads();toast.success(`Lead moved to ${STAGE_LABELS[newStage]}`)}catch{toast.error('Failed to update stage')}}
-  const addActivity=async(leadId:string)=>{if(!activitySummary.trim()){toast.error('Enter an activity summary');return}try{await fetch(`/api/leads/${leadId}/activities`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:activityType,summary:activitySummary,outcome:activityOutcome})});setActivitySummary('');setActivityOutcome('');const res=await fetch(`/api/leads/${leadId}`);setSelectedLead(await res.json());fetchStats();toast.success('Activity added')}catch{toast.error('Failed to add activity')}}
+  const updateLeadStage=async(leadId:string,newStage:string)=>{
+    try{const res=await fetch(`/api/leads/${leadId}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({stage:newStage})});
+    setSelectedLead(await res.json());fetchStats();fetchLeads();toast.success(`Moved to ${STAGE_LABELS[newStage]}`)}
+    catch{toast.error('Failed to update stage')}
+  }
+  const addActivity=async(leadId:string)=>{
+    if(!activitySummary.trim()){toast.error('Enter an activity summary');return}
+    try{await fetch(`/api/leads/${leadId}/activities`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:activityType,summary:activitySummary,outcome:activityOutcome})});
+    setActivitySummary('');setActivityOutcome('');const res=await fetch(`/api/leads/${leadId}`);setSelectedLead(await res.json());fetchStats();toast.success('Activity added')}
+    catch{toast.error('Failed to add activity')}
+  }
+
   const currentPackages=PRICING_PACKAGES[pricingCategory]
   const selectedPkg=currentPackages.find(p=>p.name===roiPackage)||currentPackages[0]
-  const monthlyRevenue=roiNewPatients[0]*roiAvgValue[0];const annualRevenue=monthlyRevenue*12
+  const monthlyRevenue=roiNewPatients[0]*roiAvgValue[0]
+  const annualRevenue=monthlyRevenue*12
   const paybackDays=monthlyRevenue>0?Math.round((selectedPkg.price/monthlyRevenue)*30):999
-  const netGainY1=annualRevenue-selectedPkg.price;const roiPercent=selectedPkg.price>0?Math.round((netGainY1/selectedPkg.price)*100):0
+  const netGainY1=annualRevenue-selectedPkg.price
+  const roiPercent=selectedPkg.price>0?Math.round((netGainY1/selectedPkg.price)*100):0
   const addOnTotalOnce=selectedAddOns.reduce((sum,id)=>{const a=ADD_ONS.find(x=>x.id===id);return sum+(a?.onceOff||0)},0)
   const addOnTotalMonthly=selectedAddOns.reduce((sum,id)=>{const a=ADD_ONS.find(x=>x.id===id);return sum+(a?.monthly||0)},0)
 
-  const analyticsData = useMemo(()=>{if(!leads.length||!stats)return null
+  const analyticsData = useMemo(()=>{
+    if(!leads.length||!stats)return null
     const byArea=new Map<string,number>();const bySectorValue=new Map<string,number>()
     leads.forEach(l=>{const area=l.area||l.location||'Unknown';byArea.set(area,(byArea.get(area)||0)+1);bySectorValue.set(l.sector,(bySectorValue.get(l.sector)||0)+(l.estimatedValue||0))})
     const conversionBySector=stats.bySector.map(s=>{const sl=leads.filter(l=>l.sector===s.sector);const won=sl.filter(l=>l.stage==='won').length;return{sector:s.sector,conversion:sl.length>0?Math.round((won/sl.length)*100):0}})
     const conversionByTier=stats.byTier.map(t=>{const tn=parseInt(t.tier.replace('Tier ',''));const tl=leads.filter(l=>l.tier===tn);const won=tl.filter(l=>l.stage==='won').length;return{tier:t.tier,conversion:tl.length>0?Math.round((won/tl.length)*100):0}})
     const hotL=leads.filter(l=>l.hotLead);const hotC=hotL.filter(l=>l.stage==='won').length
     const avgDeal=leads.filter(l=>l.stage==='won').length>0?leads.filter(l=>l.stage==='won').reduce((s,l)=>s+(l.estimatedValue||0),0)/leads.filter(l=>l.stage==='won').length:0
-    return{byArea:Array.from(byArea.entries()).map(([area,count])=>({area,count})).sort((a,b)=>b.count-a.count),bySectorValue:Array.from(bySectorValue.entries()).map(([sector,value])=>({sector,value})).sort((a,b)=>b.value-a.value),conversionBySector,conversionByTier,hotLeads:hotL.length,hotConverted:hotC,avgDealSize:avgDeal,leadVelocity:leads.length}},[leads,stats])
+    return{byArea:Array.from(byArea.entries()).map(([area,count])=>({area,count})).sort((a,b)=>b.count-a.count),bySectorValue:Array.from(bySectorValue.entries()).map(([sector,value])=>({sector,value})).sort((a,b)=>b.value-a.value),conversionBySector,conversionByTier,hotLeads:hotL.length,hotConverted:hotC,avgDealSize:avgDeal,leadVelocity:leads.length}
+  },[leads,stats])
 
   const pipelineStages=STAGES.filter(s=>s!=='won'&&s!=='lost')
-  const pageTitle=ALL_NAV_ITEMS.find(n=>n.id===activePage)?.label||'Dashboard'
+  const pageTitle=ALL_NAV_ITEMS.find(n=>n.id===activePage)?.label||'Overview'
   const navigateToEmail=(leadId?:string)=>{setActivePage('email');if(leadId){setEmailLeadId(leadId);setSelectedTemplateId(null);setEmailEditing(false);setShowFullSequence(false)}}
+  const navigateTo=(page:PageId)=>setActivePage(page)
 
+  // ── Sidebar ──
   const SidebarContent=()=>(
     <div className="flex flex-col h-full">
-      <div className="p-4 flex items-center gap-3">
-        <motion.div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl flex items-center justify-center font-bold text-lg text-white shrink-0 shadow-lg shadow-emerald-500/20" whileHover={{scale:1.05}}>C</motion.div>
-        {!sidebarCollapsed&&(<div className="min-w-0"><h1 className="text-base font-bold text-white tracking-tight truncate">Carter Digitals</h1>
-          <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 text-[10px] px-1.5 py-0">B-BBEE Level 1</Badge></div>)}
+      {/* Logo */}
+      <div className="p-5 flex items-center gap-3">
+        <motion.div
+          className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-base text-emerald-950 shrink-0 shadow-lg shadow-emerald-500/20"
+          style={{background:'linear-gradient(135deg, #10b981, #059669)'}}
+          whileHover={{scale:1.05,rotate:5}} transition={{type:'spring',stiffness:300}}
+        >C</motion.div>
+        {!sidebarCollapsed&&(
+          <div className="min-w-0">
+            <h1 className="text-sm font-black text-foreground tracking-tight truncate">Carter Digitals</h1>
+            <span className="text-[10px] font-semibold text-emerald-500 bg-emerald-950/60 border border-emerald-900/60 px-1.5 py-0.5 rounded-full">B-BBEE Level 1</span>
+          </div>
+        )}
       </div>
-      <Separator className="bg-gray-700/50"/>
-      <nav className="flex-1 py-3 px-2 space-y-4 overflow-y-auto">
+
+      <div className="mx-4 h-px bg-zinc-800"/>
+
+      <nav className="flex-1 py-4 px-3 space-y-5 overflow-y-auto">
         {NAV_SECTIONS.map(section=>(
           <div key={section.label}>
-            {!sidebarCollapsed&&<p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest px-3 mb-1.5">{section.label}</p>}
+            {!sidebarCollapsed&&<p className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.15em] px-3 mb-2">{section.label}</p>}
             <div className="space-y-0.5">
               {section.items.map(item=>(
                 <TooltipProvider key={item.id} delayDuration={0}>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <button onClick={()=>{setActivePage(item.id);setSidebarOpen(false)}}
-                        className={`w-full flex items-center gap-3 rounded-xl transition-all duration-200 ${sidebarCollapsed?'justify-center px-2 py-2.5':'px-3 py-2.5'} ${
-                          activePage===item.id?'bg-emerald-500/15 text-emerald-400 shadow-sm shadow-emerald-500/5':'text-gray-400 hover:bg-white/5 hover:text-gray-200'}`}>
-                        {item.icon}{!sidebarCollapsed&&<span className="text-sm font-medium truncate">{item.label}</span>}
+                      <button
+                        onClick={()=>{setActivePage(item.id);setSidebarOpen(false)}}
+                        className={`w-full flex items-center gap-3 rounded-xl transition-all duration-150 ${sidebarCollapsed?'justify-center px-2 py-2.5':'px-3 py-2.5'} ${
+                          activePage===item.id
+                            ?'bg-emerald-950/60 text-emerald-400 border border-emerald-900/50'
+                            :'text-zinc-500 hover:bg-zinc-800/60 hover:text-zinc-300 border border-transparent'
+                        }`}
+                      >
+                        {item.icon}
+                        {!sidebarCollapsed&&<span className="text-sm font-semibold">{item.label}</span>}
+                        {!sidebarCollapsed&&activePage===item.id&&<ChevronRight className="h-3.5 w-3.5 ml-auto opacity-60"/>}
                       </button>
                     </TooltipTrigger>
-                    {sidebarCollapsed&&<TooltipContent side="right"><p>{item.label}</p></TooltipContent>}
+                    {sidebarCollapsed&&<TooltipContent side="right" className="bg-zinc-800 border-zinc-700 text-foreground"><p>{item.label}</p></TooltipContent>}
                   </Tooltip>
                 </TooltipProvider>
               ))}
@@ -1498,101 +2041,169 @@ export default function DashboardPage() {
           </div>
         ))}
       </nav>
-      <Separator className="bg-gray-700/50"/>
-      <div className={`p-4 ${sidebarCollapsed?'flex justify-center':''}`}>
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-md">KK</div>
-          {!sidebarCollapsed&&(<div className="min-w-0"><p className="text-sm font-medium text-white truncate">Kabelo Kadiaka</p><p className="text-xs text-gray-400 truncate">Founder</p></div>)}
+
+      <div className="mx-4 h-px bg-zinc-800"/>
+
+      {/* Partner Profiles */}
+      {!sidebarCollapsed ? (
+        <div className="p-4 space-y-2">
+          <p className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.15em] px-1 mb-3">Partners</p>
+          {[
+            { initials:'KB', name:'Kabelo', role:'Build & Strategy', color:'from-emerald-500 to-teal-600' },
+            { initials:'SG', name:'Sihle', role:'Sales & Outreach', color:'from-amber-500 to-orange-600' },
+          ].map(p=>(
+            <div key={p.initials} className="flex items-center gap-2.5 p-2.5 rounded-xl bg-zinc-800/40 border border-zinc-800">
+              <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${p.color} flex items-center justify-center text-white font-bold text-xs shrink-0`}>{p.initials}</div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-foreground">{p.name}</p>
+                <p className="text-[10px] text-muted-foreground">{p.role}</p>
+              </div>
+            </div>
+          ))}
         </div>
-      </div>
+      ) : (
+        <div className="p-3 space-y-2 flex flex-col items-center">
+          {[
+            { initials:'KB', color:'from-emerald-500 to-teal-600' },
+            { initials:'SG', color:'from-amber-500 to-orange-600' },
+          ].map(p=>(
+            <div key={p.initials} className={`w-8 h-8 rounded-full bg-gradient-to-br ${p.color} flex items-center justify-center text-white font-bold text-xs`}>{p.initials}</div>
+          ))}
+        </div>
+      )}
     </div>
   )
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-gray-50 flex">
+      <div className="min-h-screen bg-background flex">
+
         {/* Desktop Sidebar */}
-        <aside className={`hidden lg:flex flex-col bg-gray-950 border-r border-gray-800/50 transition-all duration-300 shrink-0 relative ${sidebarCollapsed?'w-[72px]':'w-[260px]'}`}>
+        <aside className={`hidden lg:flex flex-col border-r border-zinc-800/60 transition-all duration-300 shrink-0 relative ${sidebarCollapsed?'w-[68px]':'w-[240px]'}`}
+          style={{background:'oklch(0.08 0.005 240)'}}>
           <SidebarContent/>
-          <button onClick={()=>setSidebarCollapsed(!sidebarCollapsed)} className="hidden lg:flex absolute top-1/2 -right-3 z-10 w-6 h-6 items-center justify-center rounded-full bg-gray-800 border border-gray-700 text-gray-400 hover:text-white hover:bg-gray-700 transition-colors shadow-lg">
+          <button
+            onClick={()=>setSidebarCollapsed(!sidebarCollapsed)}
+            className="hidden lg:flex absolute top-1/2 -right-3 z-10 w-6 h-6 items-center justify-center rounded-full bg-zinc-800 border border-zinc-700 text-zinc-400 hover:text-foreground hover:bg-zinc-700 transition-colors shadow-lg"
+          >
             {sidebarCollapsed?<ChevronRight className="h-3.5 w-3.5"/>:<ChevronLeft className="h-3.5 w-3.5"/>}
           </button>
         </aside>
 
         {/* Mobile Sidebar */}
-        <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}><SheetContent side="left" className="w-[280px] p-0 bg-gray-950 border-gray-800"><SidebarContent/></SheetContent></Sheet>
+        <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+          <SheetContent side="left" className="w-[260px] p-0 border-zinc-800" style={{background:'oklch(0.08 0.005 240)'}}>
+            <SidebarContent/>
+          </SheetContent>
+        </Sheet>
 
         {/* Main Area */}
         <div className="flex-1 flex flex-col min-w-0">
+
           {/* Header */}
-          <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-200/50">
+          <header className="sticky top-0 z-40 border-b border-zinc-800/60 backdrop-blur-xl" style={{background:'oklch(0.10 0.005 240 / 0.85)'}}>
             <div className="flex items-center gap-3 px-4 sm:px-6 h-14">
-              <button onClick={()=>setSidebarOpen(true)} className="lg:hidden p-1.5 rounded-lg hover:bg-gray-100 text-gray-600"><Menu className="h-5 w-5"/></button>
+              <button onClick={()=>setSidebarOpen(true)} className="lg:hidden p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-400 transition-colors">
+                <Menu className="h-5 w-5"/>
+              </button>
 
               {/* Breadcrumb */}
               <div className="flex items-center gap-1.5 text-sm">
-                <Home className="h-3.5 w-3.5 text-muted-foreground"/>
-                <ChevronRight className="h-3 w-3 text-muted-foreground"/>
-                <span className="font-semibold text-gray-900">{pageTitle}</span>
+                <span className="text-zinc-600 text-xs">Carter Digitals</span>
+                <ChevronRight className="h-3 w-3 text-zinc-700"/>
+                <span className="font-bold text-foreground">{pageTitle}</span>
               </div>
 
               <div className="flex-1"/>
 
-              {/* Search */}
-              <div className="hidden md:flex relative w-56"><Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
-                <Input placeholder="Search leads..." value={searchQuery} onChange={(e)=>setSearchQuery(e.target.value)} className="pl-9 h-9 bg-gray-50 border-gray-200 text-sm"/></div>
+              {/* Global search */}
+              <div className="hidden md:flex relative w-52">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-600"/>
+                <Input
+                  placeholder="Search leads..."
+                  value={searchQuery}
+                  onChange={e=>setSearchQuery(e.target.value)}
+                  className="pl-9 h-8 bg-zinc-800/60 border-zinc-700 text-foreground placeholder:text-zinc-600 text-sm focus:border-primary"
+                />
+              </div>
 
-              {/* Quick Actions Dropdown */}
+              {/* Quick Action */}
               <DropdownMenu>
-                <DropdownMenuTrigger asChild><Button variant="ghost" size="sm" className="hidden sm:flex items-center gap-1.5 text-sm text-muted-foreground hover:text-gray-900">
-                  <Plus className="h-4 w-4"/><span className="hidden md:inline">Quick Action</span><ChevronDown className="h-3 w-3"/></Button></DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={()=>toast.info('Navigate to Leads to add a new lead')}><Plus className="h-4 w-4 mr-2"/>New Lead</DropdownMenuItem>
-                  <DropdownMenuItem onClick={()=>navigateToEmail()}><Sparkles className="h-4 w-4 mr-2"/>Generate Email</DropdownMenuItem>
-                  <DropdownMenuItem onClick={()=>toast.info('Report exported!')}><Download className="h-4 w-4 mr-2"/>Export Report</DropdownMenuItem>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="hidden sm:flex items-center gap-1.5 text-sm text-zinc-400 hover:text-foreground hover:bg-zinc-800 h-8">
+                    <Plus className="h-4 w-4"/><span className="hidden md:inline text-xs">Quick Action</span><ChevronDown className="h-3 w-3"/>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-zinc-900 border-zinc-800">
+                  <DropdownMenuItem onClick={()=>toast.info('Navigate to Leads')} className="text-foreground hover:bg-zinc-800"><Plus className="h-4 w-4 mr-2"/>New Lead</DropdownMenuItem>
+                  <DropdownMenuItem onClick={()=>navigateToEmail()} className="text-foreground hover:bg-zinc-800"><Sparkles className="h-4 w-4 mr-2"/>Generate Email</DropdownMenuItem>
+                  <DropdownMenuItem onClick={()=>toast.info('Report exported!')} className="text-foreground hover:bg-zinc-800"><Download className="h-4 w-4 mr-2"/>Export Report</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
 
               {/* Notifications */}
-              <Tooltip><TooltipTrigger asChild>
-                <button className="relative p-2 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors"><Bell className="h-5 w-5"/>
-                  {stats?.hotLeads?(<span className="absolute top-1.5 right-1.5 min-w-[16px] h-4 bg-amber-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center px-1">{stats.hotLeads}</span>):null}</button>
-                </TooltipTrigger><TooltipContent><p>{stats?.hotLeads||0} hot leads</p></TooltipContent></Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button className="relative p-2 rounded-lg hover:bg-zinc-800 text-zinc-500 transition-colors">
+                    <Bell className="h-4.5 w-4.5"/>
+                    {stats?.hotLeads ? (
+                      <span className="absolute top-1.5 right-1.5 min-w-[14px] h-3.5 bg-amber-500 rounded-full text-[9px] font-bold text-amber-950 flex items-center justify-center px-1">{stats.hotLeads}</span>
+                    ) : null}
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent className="bg-zinc-800 border-zinc-700 text-foreground"><p>{stats?.hotLeads||0} hot leads</p></TooltipContent>
+              </Tooltip>
 
-              {/* User */}
+              {/* User menu */}
               <DropdownMenu>
-                <DropdownMenuTrigger asChild><button className="hidden sm:flex items-center gap-2 pl-2 border-l border-gray-200 hover:bg-gray-50 rounded-lg pr-2 py-1 transition-colors">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white font-bold text-xs">KK</div>
-                  <span className="text-sm font-medium text-gray-700 hidden xl:inline">Kabelo</span><ChevronDown className="h-3 w-3 text-gray-400 hidden xl:inline"/></button></DropdownMenuTrigger>
-                <DropdownMenuContent align="end"><DropdownMenuItem><Settings className="h-4 w-4 mr-2"/>Settings</DropdownMenuItem><DropdownMenuSeparator/><DropdownMenuItem className="text-red-600"><LogOut className="h-4 w-4 mr-2"/>Sign Out</DropdownMenuItem></DropdownMenuContent>
+                <DropdownMenuTrigger asChild>
+                  <button className="hidden sm:flex items-center gap-2 pl-2 border-l border-zinc-800 hover:bg-zinc-800/50 rounded-lg pr-2 py-1 transition-colors">
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-[10px]">KB</div>
+                    <span className="text-xs font-semibold text-zinc-300 hidden xl:inline">Kabelo</span>
+                    <ChevronDown className="h-3 w-3 text-zinc-600 hidden xl:inline"/>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-zinc-900 border-zinc-800">
+                  <DropdownMenuItem className="text-foreground hover:bg-zinc-800"><Settings className="h-4 w-4 mr-2"/>Settings</DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-zinc-800"/>
+                  <DropdownMenuItem className="text-red-400 hover:bg-zinc-800 hover:text-red-400"><LogOut className="h-4 w-4 mr-2"/>Sign Out</DropdownMenuItem>
+                </DropdownMenuContent>
               </DropdownMenu>
             </div>
           </header>
 
           {/* Content */}
-          <main className="flex-1 overflow-auto"><div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
-            {loading?(
-              <div className="space-y-6"><div className="grid grid-cols-2 lg:grid-cols-4 gap-4">{[1,2,3,4].map(i=><SkeletonCard key={i}/>)}</div><Skeleton className="h-[300px] w-full"/><Skeleton className="h-[300px] w-full"/></div>
-            ):(
-              <AnimatePresence mode="wait">
-                <motion.div key={activePage} initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-10}} transition={{duration:0.2}}>
-                  {activePage==='dashboard'&&stats&&<DashboardView stats={stats} leads={leads} openLeadDetail={openLeadDetail}/>}
-                  {activePage==='leads'&&<LeadsView leads={leads} searchQuery={searchQuery} setSearchQuery={setSearchQuery} filterSector={filterSector} setFilterSector={setFilterSector} filterTier={filterTier} setFilterTier={setFilterTier} filterStage={filterStage} setFilterStage={setFilterStage} filterHot={filterHot} setFilterHot={setFilterHot} openLeadDetail={openLeadDetail} stats={stats} navigateToEmail={navigateToEmail}/>}
-                  {activePage==='pipeline'&&<PipelineView leads={leads} stats={stats} pipelineStages={pipelineStages} updateLeadStage={updateLeadStage} openLeadDetail={openLeadDetail} navigateToEmail={navigateToEmail}/>}
-                  {activePage==='email'&&<EmailGeneratorView leads={leads} emailLeadId={emailLeadId} setEmailLeadId={setEmailLeadId} selectedTemplateId={selectedTemplateId} setSelectedTemplateId={setSelectedTemplateId} emailCategoryFilter={emailCategoryFilter} setEmailCategoryFilter={setEmailCategoryFilter} emailEditedBody={emailEditedBody} setEmailEditedBody={setEmailEditedBody} emailEditing={emailEditing} setEmailEditing={setEmailEditing} showFullSequence={showFullSequence} setShowFullSequence={setShowFullSequence} addActivity={addActivity} openLeadDetail={openLeadDetail}/>}
-                  {activePage==='strategies'&&<StrategiesView/>}
-                  {activePage==='pricing'&&<PricingView pricingCategory={pricingCategory} setPricingCategory={setPricingCategory} roiNewPatients={roiNewPatients} setRoiNewPatients={setRoiNewPatients} roiAvgValue={roiAvgValue} setRoiAvgValue={setRoiAvgValue} roiPackage={roiPackage} setRoiPackage={setRoiPackage} selectedAddOns={selectedAddOns} setSelectedAddOns={setSelectedAddOns} currentPackages={currentPackages} selectedPkg={selectedPkg} monthlyRevenue={monthlyRevenue} annualRevenue={annualRevenue} paybackDays={paybackDays} netGainY1={netGainY1} roiPercent={roiPercent} addOnTotalOnce={addOnTotalOnce} addOnTotalMonthly={addOnTotalMonthly}/>}
-                  {activePage==='analytics'&&analyticsData&&<AnalyticsView stats={stats} leads={leads} analyticsData={analyticsData} openLeadDetail={openLeadDetail}/>}
-                  {activePage==='campaigns'&&<CampaignsView leads={leads} stats={stats} navigateToEmail={navigateToEmail} openLeadDetail={openLeadDetail}/>}
-                </motion.div>
-              </AnimatePresence>
-            )}
-          </div></main>
+          <main className="flex-1 overflow-auto">
+            <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
+              {loading ? (
+                <div className="space-y-5">
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">{[1,2,3,4].map(i=><SkeletonCard key={i}/>)}</div>
+                  <div className="card-premium rounded-xl h-64 animate-pulse"/>
+                  <div className="card-premium rounded-xl h-64 animate-pulse"/>
+                </div>
+              ) : (
+                <AnimatePresence mode="wait">
+                  <motion.div key={activePage} initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-8}} transition={{duration:0.2}}>
+                    {activePage==='dashboard'&&stats&&<DashboardView stats={stats} leads={leads} openLeadDetail={openLeadDetail} navigateTo={navigateTo}/>}
+                    {activePage==='leads'&&<LeadsView leads={leads} searchQuery={searchQuery} setSearchQuery={setSearchQuery} filterSector={filterSector} setFilterSector={setFilterSector} filterTier={filterTier} setFilterTier={setFilterTier} filterStage={filterStage} setFilterStage={setFilterStage} filterHot={filterHot} setFilterHot={setFilterHot} openLeadDetail={openLeadDetail} stats={stats} navigateToEmail={navigateToEmail}/>}
+                    {activePage==='pipeline'&&<PipelineView leads={leads} stats={stats} pipelineStages={pipelineStages} updateLeadStage={updateLeadStage} openLeadDetail={openLeadDetail} navigateToEmail={navigateToEmail}/>}
+                    {activePage==='email'&&<EmailGeneratorView leads={leads} emailLeadId={emailLeadId} setEmailLeadId={setEmailLeadId} selectedTemplateId={selectedTemplateId} setSelectedTemplateId={setSelectedTemplateId} emailCategoryFilter={emailCategoryFilter} setEmailCategoryFilter={setEmailCategoryFilter} emailEditedBody={emailEditedBody} setEmailEditedBody={setEmailEditedBody} emailEditing={emailEditing} setEmailEditing={setEmailEditing} showFullSequence={showFullSequence} setShowFullSequence={setShowFullSequence} addActivity={addActivity} openLeadDetail={openLeadDetail}/>}
+                    {activePage==='strategies'&&<StrategiesView/>}
+                    {activePage==='pricing'&&<PricingView pricingCategory={pricingCategory} setPricingCategory={setPricingCategory} roiNewPatients={roiNewPatients} setRoiNewPatients={setRoiNewPatients} roiAvgValue={roiAvgValue} setRoiAvgValue={setRoiAvgValue} roiPackage={roiPackage} setRoiPackage={setRoiPackage} selectedAddOns={selectedAddOns} setSelectedAddOns={setSelectedAddOns} currentPackages={currentPackages} selectedPkg={selectedPkg} monthlyRevenue={monthlyRevenue} annualRevenue={annualRevenue} paybackDays={paybackDays} netGainY1={netGainY1} roiPercent={roiPercent} addOnTotalOnce={addOnTotalOnce} addOnTotalMonthly={addOnTotalMonthly}/>}
+                    {activePage==='analytics'&&analyticsData&&<AnalyticsView stats={stats!} leads={leads} analyticsData={analyticsData}/>}
+                    {activePage==='campaigns'&&<CampaignsView leads={leads} stats={stats} navigateToEmail={navigateToEmail} openLeadDetail={openLeadDetail}/>}
+                  </motion.div>
+                </AnimatePresence>
+              )}
+            </div>
+          </main>
         </div>
 
         {/* Lead Detail Dialog */}
         <Dialog open={leadDialogOpen} onOpenChange={setLeadDialogOpen}>
-          <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto"><LeadDetailDialog lead={selectedLead!} updateLeadStage={updateLeadStage} addActivity={addActivity} activityType={activityType} setActivityType={setActivityType} activitySummary={activitySummary} setActivitySummary={setActivitySummary} activityOutcome={activityOutcome} setActivityOutcome={setActivityOutcome} navigateToEmail={navigateToEmail}/></DialogContent>
+          <DialogContent className="max-w-2xl max-h-[88vh] overflow-y-auto bg-zinc-900 border-zinc-800">
+            {selectedLead&&<LeadDetailDialog lead={selectedLead} updateLeadStage={updateLeadStage} addActivity={addActivity} activityType={activityType} setActivityType={setActivityType} activitySummary={activitySummary} setActivitySummary={setActivitySummary} activityOutcome={activityOutcome} setActivityOutcome={setActivityOutcome} navigateToEmail={navigateToEmail}/>}
+          </DialogContent>
         </Dialog>
       </div>
     </TooltipProvider>

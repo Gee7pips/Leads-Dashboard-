@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Users, Flame, DollarSign, Stethoscope, Search, Filter, Eye, Phone, Mail,
@@ -13,6 +14,8 @@ import {
   UserCircle, Send, Crown, Briefcase, ChevronDown, Play, CircleDot,
   ArrowUpRight, ArrowDownRight, Settings, LogOut, Home,
   Download, MailPlus, Timer, MousePointerClick, PieChart as PieChartIcon, type LucideIcon,
+  ListChecks, Megaphone, Code2, Palette, Wrench, CheckSquare, TrendingDown,
+  FileText, Layers, BarChart2, LineChart as LineChartIcon, Hash, Percent,
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -82,7 +85,7 @@ interface DashboardStats {
   recentActivities: (LeadActivity & { lead: { id: string; name: string } })[]
   activePipeline: number; wonLeads: number; lostLeads: number
 }
-type PageId = 'dashboard' | 'leads' | 'pipeline' | 'email' | 'strategies' | 'pricing' | 'analytics' | 'campaigns'
+type PageId = 'dashboard' | 'leads' | 'pipeline' | 'email' | 'strategies' | 'pricing' | 'analytics' | 'campaigns' | 'kabelo' | 'sihle'
 
 // ─── Constants ───────────────────────────────────────────────────────
 const STAGES = ['new','contacted','demo_sent','meeting_booked','proposal_sent','negotiation','won','lost'] as const
@@ -121,12 +124,16 @@ const ACTIVITY_ICONS: Record<string,React.ReactNode> = {
   note:<AlertCircle className="h-3.5 w-3.5"/>,
 }
 
-interface NavSection { label: string; items: { id: PageId; label: string; icon: React.ReactNode }[] }
+interface NavSection { label: string; items: { id: PageId; label: string; icon: React.ReactNode; accent?: string }[] }
 const NAV_SECTIONS: NavSection[] = [
   { label: 'MAIN', items: [
     { id:'dashboard', label:'Overview', icon:<LayoutDashboard className="h-4 w-4"/> },
     { id:'leads', label:'Leads', icon:<Users className="h-4 w-4"/> },
     { id:'pipeline', label:'Pipeline', icon:<GitBranch className="h-4 w-4"/> },
+  ]},
+  { label: 'PARTNERS', items: [
+    { id:'kabelo', label:'Kabelo', icon:<Code2 className="h-4 w-4"/>, accent:'emerald' },
+    { id:'sihle', label:'Sihle', icon:<Megaphone className="h-4 w-4"/>, accent:'amber' },
   ]},
   { label: 'TOOLS', items: [
     { id:'email', label:'Email Generator', icon:<Sparkles className="h-4 w-4"/> },
@@ -357,8 +364,9 @@ function SectionHeader({ title, subtitle, action }: { title: string; subtitle?: 
 function DashboardView({ stats, leads, openLeadDetail, navigateTo }: {
   stats: DashboardStats; leads: Lead[]; openLeadDetail: (l: Lead) => void; navigateTo: (p: PageId) => void
 }) {
+  const [activeNiche, setActiveNiche] = useState(0)
   const topHotLeads = useMemo(() =>
-    leads.filter(l=>l.hotLead&&l.stage!=='won'&&l.stage!=='lost').sort((a,b)=>b.rating-a.rating).slice(0,6),
+    leads.filter(l=>l.hotLead&&l.stage!=='won'&&l.stage!=='lost').sort((a,b)=>b.rating-a.rating).slice(0,5),
   [leads])
 
   const revenueForecast = useMemo(() => {
@@ -382,66 +390,99 @@ function DashboardView({ stats, leads, openLeadDetail, navigateTo }: {
   [stats,leads])
 
   const weeklyTargets = [
-    { label: 'Leads Researched', target: 50, current: Math.min(leads.length, 50) },
-    { label: 'Businesses Contacted', target: 40, current: Math.min(leads.filter(l=>l.stage!=='new').length, 40) },
-    { label: 'Prototype Links Sent', target: 10, current: Math.min(leads.filter(l=>l.stage==='demo_sent').length, 10) },
-    { label: 'Meetings Booked', target: 5, current: Math.min(leads.filter(l=>l.stage==='meeting_booked').length, 5) },
+    { label: 'Leads Researched', target: 50, current: Math.min(leads.length, 50), color: 'bg-emerald-500' },
+    { label: 'Businesses Contacted', target: 40, current: Math.min(leads.filter(l=>l.stage!=='new').length, 40), color: 'bg-sky-500' },
+    { label: 'Prototype Links Sent', target: 10, current: Math.min(leads.filter(l=>l.stage==='demo_sent').length, 10), color: 'bg-violet-500' },
+    { label: 'Follow-ups Sent', target: 60, current: Math.min(leads.filter(l=>l.activities?.length>0).length * 2, 60), color: 'bg-amber-500' },
+    { label: 'Meetings Booked', target: 5, current: Math.min(leads.filter(l=>l.stage==='meeting_booked').length, 5), color: 'bg-rose-500' },
+    { label: 'Deals Closed', target: 1, current: Math.min(leads.filter(l=>l.stage==='won').length, 1), color: 'bg-emerald-400' },
+  ]
+
+  const niches = [
+    { month: 'Month 1', niche: 'Dentists & Doctors', goal: 'Establish first case study', color: 'text-emerald-400', bg: 'bg-emerald-950/60 border-emerald-900/40' },
+    { month: 'Month 2', niche: 'Attorneys', goal: 'Build authority in legal sector', color: 'text-amber-400', bg: 'bg-amber-950/60 border-amber-900/40' },
+    { month: 'Month 3', niche: 'Construction & Real Estate', goal: 'Win higher-value portfolio projects', color: 'text-sky-400', bg: 'bg-sky-950/60 border-sky-900/40' },
+    { month: 'Month 4', niche: 'Schools & Training', goal: 'Build long-term retainer relationships', color: 'text-violet-400', bg: 'bg-violet-950/60 border-violet-900/40' },
+    { month: 'Month 5', niche: 'Beauty & Wellness', goal: 'Target booking-heavy automation upsells', color: 'text-rose-400', bg: 'bg-rose-950/60 border-rose-900/40' },
+    { month: 'Month 6', niche: 'Guesthouses & Hospitality', goal: 'Target premium system builds', color: 'text-orange-400', bg: 'bg-orange-950/60 border-orange-900/40' },
+  ]
+
+  const revenueScenarios = [
+    { label: 'Conservative', value: 35000, target: 'R35,000/mo', sub: '2 sites + 5 retainers', color: 'text-emerald-400', bar: 19 },
+    { label: 'Strong', value: 86000, target: 'R86,000/mo', sub: '3 sites + 1 system', color: 'text-amber-400', bar: 48 },
+    { label: 'Aggressive', value: 180000, target: 'R180,000/mo', sub: '3+2 systems + retainers', color: 'text-violet-400', bar: 100 },
+  ]
+
+  const salesMachineSteps = [
+    { step: '01', label: 'Pick a Niche', owner: 'Both', color: 'text-emerald-400', bg: 'bg-emerald-950/50 border-emerald-900/30' },
+    { step: '02', label: 'Build Lead List', owner: 'Sihle', color: 'text-amber-400', bg: 'bg-amber-950/50 border-amber-900/30' },
+    { step: '03', label: 'Score Websites', owner: 'Kabelo', color: 'text-sky-400', bg: 'bg-sky-950/50 border-sky-900/30' },
+    { step: '04', label: 'Build Prototypes', owner: 'Kabelo', color: 'text-violet-400', bg: 'bg-violet-950/50 border-violet-900/30' },
+    { step: '05', label: 'Open Conversations', owner: 'Sihle', color: 'text-rose-400', bg: 'bg-rose-950/50 border-rose-900/30' },
+    { step: '06', label: 'Execute Follow-Up', owner: 'Sihle', color: 'text-orange-400', bg: 'bg-orange-950/50 border-orange-900/30' },
   ]
 
   return (
-    <motion.div className="space-y-6" variants={staggerContainer} initial="initial" animate="animate">
+    <motion.div className="space-y-5" variants={staggerContainer} initial="initial" animate="animate">
 
-      {/* Hero Banner */}
+      {/* Hero Banner — LaunchProof Studio */}
       <motion.div {...fadeInUp}>
-        <div className="relative rounded-2xl overflow-hidden border border-emerald-900/40"
-          style={{background:'linear-gradient(135deg, oklch(0.18 0.04 162) 0%, oklch(0.13 0.02 200) 50%, oklch(0.12 0.01 240) 100%)'}}>
-          {/* Grid overlay */}
-          <div className="absolute inset-0 opacity-5" style={{backgroundImage:'linear-gradient(oklch(1 0 0 / 0.3) 1px, transparent 1px), linear-gradient(90deg, oklch(1 0 0 / 0.3) 1px, transparent 1px)',backgroundSize:'40px 40px'}}/>
+        <div className="relative rounded-2xl overflow-hidden"
+          style={{background:'linear-gradient(135deg, #0d1f17 0%, #0a1520 55%, #0d0d18 100%)', border:'1px solid rgba(16,185,129,0.2)'}}>
+          {/* Dot-grid overlay */}
+          <div className="absolute inset-0 opacity-[0.04]" style={{backgroundImage:'radial-gradient(circle, white 1px, transparent 1px)',backgroundSize:'24px 24px'}}/>
+          {/* Glow orbs */}
+          <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full opacity-[0.07]" style={{background:'radial-gradient(circle, #10b981, transparent 70%)'}}/>
+          <div className="absolute -bottom-16 -left-8 w-48 h-48 rounded-full opacity-[0.05]" style={{background:'radial-gradient(circle, #f59e0b, transparent 70%)'}}/>
+
           <div className="relative p-6 sm:p-8">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-emerald-400 bg-emerald-950/60 border border-emerald-800/50 px-2.5 py-1 rounded-full">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"/>Live Dashboard
-                  </span>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+              <div className="flex items-center gap-5">
+                {/* Logo */}
+                <div className="relative shrink-0 hidden sm:block">
+                  <Image src="/launchproof-logo.png" alt="LaunchProof Studio" width={72} height={72} className="rounded-2xl shadow-xl shadow-emerald-500/10 object-contain"/>
                 </div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-white leading-tight">
-                  Welcome back, <span className="text-emerald-400">Kabelo</span> &amp; <span className="text-amber-400">Sihle</span>
-                </h1>
-                <p className="text-sm text-emerald-200/60 mt-1.5 max-w-lg">
-                  &ldquo;Most agencies sell promises. We sell proof.&rdquo; — Carter Digitals, Pretoria.
-                </p>
+                <div>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-950/80 border border-emerald-800/60 px-2.5 py-1 rounded-full">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"/>Live
+                    </span>
+                    <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">LaunchProof Studio</span>
+                  </div>
+                  <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight tracking-tight">
+                    <span className="text-emerald-400">Kabelo</span> &amp; <span className="text-amber-400">Sihle</span>
+                  </h1>
+                  <p className="text-sm text-white/40 mt-1 max-w-md italic">
+                    &ldquo;Most agencies sell promises. We sell proof.&rdquo;
+                  </p>
+                </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="bg-white/5 border-white/10 text-white hover:bg-white/10 text-xs"
-                  onClick={()=>toast.info('Report exported!')}
-                >
+                <Button variant="ghost" size="sm" className="bg-white/5 border border-white/10 text-white hover:bg-white/10 text-xs h-8" onClick={()=>toast.info('Report exported!')}>
                   <Download className="h-3.5 w-3.5 mr-1.5"/>Export
                 </Button>
-                <Button
-                  size="sm"
-                  className="bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-semibold text-xs"
-                  onClick={()=>navigateTo('email')}
-                >
+                <Button size="sm" className="bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-black text-xs h-8" onClick={()=>navigateTo('email')}>
                   <Sparkles className="h-3.5 w-3.5 mr-1.5"/>Generate Email
+                </Button>
+                <Button size="sm" className="bg-amber-500/20 hover:bg-amber-500/30 border border-amber-700/40 text-amber-300 font-semibold text-xs h-8" onClick={()=>navigateTo('pipeline')}>
+                  <GitBranch className="h-3.5 w-3.5 mr-1.5"/>Pipeline
                 </Button>
               </div>
             </div>
 
-            {/* Inline revenue callout */}
-            <div className="mt-5 grid grid-cols-3 gap-3">
-              {[
-                { label: 'Conservative Target', value: 'R35,000/mo', sub: '2 sites + 5 retainers' },
-                { label: 'Strong Target', value: 'R86,000/mo', sub: '3 sites + 1 system' },
-                { label: 'Aggressive Target', value: 'R180,000/mo', sub: '3+2 systems + retainers' },
-              ].map((t, i) => (
-                <div key={i} className="bg-black/20 border border-white/5 rounded-xl p-3">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-white/40">{t.label}</p>
-                  <p className={`text-base font-bold mt-0.5 ${i===0?'text-emerald-400':i===1?'text-amber-400':'text-violet-400'}`}>{t.value}</p>
-                  <p className="text-[10px] text-white/40 mt-0.5">{t.sub}</p>
+            {/* Revenue scenario bars */}
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {revenueScenarios.map((s,i)=>(
+                <div key={i} className="bg-black/30 border border-white/[0.06] rounded-xl p-4 group hover:border-white/10 transition-colors">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-white/30">{s.label}</p>
+                    <span className={`text-[10px] font-semibold ${s.color}`}>{s.sub}</span>
+                  </div>
+                  <p className={`text-xl font-black ${s.color}`}>{s.target}</p>
+                  <div className="mt-2.5 h-1 bg-white/5 rounded-full overflow-hidden">
+                    <motion.div className={`h-full rounded-full ${s.color.replace('text-','bg-')}`}
+                      initial={{width:0}} animate={{width:`${s.bar}%`}} transition={{duration:1,delay:i*0.15,ease:'easeOut'}}/>
+                  </div>
                 </div>
               ))}
             </div>
@@ -449,41 +490,73 @@ function DashboardView({ stats, leads, openLeadDetail, navigateTo }: {
         </div>
       </motion.div>
 
-      {/* KPI Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      {/* KPI Row — 5 cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         <KPICard label="Total Leads" value={stats.totalLeads} sub={`${stats.activePipeline} active`} icon={<Users className="h-5 w-5 text-emerald-400"/>} accentClass="bg-emerald-500/10" trend="up" trendValue="+12%" delay={0}/>
-        <KPICard label="Hot Leads" value={stats.hotLeads} sub="Priority contacts" icon={<Flame className="h-5 w-5 text-amber-400"/>} accentClass="bg-amber-500/10" trend="up" trendValue="+3" delay={0.08}/>
-        <KPICard label="Pipeline Value" value={formatCurrency(stats.pipelineValue)} sub={`${stats.wonLeads} won · ${stats.lostLeads} lost`} icon={<DollarSign className="h-5 w-5 text-emerald-400"/>} accentClass="bg-emerald-500/10" trend="up" trendValue="+R45K" delay={0.16}/>
-        <KPICard label="Conversion Rate" value={`${stats.conversionRate}%`} sub={`of ${stats.totalLeads} total leads`} icon={<TrendingUp className="h-5 w-5 text-violet-400"/>} accentClass="bg-violet-500/10" delay={0.24}/>
+        <KPICard label="Hot Leads" value={stats.hotLeads} sub="Priority contacts" icon={<Flame className="h-5 w-5 text-amber-400"/>} accentClass="bg-amber-500/10" trend="up" trendValue="+3" delay={0.06}/>
+        <KPICard label="Pipeline Value" value={formatCurrency(stats.pipelineValue)} sub={`${stats.wonLeads} won`} icon={<DollarSign className="h-5 w-5 text-emerald-400"/>} accentClass="bg-emerald-500/10" trend="up" trendValue="+R45K" delay={0.12}/>
+        <KPICard label="Conversion" value={`${stats.conversionRate}%`} sub={`of ${stats.totalLeads} leads`} icon={<TrendingUp className="h-5 w-5 text-violet-400"/>} accentClass="bg-violet-500/10" delay={0.18}/>
+        <KPICard label="Weighted Rev." value={formatCurrency(revenueForecast.weightedPipeline)} sub="probability-adj." icon={<Activity className="h-5 w-5 text-sky-400"/>} accentClass="bg-sky-500/10" delay={0.24}/>
       </div>
 
-      {/* Revenue Forecast + Hot Leads */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <motion.div {...fadeInUp} transition={{delay:0.3}}>
-          <div className="card-premium rounded-xl h-full p-5">
-            <div className="flex items-center gap-2 mb-4">
-              <Activity className="h-4 w-4 text-emerald-400"/>
-              <h3 className="text-sm font-semibold text-foreground">Revenue Forecast</h3>
-            </div>
-            <div className="rounded-xl p-4 mb-4" style={{background:'oklch(0.18 0.04 162 / 0.3)',border:'1px solid oklch(0.25 0.05 162 / 0.4)'}}>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">Weighted Pipeline</p>
-              <p className="text-2xl font-bold text-emerald-400 mt-1">{formatCurrency(revenueForecast.weightedPipeline)}</p>
-              <p className="text-[10px] text-emerald-600 mt-0.5">probability-adjusted value</p>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="bg-zinc-800/60 rounded-lg p-3">
-                <p className="text-[10px] text-muted-foreground font-medium">Monthly (est.)</p>
-                <p className="text-base font-bold text-foreground mt-0.5">{formatCurrency(revenueForecast.mrr)}</p>
+      {/* Row 2: Partner Spotlight + Hot Leads */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        {/* Partner cards */}
+        <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
+          {/* Kabelo */}
+          <motion.div {...fadeInUp} transition={{delay:0.28}}>
+            <button onClick={()=>navigateTo('kabelo')} className="w-full text-left card-premium rounded-xl p-4 hover:border-emerald-800/60 hover:bg-emerald-950/20 transition-all group border border-transparent">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-black text-base shadow-lg shadow-emerald-500/20">K</div>
+                <div>
+                  <p className="font-black text-sm text-foreground">Kabelo</p>
+                  <p className="text-[10px] text-emerald-500 font-semibold uppercase tracking-wider">Build &amp; Strategy</p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-zinc-700 group-hover:text-emerald-400 ml-auto transition-colors"/>
               </div>
-              <div className="bg-zinc-800/60 rounded-lg p-3">
-                <p className="text-[10px] text-muted-foreground font-medium">Annual (est.)</p>
-                <p className="text-base font-bold text-foreground mt-0.5">{formatCurrency(revenueForecast.arr)}</p>
+              <div className="grid grid-cols-3 gap-1.5">
+                {[
+                  { label: 'Builds', value: leads.filter(l=>l.stage==='won').length },
+                  { label: 'Protos', value: leads.filter(l=>l.stage==='demo_sent').length },
+                  { label: 'Active', value: leads.filter(l=>l.status==='active').length },
+                ].map((s,i)=>(
+                  <div key={i} className="bg-zinc-800/60 rounded-lg p-2 text-center">
+                    <p className="text-base font-black text-emerald-400">{s.value}</p>
+                    <p className="text-[9px] text-muted-foreground font-medium uppercase tracking-wide mt-0.5">{s.label}</p>
+                  </div>
+                ))}
               </div>
-            </div>
-          </div>
-        </motion.div>
+            </button>
+          </motion.div>
+          {/* Sihle */}
+          <motion.div {...fadeInUp} transition={{delay:0.32}}>
+            <button onClick={()=>navigateTo('sihle')} className="w-full text-left card-premium rounded-xl p-4 hover:border-amber-800/60 hover:bg-amber-950/20 transition-all group border border-transparent">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-black text-base shadow-lg shadow-amber-500/20">S</div>
+                <div>
+                  <p className="font-black text-sm text-foreground">Sihle</p>
+                  <p className="text-[10px] text-amber-500 font-semibold uppercase tracking-wider">Sales &amp; Outreach</p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-zinc-700 group-hover:text-amber-400 ml-auto transition-colors"/>
+              </div>
+              <div className="grid grid-cols-3 gap-1.5">
+                {[
+                  { label: 'Contacted', value: leads.filter(l=>l.stage!=='new').length },
+                  { label: 'Follow-ups', value: leads.filter(l=>l.activities&&l.activities.length>0).length },
+                  { label: 'Meetings', value: leads.filter(l=>l.stage==='meeting_booked').length },
+                ].map((s,i)=>(
+                  <div key={i} className="bg-zinc-800/60 rounded-lg p-2 text-center">
+                    <p className="text-base font-black text-amber-400">{s.value}</p>
+                    <p className="text-[9px] text-muted-foreground font-medium uppercase tracking-wide mt-0.5">{s.label}</p>
+                  </div>
+                ))}
+              </div>
+            </button>
+          </motion.div>
+        </div>
 
-        <motion.div {...fadeInUp} transition={{delay:0.35}} className="lg:col-span-2">
+        {/* Hot Leads */}
+        <motion.div {...fadeInUp} transition={{delay:0.3}} className="lg:col-span-3">
           <div className="card-premium rounded-xl h-full p-5">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
@@ -492,33 +565,30 @@ function DashboardView({ stats, leads, openLeadDetail, navigateTo }: {
                 <span className="text-[10px] font-bold bg-amber-950 text-amber-400 border border-amber-800 px-2 py-0.5 rounded-full">{topHotLeads.length}</span>
               </div>
               <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground h-7" onClick={()=>navigateTo('leads')}>
-                View all <ArrowRight className="h-3 w-3 ml-1"/>
+                All leads <ArrowRight className="h-3 w-3 ml-1"/>
               </Button>
             </div>
             <div className="space-y-2">
               {topHotLeads.length===0
-                ? <p className="text-sm text-muted-foreground text-center py-8">No hot leads right now</p>
+                ? <p className="text-sm text-muted-foreground text-center py-10">No hot leads right now</p>
                 : topHotLeads.map((lead,i)=>(
                 <motion.div key={lead.id}
                   initial={{opacity:0,x:-8}} animate={{opacity:1,x:0}} transition={{delay:i*0.05}}
                   className="flex items-center gap-3 p-3 rounded-xl hover:bg-zinc-800/60 transition-all cursor-pointer group border border-transparent hover:border-zinc-700"
                   onClick={()=>openLeadDetail(lead)}
                 >
-                  <div className="h-8 w-8 rounded-full bg-amber-950 border border-amber-800 flex items-center justify-center text-amber-400 font-bold text-xs shrink-0">
-                    {i+1}
-                  </div>
+                  <div className="h-8 w-8 rounded-full bg-amber-950 border border-amber-800 flex items-center justify-center text-amber-400 font-bold text-xs shrink-0">{i+1}</div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <p className="font-medium text-sm text-foreground truncate">{lead.name}</p>
-                      <Flame className="h-3 w-3 text-amber-400 shrink-0"/>
+                      <p className="font-semibold text-sm text-foreground truncate">{lead.name}</p>
+                      {lead.hotLead&&<Flame className="h-3 w-3 text-amber-400 shrink-0"/>}
                     </div>
                     <p className="text-xs text-muted-foreground">{lead.sector} · {lead.area||lead.location}</p>
                   </div>
-                  <div className="flex items-center gap-2.5 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0">
                     <StarRating rating={lead.rating}/>
-                    {lead.estimatedValue>0 && (
-                      <span className="text-xs font-semibold text-emerald-400">{formatCurrency(lead.estimatedValue)}</span>
-                    )}
+                    {lead.estimatedValue>0&&<span className="text-xs font-semibold text-emerald-400 hidden sm:inline">{formatCurrency(lead.estimatedValue)}</span>}
+                    <Badge variant="outline" className={`text-[9px] hidden md:inline-flex ${STAGE_COLORS[lead.stage]}`}>{STAGE_LABELS[lead.stage]}</Badge>
                     <ArrowRight className="h-3.5 w-3.5 text-zinc-700 group-hover:text-emerald-400 transition-colors"/>
                   </div>
                 </motion.div>
@@ -528,52 +598,87 @@ function DashboardView({ stats, leads, openLeadDetail, navigateTo }: {
         </motion.div>
       </div>
 
-      {/* Pipeline Funnel */}
-      <motion.div {...fadeInUp} transition={{delay:0.4}}>
-        <div className="card-premium rounded-xl p-5">
-          <div className="flex items-center justify-between mb-5">
-            <div>
-              <h3 className="text-sm font-semibold text-foreground">Pipeline Funnel</h3>
-              <p className="text-xs text-muted-foreground mt-0.5">Lead distribution with stage-by-stage conversion</p>
+      {/* Row 3: Pipeline Funnel + Revenue Forecast */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <motion.div {...fadeInUp} transition={{delay:0.38}} className="lg:col-span-2">
+          <div className="card-premium rounded-xl p-5 h-full">
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">Pipeline Funnel</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">Stage-by-stage lead distribution</p>
+              </div>
+              <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground h-7" onClick={()=>navigateTo('pipeline')}>
+                Full Board <ArrowRight className="h-3 w-3 ml-1"/>
+              </Button>
             </div>
-            <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground h-7" onClick={()=>navigateTo('pipeline')}>
-              Full Pipeline <ArrowRight className="h-3 w-3 ml-1"/>
-            </Button>
-          </div>
-          <div className="space-y-2.5">
-            {stats.byStage.map((stage,i)=>{
-              const maxCount=Math.max(...stats.byStage.map(s=>s.count),1)
-              const pct=(stage.count/maxCount)*100
-              const convPct = i>0&&stats.byStage[0].count>0?Math.round((stage.count/stats.byStage[0].count)*100):100
-              return (
-                <motion.div key={stage.stage} className="flex items-center gap-3"
-                  initial={{opacity:0,x:-16}} animate={{opacity:1,x:0}} transition={{delay:i*0.04}}>
-                  <span className="text-[11px] font-medium w-28 shrink-0 text-right text-muted-foreground">{stage.label}</span>
-                  <div className="flex-1 h-8 bg-zinc-800/80 rounded-lg relative overflow-hidden">
-                    <motion.div
-                      className="h-full rounded-lg"
-                      style={{backgroundColor: stage.stage==='won'?'#10b981': stage.stage==='lost'?'#ef4444': STAGE_BG_COLORS[stage.stage]+'40', borderRight:`2px solid ${STAGE_BG_COLORS[stage.stage]}`}}
-                      initial={{width:0}} animate={{width:`${Math.max(pct,2)}%`}}
-                      transition={{duration:0.7,delay:i*0.05,ease:'easeOut'}}
-                    />
-                    <div className="absolute inset-0 flex items-center justify-between px-3">
-                      <span className="text-xs font-bold text-foreground">{stage.count}</span>
-                      <span className="text-[10px] text-muted-foreground">{convPct}%</span>
+            <div className="space-y-2.5">
+              {stats.byStage.map((stage,i)=>{
+                const maxCount=Math.max(...stats.byStage.map(s=>s.count),1)
+                const pct=(stage.count/maxCount)*100
+                const convPct = i>0&&stats.byStage[0].count>0?Math.round((stage.count/stats.byStage[0].count)*100):100
+                return (
+                  <motion.div key={stage.stage} className="flex items-center gap-3"
+                    initial={{opacity:0,x:-16}} animate={{opacity:1,x:0}} transition={{delay:i*0.04}}>
+                    <span className="text-[11px] font-medium w-28 shrink-0 text-right text-muted-foreground">{stage.label}</span>
+                    <div className="flex-1 h-8 bg-zinc-800/80 rounded-lg relative overflow-hidden">
+                      <motion.div
+                        className="h-full rounded-lg"
+                        style={{backgroundColor:stage.stage==='won'?'#10b981':stage.stage==='lost'?'#ef4444':STAGE_BG_COLORS[stage.stage]+'40',borderRight:`2px solid ${STAGE_BG_COLORS[stage.stage]}`}}
+                        initial={{width:0}} animate={{width:`${Math.max(pct,2)}%`}}
+                        transition={{duration:0.7,delay:i*0.05,ease:'easeOut'}}
+                      />
+                      <div className="absolute inset-0 flex items-center justify-between px-3">
+                        <span className="text-xs font-bold text-foreground">{stage.count}</span>
+                        <span className="text-[10px] text-muted-foreground">{convPct}%</span>
+                      </div>
                     </div>
-                  </div>
-                  <span className="text-[10px] w-12 text-right font-semibold text-muted-foreground">
-                    {stage.count > 0 ? `${stage.count}` : '—'}
-                  </span>
-                </motion.div>
-              )
-            })}
+                  </motion.div>
+                )
+              })}
+            </div>
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
 
-      {/* Sector + Chart row */}
+        <motion.div {...fadeInUp} transition={{delay:0.42}}>
+          <div className="card-premium rounded-xl h-full p-5 flex flex-col gap-3">
+            <div className="flex items-center gap-2">
+              <Activity className="h-4 w-4 text-emerald-400"/>
+              <h3 className="text-sm font-semibold text-foreground">Revenue Forecast</h3>
+            </div>
+            <div className="rounded-xl p-4" style={{background:'oklch(0.18 0.04 162 / 0.3)',border:'1px solid oklch(0.25 0.05 162 / 0.4)'}}>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">Weighted Pipeline</p>
+              <p className="text-2xl font-black text-emerald-400 mt-1">{formatCurrency(revenueForecast.weightedPipeline)}</p>
+              <p className="text-[10px] text-emerald-600 mt-0.5">probability-adjusted</p>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="bg-zinc-800/60 rounded-lg p-3">
+                <p className="text-[10px] text-muted-foreground">Monthly est.</p>
+                <p className="text-sm font-bold text-foreground mt-0.5">{formatCurrency(revenueForecast.mrr)}</p>
+              </div>
+              <div className="bg-zinc-800/60 rounded-lg p-3">
+                <p className="text-[10px] text-muted-foreground">Annual est.</p>
+                <p className="text-sm font-bold text-foreground mt-0.5">{formatCurrency(revenueForecast.arr)}</p>
+              </div>
+            </div>
+            <div className="bg-zinc-800/40 rounded-lg p-3 space-y-2">
+              {[
+                { label:'Won', count:stats.wonLeads, color:'text-emerald-400' },
+                { label:'Lost', count:stats.lostLeads, color:'text-red-400' },
+                { label:'Active', count:stats.activePipeline, color:'text-sky-400' },
+              ].map((s,i)=>(
+                <div key={i} className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">{s.label}</span>
+                  <span className={`text-xs font-bold ${s.color}`}>{s.count}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Row 4: Sector Performance + Pie Chart */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <motion.div {...fadeInUp} transition={{delay:0.45}}>
+        <motion.div {...fadeInUp} transition={{delay:0.44}}>
           <div className="card-premium rounded-xl p-5 h-full">
             <h3 className="text-sm font-semibold text-foreground mb-4">Sector Performance</h3>
             <Table>
@@ -612,7 +717,7 @@ function DashboardView({ stats, leads, openLeadDetail, navigateTo }: {
           </div>
         </motion.div>
 
-        <motion.div {...fadeInUp} transition={{delay:0.5}}>
+        <motion.div {...fadeInUp} transition={{delay:0.48}}>
           <div className="card-premium rounded-xl p-5 h-full">
             <h3 className="text-sm font-semibold text-foreground mb-2">Leads by Sector</h3>
             <ChartContainer config={sectorChartConfig} className="h-[280px] w-full">
@@ -628,59 +733,110 @@ function DashboardView({ stats, leads, openLeadDetail, navigateTo }: {
         </motion.div>
       </div>
 
-      {/* Weekly Targets + Recent Activity */}
+      {/* Row 5: Weekly Targets + Pretoria Domination Roadmap */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <motion.div {...fadeInUp} transition={{delay:0.55}}>
+        <motion.div {...fadeInUp} transition={{delay:0.5}}>
           <div className="card-premium rounded-xl p-5 h-full">
             <div className="flex items-center gap-2 mb-4">
               <Target className="h-4 w-4 text-emerald-400"/>
               <h3 className="text-sm font-semibold text-foreground">Weekly Activity Targets</h3>
+              <span className="ml-auto text-[10px] text-muted-foreground">This Week</span>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {weeklyTargets.map((t,i) => (
-                <div key={i} className="space-y-1.5">
+                <div key={i} className="space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-medium text-foreground">{t.label}</span>
-                    <span className="text-xs font-bold text-emerald-400">{t.current}<span className="text-muted-foreground font-normal">/{t.target}</span></span>
+                    <span className="text-xs font-bold text-foreground">{t.current}<span className="text-muted-foreground font-normal text-[11px]">/{t.target}</span></span>
                   </div>
                   <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-                    <motion.div
-                      className="h-full bg-emerald-500 rounded-full"
+                    <motion.div className={`h-full ${t.color} rounded-full`}
                       initial={{width:0}} animate={{width:`${Math.min((t.current/t.target)*100,100)}%`}}
-                      transition={{duration:0.8, delay:i*0.1}}
+                      transition={{duration:0.8,delay:i*0.08}}
                     />
                   </div>
                 </div>
               ))}
             </div>
-            <div className="mt-5 p-3 rounded-xl bg-emerald-950/40 border border-emerald-900/40">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-500 mb-1">90-Day Machine</p>
-              <p className="text-xs text-emerald-300/70">Lead list → Prototype → Outreach → Follow-up → Meeting → Proposal → Deposit → Build → Retainer. Repeat.</p>
+            <div className="mt-5 p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-900/40">
+              <p className="text-[10px] font-black uppercase tracking-widest text-emerald-500 mb-1">The Machine</p>
+              <p className="text-xs text-emerald-300/60 leading-relaxed">Lead list → Prototype → Outreach → Follow-up → Meeting → Proposal → Deposit → Build → Retainer. Repeat.</p>
             </div>
           </div>
         </motion.div>
 
-        <motion.div {...fadeInUp} transition={{delay:0.6}}>
+        <motion.div {...fadeInUp} transition={{delay:0.54}}>
+          <div className="card-premium rounded-xl p-5 h-full">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Target className="h-4 w-4 text-amber-400"/>
+                <h3 className="text-sm font-semibold text-foreground">Pretoria Domination</h3>
+              </div>
+              <span className="text-[10px] font-bold text-amber-500 bg-amber-950/60 border border-amber-900/40 px-2 py-0.5 rounded-full">6-Month</span>
+            </div>
+            <div className="space-y-1.5">
+              {niches.map((n,i)=>(
+                <button key={i} onClick={()=>setActiveNiche(i)}
+                  className={`w-full flex items-center gap-3 p-2.5 rounded-xl border transition-all text-left ${activeNiche===i?n.bg+' border':'bg-zinc-800/30 border-transparent hover:bg-zinc-800/50'}`}>
+                  <span className="text-[10px] font-black text-zinc-600 w-12 shrink-0">{n.month}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-xs font-semibold truncate ${activeNiche===i?n.color:'text-foreground'}`}>{n.niche}</p>
+                    {activeNiche===i&&<p className="text-[10px] text-muted-foreground mt-0.5 truncate">{n.goal}</p>}
+                  </div>
+                  {activeNiche===i&&<CheckCircle2 className={`h-4 w-4 shrink-0 ${n.color}`}/>}
+                </button>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Row 6: Sales Machine + Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <motion.div {...fadeInUp} transition={{delay:0.57}}>
+          <div className="card-premium rounded-xl p-5 h-full">
+            <div className="flex items-center gap-2 mb-4">
+              <Zap className="h-4 w-4 text-amber-400"/>
+              <h3 className="text-sm font-semibold text-foreground">Sales Machine</h3>
+              <span className="text-[10px] text-muted-foreground ml-auto">6-step cycle</span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {salesMachineSteps.map((s,i)=>(
+                <div key={i} className={`rounded-xl border p-3 ${s.bg}`}>
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <span className={`text-[10px] font-black ${s.color}`}>{s.step}</span>
+                    <span className="text-[9px] text-zinc-600 font-semibold uppercase tracking-wider">·</span>
+                    <span className="text-[9px] text-zinc-600 font-semibold uppercase tracking-wider">{s.owner}</span>
+                  </div>
+                  <p className="text-xs font-semibold text-foreground">{s.label}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 p-3.5 rounded-xl bg-zinc-800/40 border border-zinc-700/50">
+              <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">WhatsApp Template</p>
+              <p className="text-xs text-zinc-400 leading-relaxed italic">&ldquo;Hi, I&apos;m Sihle. We reviewed your online presence and built a premium preview showing how your business could look. Here is the live link: [prototype]. Would you like a quick breakdown?&rdquo;</p>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div {...fadeInUp} transition={{delay:0.61}}>
           <div className="card-premium rounded-xl p-5 h-full">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Activity className="h-4 w-4 text-violet-400"/>
                 <h3 className="text-sm font-semibold text-foreground">Recent Activity</h3>
               </div>
-              <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground h-7">
-                View all
-              </Button>
             </div>
             <div className="space-y-1 max-h-[320px] overflow-y-auto pr-1">
               {stats.recentActivities.length===0
-                ? <p className="text-sm text-muted-foreground text-center py-8">No recent activities</p>
+                ? <p className="text-sm text-muted-foreground text-center py-10">No recent activities</p>
                 : stats.recentActivities.map((a,i)=>(
                 <motion.div key={a.id}
                   initial={{opacity:0,x:-8}} animate={{opacity:1,x:0}} transition={{delay:i*0.03}}
                   className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-800/50 transition-colors cursor-pointer border border-transparent hover:border-zinc-700/50"
                   onClick={()=>{const l=leads.find(x=>x.id===a.leadId);if(l)openLeadDetail(l)}}
                 >
-                  <div className="mt-0.5 h-7 w-7 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-emerald-400 shrink-0 text-xs">
+                  <div className="mt-0.5 h-7 w-7 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-emerald-400 shrink-0">
                     {ACTIVITY_ICONS[a.type]||<AlertCircle className="h-3.5 w-3.5"/>}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -699,25 +855,22 @@ function DashboardView({ stats, leads, openLeadDetail, navigateTo }: {
       </div>
 
       {/* Quick Actions Bar */}
-      <motion.div {...fadeInUp} transition={{delay:0.65}}>
+      <motion.div {...fadeInUp} transition={{delay:0.64}}>
         <div className="card-premium rounded-xl p-4">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mr-1">Quick Actions</span>
-            <Button variant="ghost" size="sm" className="h-8 text-xs border border-zinc-700 hover:bg-zinc-800 text-foreground" onClick={()=>navigateTo('email')}>
-              <Sparkles className="h-3.5 w-3.5 mr-1.5 text-emerald-400"/>Generate Email
-            </Button>
-            <Button variant="ghost" size="sm" className="h-8 text-xs border border-zinc-700 hover:bg-zinc-800 text-foreground" onClick={()=>navigateTo('leads')}>
-              <Flame className="h-3.5 w-3.5 mr-1.5 text-amber-400"/>View Hot Leads
-            </Button>
-            <Button variant="ghost" size="sm" className="h-8 text-xs border border-zinc-700 hover:bg-zinc-800 text-foreground" onClick={()=>navigateTo('campaigns')}>
-              <ClipboardList className="h-3.5 w-3.5 mr-1.5 text-violet-400"/>Campaigns
-            </Button>
-            <Button variant="ghost" size="sm" className="h-8 text-xs border border-zinc-700 hover:bg-zinc-800 text-foreground" onClick={()=>navigateTo('analytics')}>
-              <BarChart3 className="h-3.5 w-3.5 mr-1.5 text-sky-400"/>Analytics
-            </Button>
-            <Button variant="ghost" size="sm" className="h-8 text-xs border border-zinc-700 hover:bg-zinc-800 text-foreground" onClick={()=>navigateTo('pipeline')}>
-              <GitBranch className="h-3.5 w-3.5 mr-1.5 text-rose-400"/>Pipeline Board
-            </Button>
+            <span className="text-[10px] font-black text-zinc-600 uppercase tracking-widest mr-1">Quick Actions</span>
+            {[
+              { label:'Generate Email', icon:<Sparkles className="h-3.5 w-3.5 text-emerald-400"/>, page:'email' as PageId },
+              { label:'Hot Leads', icon:<Flame className="h-3.5 w-3.5 text-amber-400"/>, page:'leads' as PageId },
+              { label:'Kabelo Board', icon:<Code2 className="h-3.5 w-3.5 text-emerald-400"/>, page:'kabelo' as PageId },
+              { label:'Sihle Tracker', icon:<Megaphone className="h-3.5 w-3.5 text-amber-400"/>, page:'sihle' as PageId },
+              { label:'Analytics', icon:<BarChart3 className="h-3.5 w-3.5 text-sky-400"/>, page:'analytics' as PageId },
+              { label:'Pipeline', icon:<GitBranch className="h-3.5 w-3.5 text-violet-400"/>, page:'pipeline' as PageId },
+            ].map((a,i)=>(
+              <Button key={i} variant="ghost" size="sm" className="h-8 text-xs border border-zinc-700/60 hover:bg-zinc-800 text-foreground" onClick={()=>navigateTo(a.page)}>
+                {a.icon}<span className="ml-1.5">{a.label}</span>
+              </Button>
+            ))}
           </div>
         </div>
       </motion.div>
@@ -1910,6 +2063,557 @@ function LeadDetailDialog({ lead, updateLeadStage, addActivity, activityType, se
   </>)
 }
 
+// ─── Kabelo View ─────────────────────────────────────────────────────
+function KabeloView({ leads, stats, navigateTo }: { leads: Lead[]; stats: DashboardStats | null; navigateTo: (p: PageId) => void }) {
+  const [activeTab, setActiveTab] = useState<'board'|'checklist'|'prototypes'>('board')
+  const [tasks, setTasks] = useState([
+    { id:'k1', title:'Build dental practice prototype', sector:'Dental', priority:'high', done:false, due:'Jun 25' },
+    { id:'k2', title:'Design attorney landing page template', sector:'Legal', priority:'high', done:false, due:'Jun 27' },
+    { id:'k3', title:'Set up construction portfolio site', sector:'Construction', priority:'medium', done:false, due:'Jul 2' },
+    { id:'k4', title:'Update S&K credentials page', sector:'General', priority:'medium', done:true, due:'Jun 20' },
+    { id:'k5', title:'Build school enrolment form', sector:'Education', priority:'low', done:false, due:'Jul 5' },
+    { id:'k6', title:'Create beauty salon booking prototype', sector:'Beauty', priority:'medium', done:false, due:'Jul 8' },
+    { id:'k7', title:'Deploy first Neon DB schema', sector:'Tech', priority:'high', done:true, due:'Jun 18' },
+    { id:'k8', title:'Optimize page speed for Crown package', sector:'Dental', priority:'medium', done:false, due:'Jul 3' },
+  ])
+  const [notes, setNotes] = useState('Kabelo: Focus on getting 3 prototypes built this week for the dental niche. The Crown package demo needs to be polished before Sihle sends the next batch of outreach.')
+
+  const toggleTask = (id: string) => setTasks(prev => prev.map(t => t.id===id ? {...t, done:!t.done} : t))
+
+  const prototypePipeline = [
+    { name:'Pretoria Dental Centre', sector:'Dental', status:'Building', progress:65, color:'bg-emerald-500' },
+    { name:'Mokoena & Associates', sector:'Legal', status:'Review', progress:90, color:'bg-amber-500' },
+    { name:'Apex Construction', sector:'Construction', status:'Planned', progress:15, color:'bg-sky-500' },
+    { name:'Bright Minds Academy', sector:'Education', status:'Building', progress:40, color:'bg-violet-500' },
+    { name:'Glam Studio SA', sector:'Beauty', status:'Planned', progress:5, color:'bg-rose-500' },
+  ]
+
+  const deliverableChecklist = [
+    { id:'d1', label:'Discovery notes', done:true },
+    { id:'d2', label:'Business goal definition', done:true },
+    { id:'d3', label:'Target customer profile', done:true },
+    { id:'d4', label:'Competitor review', done:false },
+    { id:'d5', label:'Prototype build', done:false },
+    { id:'d6', label:'Client feedback session', done:false },
+    { id:'d7', label:'Final design approval', done:false },
+    { id:'d8', label:'Written sign-off', done:false },
+    { id:'d9', label:'Development build', done:false },
+    { id:'d10', label:'Mobile testing', done:false },
+    { id:'d11', label:'Contact form testing', done:false },
+    { id:'d12', label:'SEO basics', done:false },
+    { id:'d13', label:'Analytics setup', done:false },
+    { id:'d14', label:'Go-live launch', done:false },
+    { id:'d15', label:'30-day post-launch review', done:false },
+  ]
+  const [checklist, setChecklist] = useState(deliverableChecklist)
+  const toggleCheck = (id: string) => setChecklist(prev => prev.map(c => c.id===id ? {...c, done:!c.done} : c))
+  const checkPct = Math.round((checklist.filter(c=>c.done).length/checklist.length)*100)
+
+  const doneTasks = tasks.filter(t=>t.done).length
+  const totalTasks = tasks.length
+
+  return (
+    <motion.div className="space-y-5" {...fadeInUp}>
+      {/* Hero */}
+      <div className="relative rounded-2xl overflow-hidden" style={{background:'linear-gradient(135deg, #0d1f17 0%, #0a1520 60%, #0d0d18 100%)', border:'1px solid rgba(16,185,129,0.25)'}}>
+        <div className="absolute inset-0 opacity-[0.04]" style={{backgroundImage:'radial-gradient(circle, white 1px, transparent 1px)',backgroundSize:'24px 24px'}}/>
+        <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full opacity-[0.08]" style={{background:'radial-gradient(circle, #10b981, transparent 70%)'}}/>
+        <div className="relative p-6 sm:p-8">
+          <div className="flex items-center gap-5">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-black text-2xl shadow-xl shadow-emerald-500/20 shrink-0">K</div>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500 bg-emerald-950/80 border border-emerald-800/50 px-2 py-0.5 rounded-full">Build &amp; Strategy</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-black text-white">Kabelo&apos;s Workspace</h1>
+              <p className="text-sm text-white/40 mt-1">Prototypes. Design. Build. Delivery. — Kabelo brings the vision to life.</p>
+            </div>
+            <div className="ml-auto hidden sm:flex items-center gap-3">
+              <div className="text-center">
+                <p className="text-2xl font-black text-emerald-400">{doneTasks}<span className="text-sm text-zinc-600">/{totalTasks}</span></p>
+                <p className="text-[10px] text-zinc-500 uppercase tracking-wider">Tasks Done</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-black text-sky-400">{prototypePipeline.filter(p=>p.status==='Building').length}</p>
+                <p className="text-[10px] text-zinc-500 uppercase tracking-wider">In Build</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { label:'Prototypes Built', value: leads.filter(l=>l.stage==='demo_sent'||l.stage==='won').length, color:'text-emerald-400', bg:'bg-emerald-500/10', icon:<Code2 className="h-5 w-5 text-emerald-400"/> },
+          { label:'Builds Won', value: stats?.wonLeads||0, color:'text-amber-400', bg:'bg-amber-500/10', icon:<Award className="h-5 w-5 text-amber-400"/> },
+          { label:'Active Projects', value: leads.filter(l=>l.status==='active'&&l.stage==='won').length, color:'text-sky-400', bg:'bg-sky-500/10', icon:<Layers className="h-5 w-5 text-sky-400"/> },
+          { label:'Tasks Complete', value: `${doneTasks}/${totalTasks}`, color:'text-violet-400', bg:'bg-violet-500/10', icon:<CheckSquare className="h-5 w-5 text-violet-400"/> },
+        ].map((s,i)=>(
+          <div key={i} className="card-premium rounded-xl p-4 flex items-center gap-3">
+            <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${s.bg} shrink-0`}>{s.icon}</div>
+            <div>
+              <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">{s.label}</p>
+              <p className={`text-xl font-black ${s.color}`}>{s.value}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Tabs */}
+      <div className="flex items-center gap-1 p-1 bg-zinc-800/60 rounded-xl w-fit">
+        {([['board','Task Board'],['checklist','Project Checklist'],['prototypes','Prototype Pipeline']] as const).map(([t,label])=>(
+          <button key={t} onClick={()=>setActiveTab(t)}
+            className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${activeTab===t?'bg-emerald-600 text-white shadow-sm':'text-muted-foreground hover:text-foreground'}`}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab Content */}
+      <AnimatePresence mode="wait">
+        {activeTab==='board'&&(
+          <motion.div key="board" initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-8}} transition={{duration:0.2}}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="card-premium rounded-xl p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-semibold text-foreground">Build Tasks</h3>
+                  <span className="text-[10px] text-muted-foreground">{doneTasks}/{totalTasks} done</span>
+                </div>
+                <div className="space-y-2">
+                  {tasks.map(task=>(
+                    <div key={task.id} onClick={()=>toggleTask(task.id)}
+                      className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${task.done?'bg-zinc-800/20 border-zinc-800/40 opacity-60':'bg-zinc-800/40 border-zinc-700/60 hover:border-emerald-800/60'}`}>
+                      <div className={`mt-0.5 w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition-all ${task.done?'bg-emerald-500 border-emerald-500':'border-zinc-600 hover:border-emerald-500'}`}>
+                        {task.done&&<CheckCircle2 className="h-3 w-3 text-white"/>}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm font-medium ${task.done?'line-through text-muted-foreground':'text-foreground'}`}>{task.title}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-[10px] text-muted-foreground">{task.sector}</span>
+                          <span className="text-[10px] text-zinc-600">·</span>
+                          <span className="text-[10px] text-zinc-500">Due {task.due}</span>
+                        </div>
+                      </div>
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${task.priority==='high'?'bg-rose-950 text-rose-400':task.priority==='medium'?'bg-amber-950 text-amber-400':'bg-zinc-800 text-zinc-500'}`}>
+                        {task.priority}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="card-premium rounded-xl p-5">
+                  <h3 className="text-sm font-semibold text-foreground mb-3">Build Notes</h3>
+                  <Textarea
+                    value={notes} onChange={e=>setNotes(e.target.value)}
+                    className="min-h-[120px] bg-zinc-800/60 border-zinc-700 text-foreground resize-none text-sm"
+                    placeholder="Add build notes, decisions, blockers..."
+                  />
+                  <Button size="sm" className="mt-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs" onClick={()=>toast.success('Notes saved!')}>
+                    <Save className="h-3.5 w-3.5 mr-1.5"/>Save Notes
+                  </Button>
+                </div>
+                <div className="card-premium rounded-xl p-5">
+                  <h3 className="text-sm font-semibold text-foreground mb-3">Offer Stack</h3>
+                  <div className="space-y-2">
+                    {[
+                      { name:'Launch Package', price:'R6,500', desc:'Small businesses — clean, credible presence', color:'text-emerald-400' },
+                      { name:'Growth Package', price:'R15,000', desc:'Established businesses — trust + lead gen', color:'text-amber-400' },
+                      { name:'Premium System', price:'R35,000+', desc:'Apps, portals, dashboards, automation', color:'text-violet-400' },
+                    ].map((p,i)=>(
+                      <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-zinc-800/40 border border-zinc-700/50">
+                        <div className="flex-1">
+                          <p className="text-sm font-semibold text-foreground">{p.name}</p>
+                          <p className="text-xs text-muted-foreground">{p.desc}</p>
+                        </div>
+                        <p className={`text-sm font-black ${p.color}`}>{p.price}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <Button size="sm" variant="ghost" className="mt-3 w-full text-xs border border-zinc-700 hover:bg-zinc-800 text-foreground" onClick={()=>navigateTo('pricing')}>
+                    <Calculator className="h-3.5 w-3.5 mr-1.5"/>Open Pricing Calculator
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {activeTab==='checklist'&&(
+          <motion.div key="checklist" initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-8}} transition={{duration:0.2}}>
+            <div className="card-premium rounded-xl p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-semibold text-foreground">Client Project Checklist</h3>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-muted-foreground">{checklist.filter(c=>c.done).length}/{checklist.length}</span>
+                  <div className="h-2 w-32 bg-zinc-800 rounded-full overflow-hidden">
+                    <motion.div className="h-full bg-emerald-500 rounded-full" initial={{width:0}} animate={{width:`${checkPct}%`}} transition={{duration:0.8}}/>
+                  </div>
+                  <span className="text-xs font-bold text-emerald-400">{checkPct}%</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {checklist.map((item,i)=>(
+                  <div key={item.id} onClick={()=>toggleCheck(item.id)}
+                    className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${item.done?'bg-emerald-950/20 border-emerald-900/30 opacity-70':'bg-zinc-800/40 border-zinc-700/60 hover:border-emerald-800/40'}`}>
+                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-all ${item.done?'bg-emerald-500 border-emerald-500':'border-zinc-600'}`}>
+                      {item.done&&<CheckCircle2 className="h-3.5 w-3.5 text-white"/>}
+                    </div>
+                    <div className="flex items-center gap-2 flex-1">
+                      <span className="text-[10px] font-black text-zinc-600 w-5">{String(i+1).padStart(2,'0')}</span>
+                      <span className={`text-sm ${item.done?'line-through text-muted-foreground':'text-foreground'}`}>{item.label}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {activeTab==='prototypes'&&(
+          <motion.div key="prototypes" initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-8}} transition={{duration:0.2}}>
+            <div className="card-premium rounded-xl p-5">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-sm font-semibold text-foreground">Prototype Pipeline</h3>
+                <Button size="sm" variant="ghost" className="text-xs border border-zinc-700 hover:bg-zinc-800 text-foreground h-7" onClick={()=>toast.info('Add prototype flow coming soon')}>
+                  <Plus className="h-3.5 w-3.5 mr-1.5"/>Add Prototype
+                </Button>
+              </div>
+              <div className="space-y-3">
+                {prototypePipeline.map((p,i)=>(
+                  <motion.div key={i} initial={{opacity:0,x:-8}} animate={{opacity:1,x:0}} transition={{delay:i*0.06}}
+                    className="flex items-center gap-4 p-4 rounded-xl bg-zinc-800/40 border border-zinc-700/60 hover:border-zinc-600 transition-all">
+                    <div className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0" style={{backgroundColor:SECTOR_COLORS[p.sector]+'20',color:SECTOR_COLORS[p.sector]}}>
+                      {SECTOR_ICONS[p.sector]||<Layers className="h-5 w-5"/>}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <p className="text-sm font-semibold text-foreground truncate">{p.name}</p>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ml-2 ${p.status==='Building'?'bg-emerald-950 text-emerald-400':p.status==='Review'?'bg-amber-950 text-amber-400':'bg-zinc-800 text-zinc-500'}`}>{p.status}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-1.5 bg-zinc-700 rounded-full overflow-hidden">
+                          <motion.div className={`h-full ${p.color} rounded-full`} initial={{width:0}} animate={{width:`${p.progress}%`}} transition={{duration:0.8,delay:i*0.08}}/>
+                        </div>
+                        <span className="text-xs font-bold text-muted-foreground w-8 text-right">{p.progress}%</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  )
+}
+
+// ─── Sihle View ───────────────────────────────────────────────────────
+function SihleView({ leads, stats, navigateTo, openLeadDetail }: { leads: Lead[]; stats: DashboardStats | null; navigateTo: (p: PageId) => void; openLeadDetail: (l: Lead) => void }) {
+  const [activeTab, setActiveTab] = useState<'outreach'|'followups'|'tracker'>('outreach')
+  const [outreachNotes, setOutreachNotes] = useState('Sihle: Push hard on dentist niche this week. 40 contacts minimum. Use the Crown package prototype as the main hook. Remember: the goal is conversations, not closes — keep messages under 100 words.')
+
+  const outreachQueue = useMemo(() =>
+    leads.filter(l=>l.stage==='new'||l.stage==='contacted').sort((a,b)=>b.rating-a.rating).slice(0,8),
+  [leads])
+
+  const followUpQueue = useMemo(() =>
+    leads.filter(l=>['contacted','demo_sent','meeting_booked'].includes(l.stage)).sort((a,b)=>{
+      const da = a.lastContact ? new Date(a.lastContact).getTime() : 0
+      const db = b.lastContact ? new Date(b.lastContact).getTime() : 0
+      return da - db
+    }).slice(0,8),
+  [leads])
+
+  const weeklyOutreach = [
+    { label:'Leads Researched', target:50, current:Math.min(leads.length,50), color:'bg-emerald-500' },
+    { label:'Businesses Contacted', target:40, current:Math.min(leads.filter(l=>l.stage!=='new').length,40), color:'bg-sky-500' },
+    { label:'Prototype Links Sent', target:10, current:Math.min(leads.filter(l=>l.stage==='demo_sent').length,10), color:'bg-violet-500' },
+    { label:'Follow-ups Sent', target:60, current:Math.min(leads.filter(l=>l.activities&&l.activities.length>0).length*2,60), color:'bg-amber-500' },
+    { label:'Calls / Voice Notes', target:20, current:Math.min(leads.filter(l=>l.activities?.some(a=>a.type==='call')).length,20), color:'bg-rose-500' },
+    { label:'Meetings Booked', target:5, current:Math.min(leads.filter(l=>l.stage==='meeting_booked').length,5), color:'bg-emerald-400' },
+    { label:'Proposals Sent', target:3, current:Math.min(leads.filter(l=>l.stage==='proposal_sent').length,3), color:'bg-orange-500' },
+    { label:'Deals Closed', target:1, current:Math.min(leads.filter(l=>l.stage==='won').length,1), color:'bg-emerald-400' },
+  ]
+
+  const followUpSequence = [
+    { day:'Day 1', action:'Send prototype link', channel:'WhatsApp', tip:'Lead with the prototype. Keep under 100 words.' },
+    { day:'Day 2', action:'Ask if they viewed it', channel:'WhatsApp', tip:'"Did you get a chance to check the preview?"' },
+    { day:'Day 4', action:'Send a short voice note', channel:'WhatsApp', tip:'15 seconds max. Friendly tone. Ask one question.' },
+    { day:'Day 7', action:'Offer 15-min walkthrough', channel:'Call', tip:'"5 minutes on a call — I can show you exactly what changes."' },
+    { day:'Day 14', action:'Send before/after comparison', channel:'Email', tip:'Visual proof beats verbal promises every time.' },
+    { day:'Day 30', action:'Check in with entry offer', channel:'WhatsApp', tip:'"We have a R6,500 starter package — no obligation."' },
+  ]
+
+  const contactedLeads = leads.filter(l=>l.stage!=='new').length
+  const meetingsBooked = leads.filter(l=>l.stage==='meeting_booked').length
+  const proposalsSent = leads.filter(l=>l.stage==='proposal_sent').length
+
+  return (
+    <motion.div className="space-y-5" {...fadeInUp}>
+      {/* Hero */}
+      <div className="relative rounded-2xl overflow-hidden" style={{background:'linear-gradient(135deg, #1a1200 0%, #0d1520 55%, #0d0d18 100%)', border:'1px solid rgba(245,158,11,0.25)'}}>
+        <div className="absolute inset-0 opacity-[0.04]" style={{backgroundImage:'radial-gradient(circle, white 1px, transparent 1px)',backgroundSize:'24px 24px'}}/>
+        <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full opacity-[0.08]" style={{background:'radial-gradient(circle, #f59e0b, transparent 70%)'}}/>
+        <div className="relative p-6 sm:p-8">
+          <div className="flex items-center gap-5">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-black text-2xl shadow-xl shadow-amber-500/20 shrink-0">S</div>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-[10px] font-black uppercase tracking-widest text-amber-500 bg-amber-950/80 border border-amber-800/50 px-2 py-0.5 rounded-full">Sales &amp; Outreach</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-black text-white">Sihle&apos;s Workspace</h1>
+              <p className="text-sm text-white/40 mt-1">Conversations. Conversions. Closings. — Sihle opens the door.</p>
+            </div>
+            <div className="ml-auto hidden sm:flex items-center gap-3">
+              <div className="text-center">
+                <p className="text-2xl font-black text-amber-400">{contactedLeads}</p>
+                <p className="text-[10px] text-zinc-500 uppercase tracking-wider">Contacted</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-black text-emerald-400">{meetingsBooked}</p>
+                <p className="text-[10px] text-zinc-500 uppercase tracking-wider">Meetings</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-black text-violet-400">{proposalsSent}</p>
+                <p className="text-[10px] text-zinc-500 uppercase tracking-wider">Proposals</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { label:'Total Leads', value:stats?.totalLeads||0, color:'text-amber-400', bg:'bg-amber-500/10', icon:<Users className="h-5 w-5 text-amber-400"/> },
+          { label:'Hot Leads', value:stats?.hotLeads||0, color:'text-rose-400', bg:'bg-rose-500/10', icon:<Flame className="h-5 w-5 text-rose-400"/> },
+          { label:'Meetings Booked', value:meetingsBooked, color:'text-emerald-400', bg:'bg-emerald-500/10', icon:<Calendar className="h-5 w-5 text-emerald-400"/> },
+          { label:'Proposals Sent', value:proposalsSent, color:'text-violet-400', bg:'bg-violet-500/10', icon:<Send className="h-5 w-5 text-violet-400"/> },
+        ].map((s,i)=>(
+          <div key={i} className="card-premium rounded-xl p-4 flex items-center gap-3">
+            <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${s.bg} shrink-0`}>{s.icon}</div>
+            <div>
+              <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">{s.label}</p>
+              <p className={`text-xl font-black ${s.color}`}>{s.value}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Tabs */}
+      <div className="flex items-center gap-1 p-1 bg-zinc-800/60 rounded-xl w-fit">
+        {([['outreach','Outreach Queue'],['followups','Follow-Up Sequence'],['tracker','Weekly Tracker']] as const).map(([t,label])=>(
+          <button key={t} onClick={()=>setActiveTab(t)}
+            className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${activeTab===t?'bg-amber-600 text-white shadow-sm':'text-muted-foreground hover:text-foreground'}`}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      <AnimatePresence mode="wait">
+        {activeTab==='outreach'&&(
+          <motion.div key="outreach" initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-8}} transition={{duration:0.2}}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="card-premium rounded-xl p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-semibold text-foreground">Outreach Queue</h3>
+                  <span className="text-[10px] text-muted-foreground">{outreachQueue.length} leads ready</span>
+                </div>
+                <div className="space-y-2">
+                  {outreachQueue.length===0
+                    ? <p className="text-sm text-muted-foreground text-center py-8">No leads in outreach queue</p>
+                    : outreachQueue.map((lead,i)=>(
+                    <motion.div key={lead.id} initial={{opacity:0,x:-8}} animate={{opacity:1,x:0}} transition={{delay:i*0.04}}
+                      className="flex items-center gap-3 p-3 rounded-xl bg-zinc-800/40 border border-zinc-700/60 hover:border-amber-800/50 transition-all group cursor-pointer"
+                      onClick={()=>openLeadDetail(lead)}>
+                      <div className="h-8 w-8 rounded-full bg-amber-950 border border-amber-800 flex items-center justify-center text-amber-400 font-bold text-xs shrink-0">{i+1}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <p className="font-semibold text-sm text-foreground truncate">{lead.name}</p>
+                          {lead.hotLead&&<Flame className="h-3 w-3 text-amber-400 shrink-0"/>}
+                        </div>
+                        <p className="text-xs text-muted-foreground">{lead.sector} · {lead.area||lead.location}</p>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <StarRating rating={lead.rating}/>
+                        <TierBadge tier={lead.tier}/>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+                <Button size="sm" className="mt-4 w-full bg-amber-600 hover:bg-amber-500 text-white text-xs" onClick={()=>navigateTo('leads')}>
+                  <Users className="h-3.5 w-3.5 mr-1.5"/>View All Leads
+                </Button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="card-premium rounded-xl p-5">
+                  <h3 className="text-sm font-semibold text-foreground mb-3">Outreach Notes</h3>
+                  <Textarea
+                    value={outreachNotes} onChange={e=>setOutreachNotes(e.target.value)}
+                    className="min-h-[100px] bg-zinc-800/60 border-zinc-700 text-foreground resize-none text-sm"
+                    placeholder="Daily outreach notes, targets, blockers..."
+                  />
+                  <Button size="sm" className="mt-3 bg-amber-600 hover:bg-amber-500 text-white text-xs" onClick={()=>toast.success('Notes saved!')}>
+                    <Save className="h-3.5 w-3.5 mr-1.5"/>Save Notes
+                  </Button>
+                </div>
+                <div className="card-premium rounded-xl p-4">
+                  <h3 className="text-sm font-semibold text-foreground mb-3">WhatsApp Template</h3>
+                  <div className="bg-zinc-800/60 rounded-xl p-3 border border-zinc-700/60">
+                    <p className="text-xs text-zinc-300 leading-relaxed">
+                      Hi, I&apos;m Sihle. We reviewed your current online presence and built a quick premium preview showing how your business could look with a stronger, more modern website.
+                    </p>
+                    <p className="text-xs text-zinc-300 leading-relaxed mt-2">
+                      Here is the live preview: <span className="text-amber-400">[prototype link]</span>
+                    </p>
+                    <p className="text-xs text-zinc-300 leading-relaxed mt-2">
+                      Would you like me to send a quick breakdown?
+                    </p>
+                  </div>
+                  <Button size="sm" variant="ghost" className="mt-3 w-full text-xs border border-zinc-700 hover:bg-zinc-800 text-foreground" onClick={()=>{navigator.clipboard?.writeText('Hi, I\'m Sihle. We reviewed your current online presence and built a quick premium preview showing how your business could look. Here is the live preview: [prototype link]. Would you like a quick breakdown?');toast.success('Template copied!')}}>
+                    <Copy className="h-3.5 w-3.5 mr-1.5"/>Copy Template
+                  </Button>
+                </div>
+                <Button size="sm" variant="ghost" className="w-full text-xs border border-zinc-700 hover:bg-zinc-800 text-foreground h-9" onClick={()=>navigateTo('email')}>
+                  <Sparkles className="h-3.5 w-3.5 mr-1.5 text-emerald-400"/>Open Email Generator
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {activeTab==='followups'&&(
+          <motion.div key="followups" initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-8}} transition={{duration:0.2}}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="card-premium rounded-xl p-5">
+                <h3 className="text-sm font-semibold text-foreground mb-4">Follow-Up Cadence</h3>
+                <div className="space-y-2">
+                  {followUpSequence.map((s,i)=>(
+                    <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-zinc-800/40 border border-zinc-700/50">
+                      <div className="h-8 w-8 rounded-lg bg-amber-950 border border-amber-800 flex items-center justify-center shrink-0">
+                        <span className="text-[9px] font-black text-amber-400">{s.day.replace('Day ','D')}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <p className="text-sm font-semibold text-foreground">{s.action}</p>
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700">{s.channel}</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground italic">{s.tip}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 p-3.5 rounded-xl bg-amber-950/30 border border-amber-900/30">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-amber-500 mb-1">Rule of 7</p>
+                  <p className="text-xs text-amber-300/60">It takes ~7 touchpoints to convert. Each follow-up must add something new — a different angle, fresh proof, or a new insight. Never just &ldquo;checking in.&rdquo;</p>
+                </div>
+              </div>
+              <div className="card-premium rounded-xl p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-semibold text-foreground">Follow-Up Queue</h3>
+                  <span className="text-[10px] text-muted-foreground">{followUpQueue.length} leads</span>
+                </div>
+                <div className="space-y-2">
+                  {followUpQueue.length===0
+                    ? <p className="text-sm text-muted-foreground text-center py-8">No leads in follow-up queue</p>
+                    : followUpQueue.map((lead,i)=>(
+                    <div key={lead.id} className="flex items-center gap-3 p-3 rounded-xl bg-zinc-800/40 border border-zinc-700/60 hover:border-amber-800/50 transition-all cursor-pointer group" onClick={()=>openLeadDetail(lead)}>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-sm text-foreground truncate">{lead.name}</p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <Badge variant="outline" className={`text-[9px] ${STAGE_COLORS[lead.stage]}`}>{STAGE_LABELS[lead.stage]}</Badge>
+                          {lead.lastContact&&<span className="text-[10px] text-muted-foreground">{formatRelativeDate(lead.lastContact)}</span>}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-amber-400 hover:bg-amber-950" onClick={e=>{e.stopPropagation();toast.info(`Call ${lead.phone}`)}}><Phone className="h-3.5 w-3.5"/></Button>
+                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-emerald-400 hover:bg-emerald-950" onClick={e=>{e.stopPropagation();toast.info('Opening WhatsApp...')}}><MessageSquare className="h-3.5 w-3.5"/></Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {activeTab==='tracker'&&(
+          <motion.div key="tracker" initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-8}} transition={{duration:0.2}}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="card-premium rounded-xl p-5">
+                <div className="flex items-center gap-2 mb-5">
+                  <Target className="h-4 w-4 text-amber-400"/>
+                  <h3 className="text-sm font-semibold text-foreground">Weekly Activity Tracker</h3>
+                  <span className="ml-auto text-[10px] text-muted-foreground">This Week</span>
+                </div>
+                <div className="space-y-4">
+                  {weeklyOutreach.map((t,i)=>{
+                    const pct = Math.min((t.current/t.target)*100,100)
+                    return (
+                      <div key={i} className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-foreground">{t.label}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-black text-foreground">{t.current}<span className="text-muted-foreground font-normal text-[11px]">/{t.target}</span></span>
+                            <span className={`text-[10px] font-bold ${pct>=100?'text-emerald-400':pct>=60?'text-amber-400':'text-zinc-500'}`}>{Math.round(pct)}%</span>
+                          </div>
+                        </div>
+                        <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                          <motion.div className={`h-full ${t.color} rounded-full`} initial={{width:0}} animate={{width:`${pct}%`}} transition={{duration:0.8,delay:i*0.07}}/>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="card-premium rounded-xl p-5">
+                  <h3 className="text-sm font-semibold text-foreground mb-4">Sales Psychology Tips</h3>
+                  <div className="space-y-2.5">
+                    {[
+                      { tip:'Show before asking. The prototype link eliminates cold call friction.', color:'text-amber-400' },
+                      { tip:'WhatsApp has a 95% open rate in SA. Always lead there.', color:'text-emerald-400' },
+                      { tip:'"Don\'t miss out" beats "You could gain" by 2x. Use loss framing.', color:'text-sky-400' },
+                      { tip:'Interest-based CTAs outperform meeting requests by 3x.', color:'text-violet-400' },
+                      { tip:'Most money is made in follow-up — not the first message.', color:'text-rose-400' },
+                    ].map((s,i)=>(
+                      <div key={i} className="flex items-start gap-2.5 p-2.5 rounded-xl bg-zinc-800/40 border border-zinc-700/50">
+                        <div className={`h-1.5 w-1.5 rounded-full mt-1.5 shrink-0 ${s.color.replace('text-','bg-')}`}/>
+                        <p className="text-xs text-muted-foreground leading-relaxed">{s.tip}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="card-premium rounded-xl p-4">
+                  <h3 className="text-sm font-semibold text-foreground mb-3">B-BBEE Advantage</h3>
+                  <div className="bg-emerald-950/30 border border-emerald-900/30 rounded-xl p-3 space-y-1.5">
+                    {[
+                      { label:'Status', value:'B-BBEE Level 1', color:'text-emerald-400' },
+                      { label:'Recognition', value:'135% Procurement', color:'text-amber-400' },
+                      { label:'CIPC Reg.', value:'2025/907839/07', color:'text-foreground' },
+                      { label:'Ownership', value:'100% Black & Youth-Owned', color:'text-emerald-400' },
+                    ].map((r,i)=>(
+                      <div key={i} className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">{r.label}</span>
+                        <span className={`text-xs font-bold ${r.color}`}>{r.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-[10px] text-zinc-600 mt-2">Lead every corporate pitch with B-BBEE credentials. Target government sectors: Education, Healthcare.</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  )
+}
+
 // ─── Main Component ──────────────────────────────────────────────────
 export default function DashboardPage() {
   const [stats,setStats]=useState<DashboardStats|null>(null)
@@ -1995,16 +2699,17 @@ export default function DashboardPage() {
   const SidebarContent=()=>(
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="p-5 flex items-center gap-3">
+      <div className="p-4 flex items-center gap-3">
         <motion.div
-          className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-base text-emerald-950 shrink-0 shadow-lg shadow-emerald-500/20"
-          style={{background:'linear-gradient(135deg, #10b981, #059669)'}}
-          whileHover={{scale:1.05,rotate:5}} transition={{type:'spring',stiffness:300}}
-        >C</motion.div>
+          className="w-9 h-9 rounded-xl overflow-hidden shrink-0 shadow-lg shadow-emerald-500/10"
+          whileHover={{scale:1.05}} transition={{type:'spring',stiffness:300}}
+        >
+          <Image src="/launchproof-logo.png" alt="LaunchProof Studio" width={36} height={36} className="w-full h-full object-cover"/>
+        </motion.div>
         {!sidebarCollapsed&&(
           <div className="min-w-0">
-            <h1 className="text-sm font-black text-foreground tracking-tight truncate">Carter Digitals</h1>
-            <span className="text-[10px] font-semibold text-emerald-500 bg-emerald-950/60 border border-emerald-900/60 px-1.5 py-0.5 rounded-full">B-BBEE Level 1</span>
+            <h1 className="text-sm font-black text-foreground tracking-tight truncate leading-tight">LaunchProof</h1>
+            <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest leading-tight">Studio</p>
           </div>
         )}
       </div>
@@ -2024,7 +2729,9 @@ export default function DashboardPage() {
                         onClick={()=>{setActivePage(item.id);setSidebarOpen(false)}}
                         className={`w-full flex items-center gap-3 rounded-xl transition-all duration-150 ${sidebarCollapsed?'justify-center px-2 py-2.5':'px-3 py-2.5'} ${
                           activePage===item.id
-                            ?'bg-emerald-950/60 text-emerald-400 border border-emerald-900/50'
+                            ? item.accent==='amber'
+                              ? 'bg-amber-950/60 text-amber-400 border border-amber-900/50'
+                              : 'bg-emerald-950/60 text-emerald-400 border border-emerald-900/50'
                             :'text-zinc-500 hover:bg-zinc-800/60 hover:text-zinc-300 border border-transparent'
                         }`}
                       >
@@ -2109,8 +2816,8 @@ export default function DashboardPage() {
 
               {/* Breadcrumb */}
               <div className="flex items-center gap-1.5 text-sm">
-                <span className="text-zinc-600 text-xs">Carter Digitals</span>
-                <ChevronRight className="h-3 w-3 text-zinc-700"/>
+                <span className="text-zinc-600 text-xs hidden sm:inline">LaunchProof Studio</span>
+                <ChevronRight className="h-3 w-3 text-zinc-700 hidden sm:inline"/>
                 <span className="font-bold text-foreground">{pageTitle}</span>
               </div>
 
@@ -2187,6 +2894,8 @@ export default function DashboardPage() {
                     {activePage==='dashboard'&&stats&&<DashboardView stats={stats} leads={leads} openLeadDetail={openLeadDetail} navigateTo={navigateTo}/>}
                     {activePage==='leads'&&<LeadsView leads={leads} searchQuery={searchQuery} setSearchQuery={setSearchQuery} filterSector={filterSector} setFilterSector={setFilterSector} filterTier={filterTier} setFilterTier={setFilterTier} filterStage={filterStage} setFilterStage={setFilterStage} filterHot={filterHot} setFilterHot={setFilterHot} openLeadDetail={openLeadDetail} stats={stats} navigateToEmail={navigateToEmail}/>}
                     {activePage==='pipeline'&&<PipelineView leads={leads} stats={stats} pipelineStages={pipelineStages} updateLeadStage={updateLeadStage} openLeadDetail={openLeadDetail} navigateToEmail={navigateToEmail}/>}
+                    {activePage==='kabelo'&&<KabeloView leads={leads} stats={stats} navigateTo={navigateTo}/>}
+                    {activePage==='sihle'&&<SihleView leads={leads} stats={stats} navigateTo={navigateTo} openLeadDetail={openLeadDetail}/>}
                     {activePage==='email'&&<EmailGeneratorView leads={leads} emailLeadId={emailLeadId} setEmailLeadId={setEmailLeadId} selectedTemplateId={selectedTemplateId} setSelectedTemplateId={setSelectedTemplateId} emailCategoryFilter={emailCategoryFilter} setEmailCategoryFilter={setEmailCategoryFilter} emailEditedBody={emailEditedBody} setEmailEditedBody={setEmailEditedBody} emailEditing={emailEditing} setEmailEditing={setEmailEditing} showFullSequence={showFullSequence} setShowFullSequence={setShowFullSequence} addActivity={addActivity} openLeadDetail={openLeadDetail}/>}
                     {activePage==='strategies'&&<StrategiesView/>}
                     {activePage==='pricing'&&<PricingView pricingCategory={pricingCategory} setPricingCategory={setPricingCategory} roiNewPatients={roiNewPatients} setRoiNewPatients={setRoiNewPatients} roiAvgValue={roiAvgValue} setRoiAvgValue={setRoiAvgValue} roiPackage={roiPackage} setRoiPackage={setRoiPackage} selectedAddOns={selectedAddOns} setSelectedAddOns={setSelectedAddOns} currentPackages={currentPackages} selectedPkg={selectedPkg} monthlyRevenue={monthlyRevenue} annualRevenue={annualRevenue} paybackDays={paybackDays} netGainY1={netGainY1} roiPercent={roiPercent} addOnTotalOnce={addOnTotalOnce} addOnTotalMonthly={addOnTotalMonthly}/>}

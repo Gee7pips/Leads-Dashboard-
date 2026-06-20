@@ -15,10 +15,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "S&K — Carter Digitals Growth Dashboard",
+  title: "LaunchProof Studio — S&K Growth Command Centre",
   description:
-    "S&K Digital Growth Partnership — Lead pipeline, outreach, and revenue tracking for Kabelo & Sihle. Carter Digitals (Pty) Ltd. Built Different. Built African. Built to Win.",
-  keywords: ["Carter Digitals", "Kabelo", "Sihle", "Pretoria", "Lead Dashboard", "Digital Agency"],
+    "LaunchProof Studio by Carter Digitals — Kabelo & Sihle's private growth command centre. Lead pipeline, outreach, revenue tracking, and partner workspaces. Most agencies sell promises. We sell proof.",
+  keywords: ["LaunchProof Studio", "Carter Digitals", "Kabelo", "Sihle", "Pretoria", "Lead Dashboard", "Digital Agency"],
 };
 
 export default function RootLayout({
